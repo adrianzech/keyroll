@@ -30,9 +30,8 @@ parameters:
         - '%currentWorkingDirectory%/migrations/*' # Doctrine migrations are often auto-generated
         - '%currentWorkingDirectory%/tests/bootstrap.php'
 
-    # You can also ignore specific error patterns if necessary (use sparingly!)
-    # ignoreErrors:
-    #    - '#PHPDoc tag @var contains generic type Doctrine\\ORM\\QueryBuilder<.*>#' # Example
+    ignoreErrors:
+        - '#Property App\\Entity\\.*::\$id \(int\|null\) is never assigned int so it can be removed from the property type.#'
 
     # PHPStan caches results for faster subsequent runs
     # Cache directory, typically inside %tmpDir%

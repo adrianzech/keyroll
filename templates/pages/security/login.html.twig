@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ "app_login"|trans }}{% endblock %}
+
+{% block body %}
+    <div class="card bg-base-100 h-full w-full flex items-center justify-center py-12">
+        <div class="card-body">
+            <h2 class="card-title text-center text-2xl font-bold mb-6">{{ 'app_login'|trans }}</h2>
+
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+            {% if app.user %}
+                <div class="mb-3 text-center">
+                    <div class="mb-2">{{ "app_login_already_logged_in"|trans }} {{ app.user.userIdentifier }}.</div>
+                    <a href="{{ path('app_logout') }}" class="btn btn-primary">{{ "app_logout"|trans }}</a>
+                </div>
+            {% else %}
+
+                <!-- Login Form -->
+                {{ form_start(loginForm) }}
+                <!-- Email Input -->
+                <div class="form-control w-full mb-4">
+                    {{ form_label(loginForm.email, 'app_email'|trans, {'label_attr': {'class': 'label-text'}}) }}
+                    {{ form_widget(loginForm.email, {'attr': {'class': 'input input-bordered w-full', 'value': last_username, 'required': true, 'autofocus': true}}) }}
+                    {{ form_errors(loginForm.email) }}
+                </div>
+
+                <!-- Password Input -->
+                <div class="form-control w-full mb-6">
+                    {{ form_label(loginForm.password, 'app_password'|trans, {'label_attr': {'class': 'label-text'}}) }}
+                    {{ form_widget(loginForm.password, {'attr': {'class': 'input input-bordered w-full'}}) }}
+                    {{ form_errors(loginForm.password) }}
+                </div>
+
+                <!-- Remember Me Checkbox -->
+                <div class="form-control mb-6">
+                    <label class="cursor-pointer label justify-start">
+                        {{ form_widget(loginForm.rememberMe, {'attr': {'class': 'checkbox checkbox-primary mr-2'}}) }}
+                        <span class="label-text">{{ "app_login_remember_me"|trans }}</span>
+                    </label>
+                    {{ form_errors(loginForm.rememberMe) }}
+                </div>
+
+                <!-- Submit Button -->
+                <div class="card-actions justify-end">
+                    <button type="submit" class="btn btn-primary w-full">{{ "app_login"|trans }}</button>
+                </div>
+
+                <!-- Register Link -->
+                <div class="text-center mt-4">
+                    <p>{{ "app_login_no_account"|trans }} <a href="{{ path('app_register') }}"
+                                                             class="link link-primary">{{ "app_register"|trans }}</a>
+                    </p>
+                </div>
+                {{ form_end(loginForm) }}
+
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
