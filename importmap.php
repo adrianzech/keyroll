@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Returns the importmap for this application.
  *
@@ -12,17 +14,17 @@
  * The "importmap:require" command can be used to add new entries to this file.
  */
 return [
-    'app'                      => [
-        'path'       => './assets/app.js',
+    'app'                => [
+        'path' => './assets/app.js',
         'entrypoint' => true,
     ],
-    '@hotwired/stimulus'       => [
+    '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],
     '@symfony/stimulus-bundle' => [
         'path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js',
     ],
-    '@hotwired/turbo'          => [
+    '@hotwired/turbo'    => [
         'version' => '7.3.0',
     ],
 ];

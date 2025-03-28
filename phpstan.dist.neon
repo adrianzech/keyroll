@@ -28,6 +28,7 @@ parameters:
         - '%currentWorkingDirectory%/public/index.php'
         - '%currentWorkingDirectory%/src/Kernel.php'
         - '%currentWorkingDirectory%/migrations/*' # Doctrine migrations are often auto-generated
+        - '%currentWorkingDirectory%/tests/bootstrap.php'
 
     # You can also ignore specific error patterns if necessary (use sparingly!)
     # ignoreErrors:

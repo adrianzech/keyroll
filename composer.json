@@ -87,6 +87,26 @@
     ],
     "post-update-cmd": [
       "@auto-scripts"
+    ],
+    "phpstan": [
+      "@php vendor/bin/phpstan analyse -c phpstan.dist.neon --memory-limit=1G"
+    ],
+    "cs-check": [
+      "@php vendor/bin/php-cs-fixer fix --dry-run --diff"
+    ],
+    "cs-fix": [
+      "@php vendor/bin/php-cs-fixer fix"
+    ],
+    "phpmd": [
+      "@php -d error_reporting='E_ALL & ~E_DEPRECATED' vendor/bin/phpmd src/ text phpmd.xml.dist"
+    ],
+    "code-analysis": [
+      "@cs-check",
+      "@phpmd",
+      "@phpstan"
+    ],
+    "ci-check": [
+      "@code-analysis"
     ]
   },
   "conflict": {
