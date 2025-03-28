@@ -1,0 +1,64 @@
+# Application Core
+app_name: 'SubTrack'
+app_copyright: 'Copyright'
+app_footer: 'All rights reserved by Adrian Zech'
+
+# Common Actions
+app_actions: 'Actions'
+app_save: 'Save'
+app_edit: 'Edit'
+app_delete: 'Delete'
+app_cancel: 'Cancel'
+app_logout: 'Logout'
+
+# Common Labels
+app_status: 'Status'
+app_active: 'Active'
+app_inactive: 'Inactive'
+app_amount: 'Amount'
+app_category: 'Category'
+app_email: 'Email'
+app_password: 'Password'
+app_account: 'Account'
+app_settings: 'Settings'
+app_in: 'in'
+app_days: 'days'
+app_general: 'General'
+app_language: 'Language'
+app_language_en: 'English'
+app_language_de: 'German'
+
+# Form Placeholders
+app_email_placeholder: 'your@email.com'
+app_password_placeholder: '••••••••'
+app_enter_password: 'Please enter a password'
+
+# Error Messages
+app_submission_error: 'There were errors with your submission'
+
+# Authentication
+app_login: 'Login'
+app_login_already_logged_in: 'You are already logged in'
+app_login_no_account: "Don't already have an account?"
+app_login_remember_me: 'Remember me'
+app_register: 'Register'
+app_register_account_exists: 'Already have an account?'
+app_register_need_to_agree: 'You need to agree to our terms.'
+app_register_terms: 'Agree to terms and conditions'
+
+# Settings
+app_settings_current_password: 'Current password'
+app_settings_new_password: 'New password'
+app_settings_confirm_new_password: 'Confirm new password'
+app_settings_update_email: 'Update email'
+app_settings_update_password: 'Update password'
+app_settings_password_successfully_updated: 'Password updated successfully'
+app_settings_no_changes: 'No changes were made'
+app_settings_enter_password: 'Please enter a new password'
+app_settings_enter_password_to_confirm: 'Please enter your current password to confirm the change'
+app_settings_current_password_incorrect: 'Current password is incorrect'
+
+# Validation Messages
+app_settings_enter_valid_email: 'Please enter a valid email address'
+app_settings_password_min_length: 'Your password should be at least {{ limit }} characters'
+app_settings_password_mismatch: 'The password fields must match.'
