@@ -14,7 +14,7 @@ declare(strict_types=1);
  * The "importmap:require" command can be used to add new entries to this file.
  */
 return [
-    'app'             => [
+    'app' => [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
