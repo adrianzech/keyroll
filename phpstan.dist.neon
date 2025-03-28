@@ -1,0 +1,39 @@
+parameters:
+    # Analysis level (0-9), higher is stricter. Start reasonably high for new projects.
+    # Level 6 is a good starting point. Aim to increase over time.
+    level: 6
+
+    # Paths to analyse
+    paths:
+    - bin/
+    - config/
+    - public/
+    - src/
+    - tests/
+
+    # --- Symfony Framework specific parameters ---
+    symfony:
+        # Path to the XML container dump. Essential for service analysis.
+        # %currentWorkingDirectory% refers to the project root where you run phpstan.
+        # Use the 'dev' cache, as it's usually the most complete.
+        containerXmlPath: '%currentWorkingDirectory%/var/cache/dev/App_KernelDevDebugContainer.xml'
+
+        # Optional: If you want PHPStan to analyze console commands loaded via bin/console
+        consoleApplicationLoader: '%currentWorkingDirectory%/bin/console'
+
+    # --- Exclusions ---
+    # Paths to ignore (e.g., auto-generated files, specific legacy code)
+    excludePaths:
+        - '%currentWorkingDirectory%/config/bundles.php'
+        - '%currentWorkingDirectory%/public/index.php'
+        - '%currentWorkingDirectory%/src/Kernel.php'
+        - '%currentWorkingDirectory%/migrations/*' # Doctrine migrations are often auto-generated
+
+    # You can also ignore specific error patterns if necessary (use sparingly!)
+    # ignoreErrors:
+    #    - '#PHPDoc tag @var contains generic type Doctrine\\ORM\\QueryBuilder<.*>#' # Example
+
+    # PHPStan caches results for faster subsequent runs
+    # Cache directory, typically inside %tmpDir%
+    # Add '.phpstan_cache' to your .gitignore if it uses the default tmp location relative to CWD
+    # tmpDir: .phpstan_cache
