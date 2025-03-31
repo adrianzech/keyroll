@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'key.create_new'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">{{ 'key.create_new'|trans }}</h1>
+        </div>
+
+        {% include 'partials/_flash_messages.html.twig' %}
+
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                {{ form_start(form) }}
+                <div class="form-control mb-4">
+                    {{ form_label(form.name, null, {'label_attr': {'class': 'label'}}) }}
+                    {{ form_widget(form.name, {'attr': {'class': 'input input-bordered w-full'}}) }}
+                    {{ form_errors(form.name) }}
+                </div>
+
+                <div class="form-control mb-6">
+                    {{ form_label(form.publicKey, null, {'label_attr': {'class': 'label'}}) }}
+                    {{ form_widget(form.publicKey, {'attr': {'class': 'textarea textarea-bordered w-full'}}) }}
+                    {{ form_errors(form.publicKey) }}
+                </div>
+
+                {{ form_rest(form) }}
+
+                <div class="card-actions justify-end">
+                    <a href="{{ path('app_host_index') }}" class="btn btn-outline">
+                        {{ 'app_cancel'|trans }}
+                    </a>
+                    <button type="submit" class="btn btn-primary">{{ 'app_save'|trans }}</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

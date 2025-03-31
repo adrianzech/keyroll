@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -35,6 +37,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, SSHKey>
+     */
+    #[ORM\OneToMany(targetEntity: SSHKey::class, mappedBy: 'user')]
+    private Collection $sshKeys;
+
+    public function __construct()
+    {
+        $this->sshKeys = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -109,5 +122,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, SSHKey>
+     */
+    public function getSshKeys(): Collection
+    {
+        return $this->sshKeys;
+    }
+
+    public function addSshKey(SSHKey $sshKey): static
+    {
+        if (!$this->sshKeys->contains($sshKey)) {
+            $this->sshKeys->add($sshKey);
+            $sshKey->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSshKey(SSHKey $sshKey): static
+    {
+        if ($this->sshKeys->removeElement($sshKey)) {
+            // set the owning side to null (unless already changed)
+            if ($sshKey->getUser() === $this) {
+                $sshKey->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

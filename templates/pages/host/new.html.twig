@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'host.create_new'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">{{ 'host.create_new'|trans }}</h1>
+        </div>
+
+        {% include 'partials/_flash_messages.html.twig' %}
+
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                {{ form_start(form) }}
+                <div class="form-control mb-4">
+                    {{ form_label(form.name, null, {'label_attr': {'class': 'label'}}) }}
+                    {{ form_widget(form.name, {'attr': {'class': 'input input-bordered w-full'}}) }}
+                    {{ form_errors(form.name) }}
+                </div>
+
+                <div class="form-control mb-4">
+                    {{ form_label(form.hostname, null, {'label_attr': {'class': 'label'}}) }}
+                    {{ form_widget(form.hostname, {'attr': {'class': 'input input-bordered w-full'}}) }}
+                    {% if form.hostname.vars.help is defined %}
+                        <div class="text-sm text-gray-500 mt-1">{{ form.hostname.vars.help|trans }}</div>
+                    {% endif %}
+                    {{ form_errors(form.hostname) }}
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="form-control">
+                        {{ form_label(form.port, null, {'label_attr': {'class': 'label'}}) }}
+                        {{ form_widget(form.port, {'attr': {'class': 'input input-bordered w-full'}}) }}
+                        {{ form_errors(form.port) }}
+                    </div>
+
+                    <div class="form-control">
+                        {{ form_label(form.username, null, {'label_attr': {'class': 'label'}}) }}
+                        {{ form_widget(form.username, {'attr': {'class': 'input input-bordered w-full'}}) }}
+                        {{ form_errors(form.username) }}
+                    </div>
+                </div>
+
+                {{ form_rest(form) }}
+
+                <div class="card-actions justify-end">
+                    <a href="{{ path('app_host_index') }}" class="btn btn-outline">
+                        {{ 'app_cancel'|trans }}
+                    </a>
+                    <button type="submit" class="btn btn-primary">{{ 'app_save'|trans }}</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

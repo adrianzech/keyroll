@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'host.hosts'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">{{ 'host.hosts'|trans }}</h1>
+
+            <div>
+                <a href="{{ path('app_host_new') }}" class="btn btn-primary">
+                    {{ 'host.create_new'|trans }}
+                </a>
+            </div>
+        </div>
+
+        {% include 'partials/_flash_messages.html.twig' %}
+
+        {% if hosts|length > 0 %}
+            <div class="overflow-x-auto">
+                <table class="table table-zebra w-full">
+                    <thead>
+                    <tr>
+                        <th>{{ 'host.name'|trans }}</th>
+                        <th>{{ 'host.hostname'|trans }}</th>
+                        <th>{{ 'host.port'|trans }}</th>
+                        <th>{{ 'host.username'|trans }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for host in hosts %}
+                        <tr>
+                            <td>{{ host.name }}</td>
+                            <td>{{ host.hostname }}</td>
+                            <td>{{ host.port }}</td>
+                            <td>{{ host.username }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                     class="stroke-info shrink-0 w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>{{ 'host.no_hosts_found'|trans }}</span>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
