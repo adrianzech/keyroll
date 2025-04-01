@@ -19,8 +19,7 @@ class HostController extends AbstractController
     public function __construct(
         private readonly HostRepository $hostRepository,
         private readonly EntityManagerInterface $entityManager,
-    )
-    {
+    ) {
     }
 
     #[Route('', name: 'app_host_index', methods: ['GET'])]

@@ -20,8 +20,7 @@ class SSHKeyController extends AbstractController
     public function __construct(
         private readonly SSHKeyRepository $sshKeyRepository,
         private readonly EntityManagerInterface $entityManager,
-    )
-    {
+    ) {
     }
 
     #[Route('/index', name: 'app_ssh_key_index', methods: ['GET'])]
