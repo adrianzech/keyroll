@@ -42,22 +42,25 @@ WORKDIR /var/www/html
 # Copy composer files first to leverage Docker cache
 COPY composer.json composer.lock ./
 
-# Install dependencies with Composer
-RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
+# First install WITH dev dependencies
+RUN composer install --prefer-dist --no-autoloader --no-scripts --no-progress
 
 # Copy the rest of the application
 COPY . .
 
-# Finish Composer setup
-RUN composer dump-autoload --no-dev --optimize && \
+# Run scripts with dev dependencies
+RUN composer dump-autoload --optimize && \
     composer run-script post-install-cmd
+
+# Then remove dev dependencies for production
+RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-scripts --no-progress
 
 # Create required directories with proper permissions
 RUN mkdir -p var/cache var/log var/ssh && \
     chmod -R 777 var
 
 # Build Tailwind assets
-RUN APP_ENV=prod APP_DEBUG=0 php bin/console tailwind:build
+RUN APP_ENV=prod APP_DEBUG=0 php bin/console tailwind:build --no-debug
 
 # Remove dev files
 RUN rm -rf tests phpstan.dist.neon phpmd.xml.dist phpunit.xml.dist .gitignore .php-cs-fixer.dist.php
