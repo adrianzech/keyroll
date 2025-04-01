@@ -6,18 +6,21 @@ RUN apk add --no-cache \
     file \
     gettext \
     git \
-    libpq-dev \
+    postgresql-dev \
     postgresql-client \
     zip \
     unzip \
-    libzip-dev
+    libzip-dev \
+    $PHPIZE_DEPS \
+    icu-dev
 
 # Install PHP extensions
 RUN docker-php-ext-install \
     pdo \
     pdo_pgsql \
     zip \
-    opcache
+    opcache \
+    intl
 
 # Configure opcache for production use
 RUN { \
@@ -36,20 +39,25 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy application files
-COPY . /var/www/html/
+# Copy composer files first to leverage Docker cache
+COPY composer.json composer.lock ./
 
-# Set proper directory permissions
+# Install dependencies with Composer
+RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
+
+# Copy the rest of the application
+COPY . .
+
+# Finish Composer setup
+RUN composer dump-autoload --no-dev --optimize && \
+    composer run-script post-install-cmd
+
+# Create required directories with proper permissions
 RUN mkdir -p var/cache var/log var/ssh && \
-    chmod -R 777 var && \
-    chown -R www-data:www-data var
-
-# Install dependencies
-RUN composer install --prefer-dist --no-dev --no-interaction --no-progress
+    chmod -R 777 var
 
 # Build Tailwind assets
-RUN composer dump-env prod
-RUN php bin/console tailwind:build
+RUN APP_ENV=prod APP_DEBUG=0 php bin/console tailwind:build
 
 # Remove dev files
 RUN rm -rf tests phpstan.dist.neon phpmd.xml.dist phpunit.xml.dist .gitignore .php-cs-fixer.dist.php
