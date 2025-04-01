@@ -43,7 +43,7 @@ class HostController extends AbstractController
 
             $this->addFlash('success', 'host.created_successfully');
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_host_index');
         }
 
         return $this->render('pages/host/new.html.twig', [
