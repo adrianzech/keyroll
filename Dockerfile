@@ -59,8 +59,11 @@ RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-scripts -
 RUN mkdir -p var/cache var/log var/ssh && \
     chmod -R 777 var
 
-# Build Tailwind assets
-RUN APP_ENV=prod APP_DEBUG=0 php bin/console tailwind:build --no-debug
+# Build Tailwind CSS
+RUN mkdir -p var/tailwind && \
+    php bin/console tailwind:init && \
+    chmod +x var/tailwind/*/tailwindcss-* && \
+    APP_ENV=prod APP_DEBUG=0 php bin/console tailwind:build --no-debug
 
 # Remove dev files
 RUN rm -rf tests phpstan.dist.neon phpmd.xml.dist phpunit.xml.dist .gitignore .php-cs-fixer.dist.php
