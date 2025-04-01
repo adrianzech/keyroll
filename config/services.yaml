@@ -1,9 +1,6 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+  keyroll.private_key_path: '%kernel.project_dir%/var/ssh/keyroll_ed25519'
+  keyroll.connection_timeout: 10
 
 services:
   # default configuration for services in *this* file
@@ -20,5 +17,13 @@ services:
       - '../src/Entity/'
       - '../src/Kernel.php'
 
-  # add more service definitions when explicit configuration is needed
-  # please note that last definitions always *replace* previous ones
+  # Configure SSHKeyDeployer service
+  App\Service\SSHKeyDeployer:
+    arguments:
+      $keyRollPrivateKeyPath: '%keyroll.private_key_path%'
+      $connectionTimeout: '%keyroll.connection_timeout%'
+
+  # Configure SSHKeyGenerateCommand with the project directory
+  App\Command\SSHKeyGenerateCommand:
+    arguments:
+      $projectDir: '%kernel.project_dir%'
