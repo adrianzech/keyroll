@@ -20,7 +20,9 @@ class SSHKeyController extends AbstractController
     public function __construct(
         private readonly SSHKeyRepository $sshKeyRepository,
         private readonly EntityManagerInterface $entityManager,
-    ) {}
+    )
+    {
+    }
 
     #[Route('/index', name: 'app_ssh_key_index', methods: ['GET'])]
     public function index(): Response
@@ -38,12 +40,12 @@ class SSHKeyController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $key = new SSHKey();
-        if ($user instanceof User) {
-            $key->setUser($user);
-        } else {
+        if (!$user instanceof User) {
             throw new \InvalidArgumentException('Expected instance of User');
         }
+
+        $key = new SSHKey();
+        $key->setUser($user);
 
         $form = $this->createForm(SSHKeyType::class, $key);
         $form->handleRequest($request);

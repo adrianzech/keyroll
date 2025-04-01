@@ -14,6 +14,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Regex;
 
+/**
+ * @extends AbstractType<Host>
+ */
 class HostType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

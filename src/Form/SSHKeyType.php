@@ -13,6 +13,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 
+/**
+ * @extends AbstractType<SSHKey>
+ */
 class SSHKeyType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
