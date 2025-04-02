@@ -9,8 +9,13 @@ fi
 if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
     echo "Checking for Symfony runtime environment..."
 
+    # Create .env.local with environment variables
+    echo "DATABASE_URL=\"${DATABASE_URL}\"" > .env.local
+    echo "APP_SECRET=\"${APP_SECRET}\"" >> .env.local
+    echo "APP_ENV=${APP_ENV}" >> .env.local
+
     # Wait for database to be ready
-    if grep -q DATABASE_URL .env; then
+    if grep -q DATABASE_URL .env.local; then
         until php bin/console doctrine:query:sql "SELECT 1" > /dev/null 2>&1; do
             echo "Waiting for database to be ready..."
             sleep 2
