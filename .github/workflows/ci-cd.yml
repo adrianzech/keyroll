@@ -20,7 +20,7 @@ jobs:
     name: PHPStan
     runs-on: ubuntu-latest
     env:
-      APP_ENV: test
+      APP_ENV: test # Job still runs in test env overall
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -50,8 +50,9 @@ jobs:
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
 
-      - name: Warmup Symfony Cache for PHPStan
-        run: php bin/console cache:warmup --env=test
+      # Warmup DEV cache specifically for PHPStan, as it seems to require it
+      - name: Warmup Symfony DEV Cache for PHPStan
+        run: php bin/console cache:warmup --env=dev
 
       - name: Run PHPStan
         run: composer phpstan
@@ -214,10 +215,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Correct the path for the Symfony CLI setup action
+      # Pin Symfony CLI setup action to a specific version
       - name: Setup Symfony CLI
-        # uses: symfony/actions/setup-cli@v1 # Incorrect path
-        uses: symfony/setup-cli-action@v1   # Correct path
+        uses: symfony/setup-cli-action@v1.7.0 # Pinned version
 
       - name: Run Symfony Security Check
         run: symfony check:security
