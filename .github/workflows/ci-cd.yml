@@ -20,7 +20,7 @@ jobs:
     name: PHPStan
     runs-on: ubuntu-latest
     env:
-      APP_ENV: test
+      APP_ENV: test # Ensure test environment is used
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -50,8 +50,12 @@ jobs:
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
 
+      # Add this step to warm up the cache for the 'test' environment
+      - name: Warmup Symfony Cache for PHPStan
+        run: php bin/console cache:warmup --env=test
+
       - name: Run PHPStan
-        run: composer phpstan
+        run: composer phpstan # This should now find the correct container definition
 
   cs-check:
     name: PHP CS Fixer
