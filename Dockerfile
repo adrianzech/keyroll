@@ -1,18 +1,18 @@
-FROM php:8.4-fpm-alpine
+FROM php:8.4-fpm
 
 # Install system dependencies
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     acl \
     file \
     gettext \
     git \
-    postgresql-dev \
+    libpq-dev \
     postgresql-client \
     zip \
     unzip \
     libzip-dev \
-    $PHPIZE_DEPS \
-    icu-dev
+    libicu-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
 RUN docker-php-ext-install \
@@ -73,7 +73,7 @@ COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Create a non-root user to run the application
-RUN adduser --disabled-password --gecos "" keyroll && \
+RUN useradd -ms /bin/bash keyroll && \
     chown -R keyroll:keyroll /var/www/html
 
 USER keyroll
