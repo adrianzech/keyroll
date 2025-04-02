@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client \
     unzip \
     zip \
+    openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
@@ -69,6 +70,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     libzip-dev \
     postgresql-client \
+    openssh-client \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy PHP configuration (Opcache etc.) from build stage (includes installed ext configs)
