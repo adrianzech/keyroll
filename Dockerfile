@@ -55,7 +55,6 @@ RUN composer dump-autoload --optimize && \
 # Build Tailwind CSS (with dev dependencies still present)
 RUN mkdir -p var/tailwind && \
     APP_ENV=dev php bin/console tailwind:init && \
-    chmod +x var/tailwind/*/tailwindcss-* && \
     APP_ENV=dev php bin/console tailwind:build
 
 # Then remove dev dependencies for production
