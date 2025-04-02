@@ -45,14 +45,12 @@ RUN npm install
 COPY . .
 
 # Execute Composer scripts (incl. post-install-cmd)
-# Set APP_ENV temporarily here for scripts if needed (e.g., for AssetMapper)
 RUN composer dump-autoload --optimize && \
-    APP_ENV=prod composer run-script post-install-cmd
+    composer run-script post-install-cmd
 
 # Build Tailwind assets for production
-# APP_ENV=prod is important for production builds (minification etc.)
 RUN mkdir -p var/tailwind && \
-    APP_ENV=prod php bin/console tailwind:build --minify
+    php bin/console tailwind:build --minify
 
 # Clean up build artifacts and install only production Composer dependencies
 # --no-scripts, as they have already been executed
