@@ -6,9 +6,8 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag for the image'
-        required: true
-        default: '1.0.0'
+        description: 'Version tag for the image (overrides VERSION file)'
+        required: false
 
 env:
   PHP_VERSION: '8.4'
@@ -249,10 +248,11 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.version }}" != "" ]; then
             echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
           else
-            echo "VERSION=sha-$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+            VERSION=$(cat VERSION)
+            echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT 
           fi
 
       - name: Set Docker tags
