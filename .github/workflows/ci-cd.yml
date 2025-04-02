@@ -20,7 +20,7 @@ jobs:
     name: PHPStan
     runs-on: ubuntu-latest
     env:
-      APP_ENV: test # Ensure test environment is used
+      APP_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -50,12 +50,11 @@ jobs:
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
 
-      # Add this step to warm up the cache for the 'test' environment
       - name: Warmup Symfony Cache for PHPStan
         run: php bin/console cache:warmup --env=test
 
       - name: Run PHPStan
-        run: composer phpstan # This should now find the correct container definition
+        run: composer phpstan
 
   cs-check:
     name: PHP CS Fixer
@@ -215,8 +214,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # Correct the path for the Symfony CLI setup action
       - name: Setup Symfony CLI
-        uses: symfony/actions/setup-cli@v1
+        # uses: symfony/actions/setup-cli@v1 # Incorrect path
+        uses: symfony/setup-cli-action@v1   # Correct path
 
       - name: Run Symfony Security Check
         run: symfony check:security
