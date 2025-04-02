@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Image version tag (overrides VERSION file if provided)'
+        description: 'Version tag for the image (overrides VERSION file)'
         required: false
 
 env:
@@ -20,17 +20,16 @@ jobs:
     name: PHPStan
     runs-on: ubuntu-latest
     env:
-      APP_ENV: test # Job still runs in test env overall
+      APP_RUNTIME_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup PHP
-        id: setup-php
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ env.PHP_VERSION }}
-          extensions: mbstring, xml, ctype, iconv, intl, zip, pdo, pdo_pgsql
+          extensions: mbstring, xml, ctype, iconv, intl, zip
           coverage: none
           tools: composer:v2
 
@@ -48,11 +47,7 @@ jobs:
             ${{ runner.os }}-php-
 
       - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
-
-      # Warmup DEV cache specifically for PHPStan, as it seems to require it
-      - name: Warmup Symfony DEV Cache for PHPStan
-        run: php bin/console cache:warmup --env=dev
+        run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run PHPStan
         run: composer phpstan
@@ -61,18 +56,17 @@ jobs:
     name: PHP CS Fixer
     runs-on: ubuntu-latest
     env:
-      APP_ENV: test
+      APP_RUNTIME_ENV: test
       PHP_CS_FIXER_IGNORE_ENV: 1
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup PHP
-        id: setup-php
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ env.PHP_VERSION }}
-          extensions: mbstring, xml, ctype, iconv, intl, zip, pdo, pdo_pgsql
+          extensions: mbstring, xml, ctype, iconv, intl, zip
           coverage: none
           tools: composer:v2
 
@@ -90,7 +84,7 @@ jobs:
             ${{ runner.os }}-php-
 
       - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
+        run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run PHP CS Fixer (Dry Run)
         run: composer cs-check
@@ -99,17 +93,16 @@ jobs:
     name: PHPMD
     runs-on: ubuntu-latest
     env:
-      APP_ENV: test
+      APP_RUNTIME_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup PHP
-        id: setup-php
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ env.PHP_VERSION }}
-          extensions: mbstring, xml, ctype, iconv, intl, zip, pdo, pdo_pgsql
+          extensions: mbstring, xml, ctype, iconv, intl, zip
           coverage: none
           tools: composer:v2
 
@@ -127,7 +120,7 @@ jobs:
             ${{ runner.os }}-php-
 
       - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
+        run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run PHPMD
         run: composer phpmd
@@ -136,17 +129,16 @@ jobs:
     name: Lint Twig Templates
     runs-on: ubuntu-latest
     env:
-      APP_ENV: test
+      APP_RUNTIME_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup PHP
-        id: setup-php
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ env.PHP_VERSION }}
-          extensions: mbstring, xml, ctype, iconv, intl, zip, pdo, pdo_pgsql
+          extensions: mbstring, xml, ctype, iconv, intl, zip
           coverage: none
           tools: composer:v2
 
@@ -164,7 +156,7 @@ jobs:
             ${{ runner.os }}-php-
 
       - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
+        run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run Twig Lint
         run: php bin/console lint:twig templates
@@ -173,17 +165,16 @@ jobs:
     name: Lint YAML Files
     runs-on: ubuntu-latest
     env:
-      APP_ENV: test
+      APP_RUNTIME_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup PHP
-        id: setup-php
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ env.PHP_VERSION }}
-          extensions: mbstring, xml, ctype, iconv, intl, zip, pdo, pdo_pgsql
+          extensions: mbstring, xml, ctype, iconv, intl, zip
           coverage: none
           tools: composer:v2
 
@@ -201,7 +192,7 @@ jobs:
             ${{ runner.os }}-php-
 
       - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
+        run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run YAML Lint
         run: php bin/console lint:yaml config --parse-tags
@@ -210,14 +201,23 @@ jobs:
     name: Symfony Security Check
     runs-on: ubuntu-latest
     env:
-      APP_ENV: test
+      APP_RUNTIME_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Pin Symfony CLI setup action to a specific version
-      - name: Setup Symfony CLI
-        uses: symfony/setup-cli-action@v1.7.0 # Pinned version
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          coverage: none
+          tools: composer:v2
+
+      - name: Install Symfony CLI
+        run: |
+          curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | sudo -E bash
+          sudo apt-get update
+          sudo apt-get install symfony-cli -y
 
       - name: Run Symfony Security Check
         run: symfony check:security
@@ -250,13 +250,10 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.version }}" != "" ]; then
             echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-          elif [ -f VERSION ]; then
-            VERSION_FROM_FILE=$(cat VERSION)
-            echo "VERSION=${VERSION_FROM_FILE}" >> $GITHUB_OUTPUT
           else
-            echo "VERSION=latest" >> $GITHUB_OUTPUT
+            VERSION=$(cat VERSION)
+            echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT 
           fi
-          echo "Using version: ${{ steps.version.outputs.VERSION }}"
 
       - name: Set Docker tags
         id: meta
@@ -264,7 +261,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest,enable=${{ steps.version.outputs.VERSION != 'latest' }}
+            type=raw,value=latest
             type=raw,value=${{ steps.version.outputs.VERSION }}
 
       - name: Build and push Docker image
