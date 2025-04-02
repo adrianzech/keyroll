@@ -83,6 +83,11 @@ RUN docker-php-ext-install \
     pdo_pgsql \
     zip
 
+# Uncomment clear_env to allow PHP-FPM workers to inherit environment variables
+RUN sed -i 's#^;clear_env\s*=\s*no#clear_env = no#' /usr/local/etc/php-fpm.d/www.conf \
+ && sed -i 's#^;catch_workers_output\s*=\s*yes#catch_workers_output = yes#' /usr/local/etc/php-fpm.d/www.conf
+
+
 WORKDIR /var/www/html
 
 # Copy only the built application artifact from the build stage
