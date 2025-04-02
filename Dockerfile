@@ -71,6 +71,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gettext \
     libicu-dev \
     libpq-dev \
+    libzip-dev \
     postgresql-client \
     mariadb-client \
     libmariadb-dev \
