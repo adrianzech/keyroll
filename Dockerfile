@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     npm \
     postgresql-client \
     mariadb-client \
+    libmariadb-dev \
     unzip \
     zip \
     openssh-client \
