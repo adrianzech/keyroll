@@ -31,7 +31,6 @@ WORKDIR /var/www/html
 # Copy dependency files
 COPY composer.json composer.lock ./
 COPY package.json package-lock.json ./
-COPY tailwind.config.js ./
 COPY assets/styles/app.css ./assets/styles/
 
 # Install Composer dev dependencies for build steps
