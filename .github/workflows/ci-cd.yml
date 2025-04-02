@@ -19,8 +19,6 @@ jobs:
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
-    env:
-      APP_RUNTIME_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -41,13 +39,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-no-scripts-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
+            ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-no-scripts-
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
             ${{ runner.os }}-php-
 
-      - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
+      - name: Install Dependencies without scripts
+        run: composer install --prefer-dist --no-progress --no-interaction --no-scripts
 
       - name: Run PHPStan
         run: composer phpstan
@@ -56,7 +55,6 @@ jobs:
     name: PHP CS Fixer
     runs-on: ubuntu-latest
     env:
-      APP_RUNTIME_ENV: test
       PHP_CS_FIXER_IGNORE_ENV: 1
     steps:
       - name: Checkout Code
@@ -78,13 +76,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-no-scripts-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
+            ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-no-scripts-
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
             ${{ runner.os }}-php-
 
-      - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
+      - name: Install Dependencies without scripts
+        run: composer install --prefer-dist --no-progress --no-interaction --no-scripts
 
       - name: Run PHP CS Fixer (Dry Run)
         run: composer cs-check
@@ -92,8 +91,6 @@ jobs:
   phpmd:
     name: PHPMD
     runs-on: ubuntu-latest
-    env:
-      APP_RUNTIME_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -114,13 +111,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-no-scripts-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
+            ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-no-scripts-
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
             ${{ runner.os }}-php-
 
-      - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
+      - name: Install Dependencies without scripts
+        run: composer install --prefer-dist --no-progress --no-interaction --no-scripts
 
       - name: Run PHPMD
         run: composer phpmd
@@ -128,8 +126,6 @@ jobs:
   lint-twig:
     name: Lint Twig Templates
     runs-on: ubuntu-latest
-    env:
-      APP_RUNTIME_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -150,13 +146,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-no-scripts-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
+            ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-no-scripts-
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
             ${{ runner.os }}-php-
 
-      - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
+      - name: Install Dependencies without scripts
+        run: composer install --prefer-dist --no-progress --no-interaction --no-scripts
 
       - name: Run Twig Lint
         run: php bin/console lint:twig templates
@@ -164,8 +161,6 @@ jobs:
   lint-yaml:
     name: Lint YAML Files
     runs-on: ubuntu-latest
-    env:
-      APP_RUNTIME_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -186,13 +181,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-no-scripts-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
+            ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-no-scripts-
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
             ${{ runner.os }}-php-
 
-      - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
+      - name: Install Dependencies without scripts
+        run: composer install --prefer-dist --no-progress --no-interaction --no-scripts
 
       - name: Run YAML Lint
         run: php bin/console lint:yaml config --parse-tags
@@ -200,8 +196,6 @@ jobs:
   security-check:
     name: Symfony Security Check
     runs-on: ubuntu-latest
-    env:
-      APP_RUNTIME_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -252,7 +246,7 @@ jobs:
             echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
           else
             VERSION=$(cat VERSION)
-            echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT 
+            echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
           fi
 
       - name: Set Docker tags
