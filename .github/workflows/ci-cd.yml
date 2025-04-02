@@ -6,42 +6,13 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag for the image (overrides VERSION file)'
+        description: 'Image version tag (overrides VERSION file if provided)'
         required: false
 
 env:
   PHP_VERSION: '8.4'
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-
-x-ci-steps: &ci-steps
-  - name: Checkout Code
-    uses: actions/checkout@v4
-
-  - name: Setup PHP
-    id: setup-php
-    uses: shivammathur/setup-php@v2
-    with:
-      php-version: ${{ env.PHP_VERSION }}
-      extensions: mbstring, xml, ctype, iconv, intl, zip, pdo, pdo_pgsql
-      coverage: none
-      tools: composer:v2
-
-  - name: Get composer cache directory
-    id: composer-cache
-    run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-  - name: Cache composer dependencies
-    uses: actions/cache@v4
-    with:
-      path: ${{ steps.composer-cache.outputs.dir }}
-      key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
-      restore-keys: |
-        ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
-        ${{ runner.os }}-php-
-
-  - name: Install Dependencies
-    run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
 
 jobs:
   # ----- CI Jobs -----
@@ -51,7 +22,34 @@ jobs:
     env:
       APP_ENV: test
     steps:
-      - *ci-steps
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        id: setup-php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, iconv, intl, zip, pdo, pdo_pgsql
+          coverage: none
+          tools: composer:v2
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
+            ${{ runner.os }}-php-
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
+
       - name: Run PHPStan
         run: composer phpstan
 
@@ -62,7 +60,34 @@ jobs:
       APP_ENV: test
       PHP_CS_FIXER_IGNORE_ENV: 1
     steps:
-      - *ci-steps
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        id: setup-php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, iconv, intl, zip, pdo, pdo_pgsql
+          coverage: none
+          tools: composer:v2
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
+            ${{ runner.os }}-php-
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
+
       - name: Run PHP CS Fixer (Dry Run)
         run: composer cs-check
 
@@ -72,7 +97,34 @@ jobs:
     env:
       APP_ENV: test
     steps:
-      - *ci-steps
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        id: setup-php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, iconv, intl, zip, pdo, pdo_pgsql
+          coverage: none
+          tools: composer:v2
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
+            ${{ runner.os }}-php-
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
+
       - name: Run PHPMD
         run: composer phpmd
 
@@ -82,7 +134,34 @@ jobs:
     env:
       APP_ENV: test
     steps:
-      - *ci-steps
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        id: setup-php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, iconv, intl, zip, pdo, pdo_pgsql
+          coverage: none
+          tools: composer:v2
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
+            ${{ runner.os }}-php-
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
+
       - name: Run Twig Lint
         run: php bin/console lint:twig templates
 
@@ -92,7 +171,34 @@ jobs:
     env:
       APP_ENV: test
     steps:
-      - *ci-steps
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        id: setup-php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, iconv, intl, zip, pdo, pdo_pgsql
+          coverage: none
+          tools: composer:v2
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
+            ${{ runner.os }}-php-
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
+
       - name: Run YAML Lint
         run: php bin/console lint:yaml config --parse-tags
 
@@ -137,18 +243,15 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          # Priorisiert die manuelle Eingabe bei workflow_dispatch
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.version }}" != "" ]; then
             echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-          # Fallback auf die VERSION-Datei im Repo
           elif [ -f VERSION ]; then
-            VERSION=$(cat VERSION)
-            echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
-          # Fallback auf 'latest', wenn keine Version gefunden wurde
+            VERSION_FROM_FILE=$(cat VERSION)
+            echo "VERSION=${VERSION_FROM_FILE}" >> $GITHUB_OUTPUT
           else
             echo "VERSION=latest" >> $GITHUB_OUTPUT
           fi
-          echo "Using version: ${{ steps.version.outputs.VERSION }}" # Log zur Überprüfung
+          echo "Using version: ${{ steps.version.outputs.VERSION }}"
 
       - name: Set Docker tags
         id: meta
@@ -156,9 +259,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            # Fügt 'latest' hinzu, wenn die extrahierte Version nicht 'latest' ist
             type=raw,value=latest,enable=${{ steps.version.outputs.VERSION != 'latest' }}
-            # Fügt das Tag aus der extrahierten Version hinzu
             type=raw,value=${{ steps.version.outputs.VERSION }}
 
       - name: Build and push Docker image
