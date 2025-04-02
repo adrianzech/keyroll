@@ -32,7 +32,7 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 COPY package.json package-lock.json ./
 COPY tailwind.config.js ./
-COPY assets/styles/app.css ./assets/styles/ # Assumption: Path to your main CSS file
+COPY assets/styles/app.css ./assets/styles/
 
 # Install Composer dev dependencies for build steps
 # --no-scripts because we run them later after copying the full code
