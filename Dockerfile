@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev \
     libicu-dev \
+    nodejs \
+    npm \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
@@ -41,9 +43,13 @@ WORKDIR /var/www/html
 
 # Copy composer files first to leverage Docker cache
 COPY composer.json composer.lock ./
+COPY package.json package-lock.json ./
 
 # First install WITH dev dependencies for Tailwind initialization
 RUN composer install --prefer-dist --no-autoloader --no-scripts --no-progress
+
+# Install npm dependencies including daisyUI
+RUN npm install
 
 # Copy the rest of the application
 COPY . .
@@ -65,7 +71,7 @@ RUN mkdir -p var/cache var/log var/ssh && \
     chmod -R 777 var
 
 # Remove dev files
-RUN rm -rf tests phpstan.dist.neon phpmd.xml.dist phpunit.xml.dist .gitignore .php-cs-fixer.dist.php
+RUN rm -rf tests phpstan.dist.neon phpmd.xml.dist phpunit.xml.dist .gitignore .php-cs-fixer.dist.php node_modules
 
 # Add entrypoint
 COPY docker-entrypoint.sh /usr/local/bin/
