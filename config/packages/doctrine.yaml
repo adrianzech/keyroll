@@ -1,7 +1,7 @@
 doctrine:
   dbal:
     # url: '%env(resolve:DATABASE_URL)%'
-    driver: 'pdo_pgsql'
+    driver: 'pdo_mysql'
     host: '%env(KEYROLL_DATABASE_HOST)%'
     port: '%env(int:KEYROLL_DATABASE_PORT)%'
     dbname: '%env(KEYROLL_DATABASE_NAME)%'

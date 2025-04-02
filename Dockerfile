@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     nodejs \
     npm \
     postgresql-client \
+    mariadb-client \
     unzip \
     zip \
     openssh-client \
@@ -22,6 +23,7 @@ RUN docker-php-ext-install \
     opcache \
     pdo \
     pdo_pgsql \
+    pdo_mysql \
     zip
 
 # Install Composer
@@ -68,8 +70,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gettext \
     libicu-dev \
     libpq-dev \
-    libzip-dev \
     postgresql-client \
+    mariadb-client \
     openssh-client \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -83,6 +85,7 @@ RUN docker-php-ext-install \
     opcache \
     pdo \
     pdo_pgsql \
+    pdo_mysql \
     zip
 
 # Uncomment clear_env to allow PHP-FPM workers to inherit environment variables
