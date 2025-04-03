@@ -153,7 +153,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libmariadb3 \
     postgresql-client \
     mariadb-client \
-    cgi-fcgi \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy PHP configuration from build stage (includes opcache, etc.)
