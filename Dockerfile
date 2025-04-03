@@ -30,6 +30,10 @@ RUN docker-php-ext-install \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Install Symfony CLI
+RUN curl -sS https://get.symfony.com/cli/installer | bash && \
+    mv /root/.symfony*/bin/symfony /usr/local/bin/symfony
+
 WORKDIR /var/www/html
 
 # Copy dependency files
@@ -94,7 +98,6 @@ RUN docker-php-ext-install \
 # Uncomment clear_env to allow PHP-FPM workers to inherit environment variables
 RUN sed -i 's#^;clear_env\s*=\s*no#clear_env = no#' /usr/local/etc/php-fpm.d/www.conf \
  && sed -i 's#^;catch_workers_output\s*=\s*yes#catch_workers_output = yes#' /usr/local/etc/php-fpm.d/www.conf
-
 
 WORKDIR /var/www/html
 
