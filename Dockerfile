@@ -1,93 +1,47 @@
-# Stage 1: Build Environment (incl. Dev Dependencies, Node.js, etc.)
-FROM php:8.4-fpm AS php_build
+# ==============================================================================
+# Global Build Arguments
+# ==============================================================================
+ARG PHP_VERSION=8.4
+ARG NODE_MAJOR=22
+ARG APP_USER=keyroll
+ARG APP_GROUP=keyroll
+ARG APP_UID=1000
+ARG APP_GID=1000
 
-# Install system and PHP dependencies (incl. build-essentials etc. if needed)
+# ==============================================================================
+# Stage 1: Build Environment
+# Purpose: Install all dependencies (dev included), build assets, prepare production code artifact.
+# ==============================================================================
+FROM php:${PHP_VERSION}-fpm AS php_build
+
+# Set build arguments available in this stage
+ARG NODE_MAJOR
+ARG APP_USER
+ARG APP_GROUP
+ARG APP_UID
+ARG APP_GID
+
+# Set working directory
+WORKDIR /app
+
+# Install essential system packages and PHP extension build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     acl \
     git \
-    libicu-dev \
-    libpq-dev \
-    libzip-dev \
-    nodejs \
-    npm \
-    postgresql-client \
-    mariadb-client \
-    libmariadb-dev \
+    gosu \
+    curl \
     unzip \
     zip \
     openssh-client \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions
-RUN docker-php-ext-install \
-    intl \
-    opcache \
-    pdo \
-    pdo_pgsql \
-    pdo_mysql \
-    zip
-
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Install Symfony CLI
-RUN curl -sS https://get.symfony.com/cli/installer | bash && \
-    mv /root/.symfony*/bin/symfony /usr/local/bin/symfony
-
-WORKDIR /var/www/html
-
-# Copy dependency files
-COPY composer.json composer.lock ./
-COPY package.json package-lock.json ./
-COPY assets/styles/app.css ./assets/styles/
-
-# Install Composer dev dependencies for build steps
-# --no-scripts because we run them later after copying the full code
-# --no-autoloader because we dump it later
-RUN composer install --prefer-dist --no-scripts --no-progress --no-autoloader
-
-# Install NPM dependencies
-RUN npm install
-
-# Copy the rest of the application
-COPY . .
-
-# Execute Composer scripts (incl. post-install-cmd)
-RUN composer dump-autoload --optimize && \
-    composer run-script post-install-cmd
-
-# Build Tailwind assets for production
-RUN mkdir -p var/tailwind && \
-    php bin/console tailwind:build --minify
-
-# Clean up build artifacts and install only production Composer dependencies
-# --no-scripts, as they have already been executed
-# --optimize-autoloader for production performance
-RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-scripts --no-progress && \
-    rm -rf node_modules tests phpstan.dist.neon phpmd.xml.dist phpunit.xml.dist .gitignore .php-cs-fixer.dist.php var/cache/* var/log/*
-
-# Stage 2: Final Runtime Environment
-FROM php:8.4-fpm AS php_runtime
-
-# Install only necessary runtime system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    acl \
-    gettext \
     libicu-dev \
     libpq-dev \
     libzip-dev \
-    postgresql-client \
-    mariadb-client \
     libmariadb-dev \
-    openssh-client \
+    build-essential \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy PHP configuration (Opcache etc.) from build stage (includes installed ext configs)
-COPY --from=php_build /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
-
-# Install necessary runtime PHP extensions
-# Ensure these match the -dev packages installed above
-RUN docker-php-ext-install \
+# Install PHP extensions required during build or runtime
+RUN docker-php-ext-install -j$(nproc) \
     intl \
     opcache \
     pdo \
@@ -95,36 +49,163 @@ RUN docker-php-ext-install \
     pdo_mysql \
     zip
 
-# Uncomment clear_env to allow PHP-FPM workers to inherit environment variables
-RUN sed -i 's#^;clear_env\s*=\s*no#clear_env = no#' /usr/local/etc/php-fpm.d/www.conf \
- && sed -i 's#^;catch_workers_output\s*=\s*yes#catch_workers_output = yes#' /usr/local/etc/php-fpm.d/www.conf
+# Install Node.js using NodeSource repository
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR}.x | bash - && \
+    apt-get update && apt-get install -y --no-install-recommends nodejs && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Symfony CLI in the runtime stage
+# Install Composer globally
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+# Install Symfony CLI globally
 RUN curl -sS https://get.symfony.com/cli/installer | bash && \
     mv /root/.symfony*/bin/symfony /usr/local/bin/symfony
 
-WORKDIR /var/www/html
+# Copy dependency manifest files for caching
+COPY composer.json composer.lock symfony.lock ./
+COPY package.json package-lock.json ./
+COPY tailwind.config.js postcss.config.js ./
+COPY assets/styles/app.css ./assets/styles/
 
-# Copy only the built application artifact from the build stage
-COPY --from=php_build /var/www/html /var/www/html
+# Install Composer dependencies (including dev-dependencies needed for build steps)
+RUN composer install --prefer-dist --no-progress --no-scripts --no-autoloader
 
-# Copy the entrypoint script
-COPY docker-entrypoint.sh /usr/local/bin/
+# Install Node packages (including dev-dependencies needed for build steps)
+RUN npm install --omit=optional --legacy-peer-deps
+
+# Copy the rest of the application source code
+# This layer changes frequently, so copy it after dependency installation
+COPY . .
+
+# --- Build Application Artifacts ---
+
+# Generate optimized Composer autoloader for production
+RUN composer dump-autoload --optimize --classmap-authoritative --no-dev
+
+# Execute Composer post-install scripts (e.g., asset mapper preparation)
+RUN composer run-script post-install-cmd --no-dev
+
+# Compile frontend assets for production
+RUN php bin/console asset-map:compile && \
+    php bin/console tailwind:build --minify
+
+# --- Cleanup Build Stage ---
+
+# Remove development Composer dependencies
+RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-scripts --no-progress
+
+# Remove development Node packages
+RUN npm prune --production
+
+# Remove unnecessary files and development tools to minimize artifact size
+RUN rm -rf \
+    node_modules \
+    tests \
+    phpstan.dist.neon \
+    phpmd.xml.dist \
+    phpunit.xml.dist \
+    .gitignore \
+    .php-cs-fixer.dist.php \
+    docker-entrypoint.sh \
+    Dockerfile \
+    docker-compose.yml \
+    README.md \
+    var/cache/* \
+    var/log/* \
+    /tmp/* \
+    ~/.composer \
+    /root/.npm \
+    /root/.cache
+
+# Remove build-time system packages
+RUN apt-get purge -y --auto-remove build-essential libicu-dev libpq-dev libzip-dev libmariadb-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+
+# ==============================================================================
+# Stage 2: Final Runtime Environment
+# Purpose: Create a minimal, secure image with only runtime dependencies and the optimized application code.
+# ==============================================================================
+FROM php:${PHP_VERSION}-fpm AS php_runtime
+
+# Set runtime arguments and environment variables
+ARG APP_USER
+ARG APP_GROUP
+ARG APP_UID
+ARG APP_GID
+ENV APP_USER=${APP_USER} \
+    APP_GROUP=${APP_GROUP} \
+    APP_UID=${APP_UID} \
+    APP_GID=${APP_GID}
+
+# Set working directory
+WORKDIR /app
+
+# Install essential runtime system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    acl \
+    git \
+    gosu \
+    gettext \
+    openssh-client \
+    libicu72 \
+    libpq5 \
+    libzip4 \
+    libmariadb3 \
+    postgresql-client \
+    mariadb-client \
+    cgi-fcgi \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Copy PHP configuration from build stage (includes opcache, etc.)
+COPY --from=php_build /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
+
+# Install required runtime PHP extensions
+RUN docker-php-ext-install -j$(nproc) \
+    intl \
+    opcache \
+    pdo \
+    pdo_pgsql \
+    pdo_mysql \
+    zip
+
+# Configure PHP-FPM pool: enable logging, env vars, TCP listen, healthcheck endpoints
+RUN sed -i 's#^;clear_env\s*=\s*no#clear_env = no#' /usr/local/etc/php-fpm.d/www.conf \
+ && sed -i 's#^;catch_workers_output\s*=\s*yes#catch_workers_output = yes#' /usr/local/etc/php-fpm.d/www.conf \
+ && sed -i 's#listen\s*=\s*/run/php/php\d.\d-fpm.sock#listen = 9000#' /usr/local/etc/php-fpm.d/www.conf \
+ && echo "pm.status_path = /status" >> /usr/local/etc/php-fpm.d/www.conf \
+ && echo "ping.path = /ping" >> /usr/local/etc/php-fpm.d/www.conf \
+ && echo "ping.response = pong" >> /usr/local/etc/php-fpm.d/www.conf
+
+# Copy Symfony CLI from build stage (optional, for entrypoint/exec commands)
+COPY --from=php_build /usr/local/bin/symfony /usr/local/bin/symfony
+
+# Copy the optimized application artifact from the build stage
+COPY --from=php_build /app /app
+
+# Create directories needed by Symfony and ensure initial ownership
+# Directories must exist before entrypoint script tries to setfacl on them
+RUN mkdir -p var/cache var/log var/ssh \
+    && chown -R ${APP_UID}:${APP_GID} var
+
+# Create the non-root application user and group
+RUN groupadd -g ${APP_GID} ${APP_GROUP} || groupmod -n ${APP_GROUP} $(getent group ${APP_GID} | cut -d: -f1) \
+ && useradd -u ${APP_UID} -g ${APP_GROUP} -ms /bin/bash ${APP_USER} || usermod -l ${APP_USER} -g ${APP_GROUP} -d /home/${APP_USER} -m $(getent passwd ${APP_UID} | cut -d: -f1) \
+ && chown ${APP_USER}:${APP_GROUP} /app
+
+# Copy the entrypoint script and make it executable
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-# Create the non-root user and set permissions for 'var' directory
-RUN mkdir -p var/cache var/log var/ssh && \
-    useradd -ms /bin/bash keyroll && \
-    chown -R keyroll:keyroll /var/www/html
-
-# Switch to the non-root user
-USER keyroll
 
 # Expose the port PHP-FPM listens on
 EXPOSE 9000
 
-# Define the entrypoint script
+# Healthcheck: Verify PHP-FPM is responding via its ping endpoint
+HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=3 \
+    CMD SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1
+
+# Set the entrypoint script to run on container start
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-# Default command to run PHP-FPM
-CMD ["php-fpm"]
+# Default command: Run PHP-FPM in the foreground
+CMD ["php-fpm", "-F"]
