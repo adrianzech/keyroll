@@ -6,12 +6,6 @@ if [ "${1#-}" != "$1" ]; then
     set -- php-fpm "$@"
 fi
 
-# Construct DATABASE_URL only if it's not set in the environment
-if [ "$1" = 'php-fpm' ] && [ -z "$DATABASE_URL" ]; then
-  export DATABASE_URL="mysql://${KEYROLL_DATABASE_USER}:${KEYROLL_DATABASE_PASSWORD}@${KEYROLL_DATABASE_HOST}:${KEYROLL_DATABASE_PORT}/${KEYROLL_DATABASE_NAME}?serverVersion=11.4.3-MariaDB&charset=utf8mb4"
-  echo "DEBUG: DATABASE_URL is $DATABASE_URL"
-fi
-
 # Run setup only when the main process is started
 if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
     echo "Checking for Symfony runtime environment..."
