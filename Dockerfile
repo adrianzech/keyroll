@@ -8,6 +8,7 @@ ARG APP_USER=keyroll
 ARG APP_GROUP=keyroll
 ARG APP_UID=1000
 ARG APP_GID=1000
+ARG DATABASE_URL="mysql://app:!ChangeMe!@127.0.0.1:3306/app
 
 # ==============================================================================
 # Stage 1: Build Environment
@@ -28,6 +29,7 @@ WORKDIR /app
 
 # Set APP_ENV as an environment variable for this stage
 ENV APP_ENV=${APP_ENV}
+ENV DATABASE_URL=${DATABASE_URL}
 
 # Install essential system packages and PHP extension build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
