@@ -14,7 +14,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
         echo "Waiting for database connection..."
         ATTEMPTS=0
         MAX_ATTEMPTS=60
-        until php bin/console doctrine:query:sql "SELECT 1" --env="$APP_ENV" > /dev/null 2>&1 || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
+        until php bin/console doctrine:query:sql "SELECT 1" --env="$APP_ENV" -vvv || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
             ATTEMPTS=$((ATTEMPTS+1))
             echo "Database unavailable, waiting 5 seconds... (Attempt $ATTEMPTS/$MAX_ATTEMPTS)"
             sleep 5
