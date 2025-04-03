@@ -64,7 +64,6 @@ RUN curl -sS https://get.symfony.com/cli/installer | bash && \
 # Copy dependency manifest files for caching
 COPY composer.json composer.lock symfony.lock ./
 COPY package.json package-lock.json ./
-COPY tailwind.config.js postcss.config.js ./
 COPY assets/styles/app.css ./assets/styles/
 
 # Install Composer dependencies (including dev-dependencies needed for build steps)
