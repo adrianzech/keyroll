@@ -99,6 +99,10 @@ RUN docker-php-ext-install \
 RUN sed -i 's#^;clear_env\s*=\s*no#clear_env = no#' /usr/local/etc/php-fpm.d/www.conf \
  && sed -i 's#^;catch_workers_output\s*=\s*yes#catch_workers_output = yes#' /usr/local/etc/php-fpm.d/www.conf
 
+# Install Symfony CLI in the runtime stage
+RUN curl -sS https://get.symfony.com/cli/installer | bash && \
+    mv /root/.symfony*/bin/symfony /usr/local/bin/symfony
+
 WORKDIR /var/www/html
 
 # Copy only the built application artifact from the build stage
