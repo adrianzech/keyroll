@@ -3,6 +3,7 @@
 # ==============================================================================
 ARG PHP_VERSION=8.4
 ARG NODE_MAJOR=22
+ARG APP_ENV=prod
 ARG APP_USER=keyroll
 ARG APP_GROUP=keyroll
 ARG APP_UID=1000
@@ -16,6 +17,7 @@ FROM php:${PHP_VERSION}-fpm AS php_build
 
 # Set build arguments available in this stage
 ARG NODE_MAJOR
+ARG APP_ENV
 ARG APP_USER
 ARG APP_GROUP
 ARG APP_UID
@@ -23,6 +25,9 @@ ARG APP_GID
 
 # Set working directory
 WORKDIR /app
+
+# Set APP_ENV as an environment variable for this stage
+ENV APP_ENV=${APP_ENV}
 
 # Install essential system packages and PHP extension build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
