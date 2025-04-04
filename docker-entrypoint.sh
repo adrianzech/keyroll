@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # This script prepares the environment and runs the main container command.
 # It handles DATABASE_URL construction, waits for the database, sets ACLs for
 # bind mount permissions, generates SSH keys, runs migrations, warms up cache,
@@ -132,5 +132,13 @@ fi
 # --- Execute Main Command ---
 # Use gosu to drop root privileges and execute the main command (passed as arguments $@)
 # as the non-root user ($APP_USER).
-echo "Executing command as user ${APP_USER}: $@"
+
+# Log the command safely using printf to handle spaces/special chars correctly
+printf 'Executing command as user %s:' "${APP_USER}"
+for arg in "$@"; do
+    printf ' %q' "$arg"
+done
+printf '\n' # Add a newline after logging the command
+
+# Execute the command, ensuring arguments are passed correctly using "$@"
 exec gosu "${APP_USER}" "$@"
