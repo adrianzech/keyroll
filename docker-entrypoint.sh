@@ -82,7 +82,8 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
         ATTEMPTS=0
         MAX_ATTEMPTS=60 # Wait up to 5 minutes (60 * 5 seconds)
         # Use gosu to run the check as the APP_USER
-        until gosu "${APP_USER}" php bin/console doctrine:query:sql "SELECT 1" --env="$APP_ENV" --quiet || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
+        # Use the newer dbal:run-sql command instead of the deprecated doctrine:query:sql
+        until gosu "${APP_USER}" php bin/console dbal:run-sql "SELECT 1" --env="$APP_ENV" --quiet || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
             ATTEMPTS=$((ATTEMPTS+1))
             echo "Database unavailable, waiting 5 seconds... (Attempt $ATTEMPTS/$MAX_ATTEMPTS)"
             sleep 5
