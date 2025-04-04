@@ -221,11 +221,8 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 EXPOSE 9000
 
 # Healthcheck: Verify PHP-FPM is responding via its ping endpoint
-# Use cgi-fcgi (often part of libfcgi-dev or similar, ensure it's installed if needed, or use alternative like curl/wget from within container)
-# Note: cgi-fcgi might not be in minimal images; consider installing 'libfcgi0ldbl' or similar if needed, or using curl against nginx if present.
-# Installing it here for simplicity if missing:
 RUN if ! command -v cgi-fcgi &> /dev/null; then \
-        apt-get update && apt-get install -y --no-install-recommends libfcgi0t64 && \
+        apt-get update && apt-get install -y --no-install-recommends libfcgi-bin && \
         apt-get clean && rm -rf /var/lib/apt/lists/* ;\
     fi
 HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=3 \
