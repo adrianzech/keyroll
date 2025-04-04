@@ -92,6 +92,8 @@ COPY . .
 RUN composer dump-autoload --optimize --classmap-authoritative --no-dev --no-scripts
 
 # Compile frontend assets for production
+# Ensure AssetMapper bundles are processed if necessary
+# Use --resolve (-r) with importmap:install if you have downloaded assets
 RUN php bin/console importmap:install && \
     php bin/console tailwind:build --minify && \
     php bin/console asset-map:compile
@@ -149,6 +151,8 @@ ENV APP_USER=${APP_USER} \
 WORKDIR /app
 
 # Install essential runtime system dependencies
+# Ensure libicu version matches what PHP was built against (check base image if necessary)
+# Example uses libicu72 for recent Debian/PHP versions
 RUN apt-get update && apt-get install -y --no-install-recommends \
     acl \
     git \
@@ -175,20 +179,19 @@ COPY --from=php_build /usr/local/lib/php/extensions/ /usr/local/lib/php/extensio
 RUN \
     # Ensure FPM runs in foreground mode
     sed -i 's#^daemonize = .*#daemonize = no#' /usr/local/etc/php-fpm.conf \
-    && sed -i 's#^;daemonize = .*#daemonize = no#' /usr/local/etc/php-fpm.conf \
-    # Log errors to stdout for Docker capture
-    && sed -i 's#^error_log = .*#error_log = /dev/stdout#' /usr/local/etc/php-fpm.conf \
-    && sed -i 's#^;error_log = .*#error_log = /dev/stdout#' /usr/local/etc/php-fpm.conf
+    && sed -i 's#^;daemonize = .*#daemonize = no#' /usr/local/etc/php-fpm.conf
+    # DO NOT explicitly set global error_log here when running as non-root.
+    # Let FPM use inherited stdout/stderr. Docker will capture it.
+    # Worker logs are captured via 'catch_workers_output=yes' in www.conf.
 
 # Configure PHP-FPM pool: set user/group, enable logging, env vars, TCP listen, healthcheck endpoints
-# (Keep the www.conf modifications as they were)
 RUN sed -i "s#^user\s*=.*#user = ${APP_USER}#" /usr/local/etc/php-fpm.d/www.conf \
  && sed -i "s#^group\s*=.*#group = ${APP_GROUP}#" /usr/local/etc/php-fpm.d/www.conf \
  && sed -i "s#^;listen.owner\s*=.*#listen.owner = ${APP_USER}#" /usr/local/etc/php-fpm.d/www.conf \
  && sed -i "s#^;listen.group\s*=.*#listen.group = ${APP_GROUP}#" /usr/local/etc/php-fpm.d/www.conf \
  && sed -i 's#^;clear_env\s*=\s*no#clear_env = no#' /usr/local/etc/php-fpm.d/www.conf \
  && sed -i 's#^;catch_workers_output\s*=\s*yes#catch_workers_output = yes#' /usr/local/etc/php-fpm.d/www.conf \
- && sed -i 's#listen\s*=\s*/run/php/php\d.\d-fpm.sock#listen = 9000#' /usr/local/etc/php-fpm.d/www.conf \
+ && sed -i 's#listen\s*=\s*/run/php/php[0-9]\.[0-9]-fpm\.sock#listen = 9000#' /usr/local/etc/php-fpm.d/www.conf \
  && echo "pm.status_path = /status" >> /usr/local/etc/php-fpm.d/www.conf \
  && echo "ping.path = /ping" >> /usr/local/etc/php-fpm.d/www.conf \
  && echo "ping.response = pong" >> /usr/local/etc/php-fpm.d/www.conf
@@ -205,6 +208,7 @@ RUN mkdir -p var/cache var/log var/ssh \
     && chown -R ${APP_UID}:${APP_GID} var
 
 # Create the non-root application user and group
+# Use getent to find existing group/user ID if they exist, modify instead of adding if so
 RUN groupadd -g ${APP_GID} ${APP_GROUP} || groupmod -n ${APP_GROUP} $(getent group ${APP_GID} | cut -d: -f1) \
  && useradd -u ${APP_UID} -g ${APP_GROUP} -ms /bin/bash ${APP_USER} || usermod -l ${APP_USER} -g ${APP_GROUP} -d /home/${APP_USER} -m $(getent passwd ${APP_UID} | cut -d: -f1) \
  && chown ${APP_USER}:${APP_GROUP} /app
@@ -217,6 +221,13 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 EXPOSE 9000
 
 # Healthcheck: Verify PHP-FPM is responding via its ping endpoint
+# Use cgi-fcgi (often part of libfcgi-dev or similar, ensure it's installed if needed, or use alternative like curl/wget from within container)
+# Note: cgi-fcgi might not be in minimal images; consider installing 'libfcgi0ldbl' or similar if needed, or using curl against nginx if present.
+# Installing it here for simplicity if missing:
+RUN if ! command -v cgi-fcgi &> /dev/null; then \
+        apt-get update && apt-get install -y --no-install-recommends libfcgi0t64 && \
+        apt-get clean && rm -rf /var/lib/apt/lists/* ;\
+    fi
 HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=3 \
     CMD SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1
 
