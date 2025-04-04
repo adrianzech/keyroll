@@ -12,6 +12,7 @@ APP_ENV="${APP_ENV:-prod}"
 APP_USER="${APP_USER:-keyroll}"
 APP_GROUP="${APP_GROUP:-$APP_USER}"
 APP_UID="${APP_UID:-1000}"
+APP_GID="${APP_GID:-${APP_UID}}" # Default GID to UID if not set
 
 # --- DATABASE_URL Construction ---
 # Check if DATABASE_URL is already set. If not, try constructing it.
@@ -80,19 +81,19 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
     if [ -n "$DATABASE_URL" ]; then
         echo "Waiting for database connection..."
         ATTEMPTS=0
-        MAX_ATTEMPTS=60 # Wait up to 5 minutes (60 * 5 seconds)
+        MAX_ATTEMPTS=60 # Wait up to 60 seconds (60 * 1 second)
         # Use gosu to run the check as the APP_USER
         # Use the newer dbal:run-sql command instead of the deprecated doctrine:query:sql
-        until gosu "${APP_USER}" php bin/console dbal:run-sql "SELECT 1" --env="$APP_ENV" --quiet || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
+        # Check exit code directly, don't rely on until logic inversion
+        while ! gosu "${APP_USER}" php bin/console dbal:run-sql "SELECT 1" --env="$APP_ENV" --quiet 2>/dev/null; do
             ATTEMPTS=$((ATTEMPTS+1))
-            echo "Database unavailable, waiting 5 seconds... (Attempt $ATTEMPTS/$MAX_ATTEMPTS)"
-            sleep 5
+            if [ $ATTEMPTS -ge $MAX_ATTEMPTS ]; then
+                 echo "Error: Database connection failed after $MAX_ATTEMPTS attempts." >&2
+                 exit 1
+            fi
+            echo "Database unavailable, waiting 1 second... (Attempt $ATTEMPTS/$MAX_ATTEMPTS)"
+            sleep 1
         done
-
-        if [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; then
-            echo "Error: Database connection failed after $MAX_ATTEMPTS attempts." >&2
-            exit 1
-        fi
         echo "Database connection successful."
     else
         echo "No DATABASE_URL configured, skipping database wait."
@@ -135,11 +136,22 @@ fi
 # as the non-root user ($APP_USER).
 
 # Log the command safely using printf to handle spaces/special chars correctly
-printf 'Executing command as user %s:' "${APP_USER}"
+printf 'Preparing to execute command as user %s:' "${APP_USER}"
 for arg in "$@"; do
     printf ' %q' "$arg"
 done
 printf '\n' # Add a newline after logging the command
 
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< FIX INSERTED HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+# Fix permissions for stdout/stderr for the non-root user before switching user
+if [ "$(id -u)" = "0" ]; then
+    echo "Fixing stdio permissions for user ${APP_USER}:${APP_GROUP}..."
+    chown "${APP_USER}:${APP_GROUP}" /proc/self/fd/1 /proc/self/fd/2 || echo "Warning: Failed to chown stdio descriptors (continuing anyway)"
+else
+    echo "Not running as root, skipping stdio permission fix."
+fi
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< END FIX <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+echo "Executing command..."
 # Execute the command, ensuring arguments are passed correctly using "$@"
 exec gosu "${APP_USER}" "$@"
