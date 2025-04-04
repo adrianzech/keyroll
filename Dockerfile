@@ -169,8 +169,12 @@ COPY --from=php_build /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 # Copy compiled PHP extensions from build stage
 COPY --from=php_build /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 
-# Configure PHP-FPM pool: enable logging, env vars, TCP listen, healthcheck endpoints
-RUN sed -i 's#^;clear_env\s*=\s*no#clear_env = no#' /usr/local/etc/php-fpm.d/www.conf \
+# Configure PHP-FPM pool: set user/group, enable logging, env vars, TCP listen, healthcheck endpoints
+RUN sed -i "s#^user\s*=.*#user = ${APP_USER}#" /usr/local/etc/php-fpm.d/www.conf \
+ && sed -i "s#^group\s*=.*#group = ${APP_GROUP}#" /usr/local/etc/php-fpm.d/www.conf \
+ && sed -i "s#^;listen.owner\s*=.*#listen.owner = ${APP_USER}#" /usr/local/etc/php-fpm.d/www.conf \
+ && sed -i "s#^;listen.group\s*=.*#listen.group = ${APP_GROUP}#" /usr/local/etc/php-fpm.d/www.conf \
+ && sed -i 's#^;clear_env\s*=\s*no#clear_env = no#' /usr/local/etc/php-fpm.d/www.conf \
  && sed -i 's#^;catch_workers_output\s*=\s*yes#catch_workers_output = yes#' /usr/local/etc/php-fpm.d/www.conf \
  && sed -i 's#listen\s*=\s*/run/php/php\d.\d-fpm.sock#listen = 9000#' /usr/local/etc/php-fpm.d/www.conf \
  && echo "pm.status_path = /status" >> /usr/local/etc/php-fpm.d/www.conf \
