@@ -8,7 +8,7 @@ ARG APP_USER=keyroll
 ARG APP_GROUP=keyroll
 ARG APP_UID=1000
 ARG APP_GID=1000
-ARG DATABASE_URL="mysql://app:!ChangeMe!@127.0.0.1:3306/app
+ARG DATABASE_URL="mysql://app:!ChangeMe!@127.0.0.1:3306/app"
 
 # ==============================================================================
 # Stage 1: Build Environment
