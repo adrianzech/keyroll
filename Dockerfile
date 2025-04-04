@@ -56,7 +56,7 @@ RUN docker-php-ext-install -j$(nproc) \
     pdo \
     pdo_pgsql \
     pdo_mysql \
-    pdo_sqlite \ # Install pdo_sqlite for build stage
+    pdo_sqlite \
     zip
 
 # Install Node.js using NodeSource repository
