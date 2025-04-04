@@ -176,6 +176,7 @@ RUN sed -i "s#^user\s*=.*#user = ${APP_USER}#" /usr/local/etc/php-fpm.d/www.conf
  && sed -i "s#^;listen.group\s*=.*#listen.group = ${APP_GROUP}#" /usr/local/etc/php-fpm.d/www.conf \
  && sed -i 's#^;clear_env\s*=\s*no#clear_env = no#' /usr/local/etc/php-fpm.d/www.conf \
  && sed -i 's#^;catch_workers_output\s*=\s*yes#catch_workers_output = yes#' /usr/local/etc/php-fpm.d/www.conf \
+ && echo "error_log = /dev/stdout" >> /usr/local/etc/php-fpm.d/www.conf \
  && sed -i 's#listen\s*=\s*/run/php/php\d.\d-fpm.sock#listen = 9000#' /usr/local/etc/php-fpm.d/www.conf \
  && echo "pm.status_path = /status" >> /usr/local/etc/php-fpm.d/www.conf \
  && echo "ping.path = /ping" >> /usr/local/etc/php-fpm.d/www.conf \
