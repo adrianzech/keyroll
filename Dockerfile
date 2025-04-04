@@ -92,7 +92,8 @@ COPY . .
 RUN composer dump-autoload --optimize --classmap-authoritative --no-dev --no-scripts
 
 # Compile frontend assets for production
-RUN php bin/console tailwind:build --minify && \
+RUN php bin/console importmap:install && \
+    php bin/console tailwind:build --minify && \
     php bin/console asset-map:compile
 
 # --- Cleanup Build Stage ---
