@@ -7,14 +7,11 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-# Default APP_ENV to prod if not set externally
-: ${APP_ENV:=prod}
-# Make sure APP_USER is set, use value from Dockerfile ENV or default
-: ${APP_USER:=${APP_USER:-keyroll}}
-# Use APP_GROUP from Dockerfile ENV or default to APP_USER
-: ${APP_GROUP:=${APP_GROUP:-${APP_USER}}}
-# Use APP_UID from Dockerfile ENV or default
-: ${APP_UID:=${APP_UID:-1000}}
+# Set default values for environment variables if not provided
+APP_ENV="${APP_ENV:-prod}"
+APP_USER="${APP_USER:-keyroll}"
+APP_GROUP="${APP_GROUP:-$APP_USER}"
+APP_UID="${APP_UID:-1000}"
 
 # --- DATABASE_URL Construction ---
 # Check if DATABASE_URL is already set. If not, try constructing it.

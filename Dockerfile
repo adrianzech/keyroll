@@ -8,6 +8,7 @@ ARG APP_USER=keyroll
 ARG APP_GROUP=keyroll
 ARG APP_UID=1000
 ARG APP_GID=1000
+ARG DATABASE_URL="pdo-sqlite:///:memory:"
 
 # ==============================================================================
 # Stage 1: Build Environment
@@ -22,12 +23,14 @@ ARG APP_USER
 ARG APP_GROUP
 ARG APP_UID
 ARG APP_GID
+ARG DATABASE_URL
 
 # Set working directory
 WORKDIR /app
 
-# Set APP_ENV as an environment variable for this stage
-ENV APP_ENV=${APP_ENV}
+# Set environment variables for this stage
+ENV APP_ENV=${APP_ENV} \
+    DATABASE_URL=${DATABASE_URL}
 
 # Install essential system packages and PHP extension build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -42,6 +45,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     libzip-dev \
     libmariadb-dev \
+    libsqlite3-dev \ # Add dependency for pdo_sqlite
     build-essential \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -52,6 +56,7 @@ RUN docker-php-ext-install -j$(nproc) \
     pdo \
     pdo_pgsql \
     pdo_mysql \
+    pdo_sqlite \ # Install pdo_sqlite for build stage
     zip
 
 # Install Node.js using NodeSource repository
@@ -71,8 +76,8 @@ COPY composer.json composer.lock symfony.lock ./
 COPY package.json package-lock.json ./
 COPY assets/styles/app.css ./assets/styles/
 
-# Install Composer dependencies (including dev-dependencies needed for build steps)
-RUN composer install --prefer-dist --no-progress --no-scripts --no-autoloader
+# Install Composer dependencies (NO scripts)
+RUN composer install --prefer-dist --no-progress --no-autoloader --no-scripts
 
 # Install Node packages (including dev-dependencies needed for build steps)
 RUN npm install --omit=optional --legacy-peer-deps
@@ -83,16 +88,16 @@ COPY . .
 
 # --- Build Application Artifacts ---
 
-# Generate optimized Composer autoloader for production
+# Generate optimized Composer autoloader for production (NO scripts)
 RUN composer dump-autoload --optimize --classmap-authoritative --no-dev --no-scripts
 
-# Compile frontend assets for productions
+# Compile frontend assets for production (Requires DATABASE_URL to be set)
 RUN php bin/console asset-map:compile && \
     php bin/console tailwind:build --minify
 
 # --- Cleanup Build Stage ---
 
-# Remove development Composer dependencies
+# Remove development Composer dependencies (NO scripts)
 RUN composer install --prefer-dist --no-dev --no-progress --no-scripts
 
 # Remove development Node packages
@@ -119,7 +124,7 @@ RUN rm -rf \
     /root/.cache
 
 # Remove build-time system packages
-RUN apt-get purge -y --auto-remove build-essential libicu-dev libpq-dev libzip-dev libmariadb-dev \
+RUN apt-get purge -y --auto-remove build-essential libicu-dev libpq-dev libzip-dev libmariadb-dev libsqlite3-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
@@ -161,6 +166,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=php_build /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 
 # Install required runtime PHP extensions
+# NOTE: pdo_sqlite is NOT installed here unless needed at runtime
 RUN docker-php-ext-install -j$(nproc) \
     intl \
     opcache \
