@@ -76,9 +76,9 @@ RUN curl -sS https://get.symfony.com/cli/installer | bash && \
 # --- Dependency Installation ---
 
 # Copy dependency manifest files for caching
-COPY ../../composer.json composer.lock symfony.lock ./
-COPY ../../package.json package-lock.json ./
-COPY ../../assets/styles/app.css ./assets/styles/
+COPY composer.json composer.lock symfony.lock ./
+COPY package.json package-lock.json ./
+COPY assets/styles/app.css ./assets/styles/
 
 # Install Composer dependencies (including dev, NO scripts)
 RUN composer install --prefer-dist --no-progress --no-autoloader --no-scripts --no-interaction --ignore-platform-reqs
@@ -88,7 +88,7 @@ RUN npm install --omit=optional --legacy-peer-deps
 
 # Copy the rest of the application source code
 # This layer changes frequently, so copy it after dependency installation
-COPY ../.. .
+COPY . .
 
 # --- Build Application Artifacts ---
 
@@ -167,7 +167,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Configure Apache - Copy custom config and enable modules
-COPY --from=php_build  apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/build/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite expires headers
 
 # Copy PHP configuration (including OPcache) from build stage
@@ -195,7 +195,7 @@ RUN mkdir -p var/cache var/log var/ssh \
     && chown -R ${APP_UID}:${APP_GID} var
 
 # Copy the entrypoint script from the build context and make it executable
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY docker/build/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Expose the port Apache listens on
