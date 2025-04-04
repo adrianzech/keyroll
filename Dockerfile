@@ -171,21 +171,27 @@ COPY --from=php_build /usr/local/lib/php/extensions/ /usr/local/lib/php/extensio
 
 # --- Configure PHP-FPM ---
 
-# Modify GLOBAL FPM configuration to log errors to stderr
-# This ensures Docker captures FPM startup errors. Assumes error_log line exists.
-RUN sed -i 's#^error_log = .*#error_log = /proc/self/fd/2#' /usr/local/etc/php-fpm.conf \
-    # If the error_log line might be commented out, uncomment it first (optional, more robust):
-    && sed -i 's#^;error_log = .*#error_log = /proc/self/fd/2#' /usr/local/etc/php-fpm.conf
+# Modify GLOBAL FPM configuration
+RUN \
+    # Ensure FPM runs in foreground mode (required by CMD ["php-fpm", "-F"])
+    # - Try finding and replacing existing daemonize line
+    sed -i 's#^daemonize = .*#daemonize = no#' /usr/local/etc/php-fpm.conf \
+    # - Try finding and uncommenting/replacing commented daemonize line
+    && sed -i 's#^;daemonize = .*#daemonize = no#' /usr/local/etc/php-fpm.conf \
+    # Log errors to stdout for Docker capture (trying stdout instead of stderr)
+    # - Try finding and replacing existing error_log line
+    && sed -i 's#^error_log = .*#error_log = /dev/stdout#' /usr/local/etc/php-fpm.conf \
+    # - Try finding and uncommenting/replacing commented error_log line
+    && sed -i 's#^;error_log = .*#error_log = /dev/stdout#' /usr/local/etc/php-fpm.conf
 
 # Configure PHP-FPM pool: set user/group, enable logging, env vars, TCP listen, healthcheck endpoints
-# NOTE: Removed the incorrect error_log directive from here.
+# (Keep the www.conf modifications as they were in the previous step - NO error_log here)
 RUN sed -i "s#^user\s*=.*#user = ${APP_USER}#" /usr/local/etc/php-fpm.d/www.conf \
  && sed -i "s#^group\s*=.*#group = ${APP_GROUP}#" /usr/local/etc/php-fpm.d/www.conf \
  && sed -i "s#^;listen.owner\s*=.*#listen.owner = ${APP_USER}#" /usr/local/etc/php-fpm.d/www.conf \
  && sed -i "s#^;listen.group\s*=.*#listen.group = ${APP_GROUP}#" /usr/local/etc/php-fpm.d/www.conf \
  && sed -i 's#^;clear_env\s*=\s*no#clear_env = no#' /usr/local/etc/php-fpm.d/www.conf \
  && sed -i 's#^;catch_workers_output\s*=\s*yes#catch_workers_output = yes#' /usr/local/etc/php-fpm.d/www.conf \
- # && echo "error_log = /dev/stdout" >> /usr/local/etc/php-fpm.d/www.conf \ # <<< REMOVE THIS LINE
  && sed -i 's#listen\s*=\s*/run/php/php\d.\d-fpm.sock#listen = 9000#' /usr/local/etc/php-fpm.d/www.conf \
  && echo "pm.status_path = /status" >> /usr/local/etc/php-fpm.d/www.conf \
  && echo "ping.path = /ping" >> /usr/local/etc/php-fpm.d/www.conf \
