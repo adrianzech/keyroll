@@ -45,7 +45,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     libzip-dev \
     libmariadb-dev \
-    libsqlite3-dev \ # Add dependency for pdo_sqlite
+    libsqlite3-dev \
     build-essential \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
