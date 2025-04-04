@@ -91,9 +91,9 @@ COPY . .
 # Generate optimized Composer autoloader for production (NO scripts)
 RUN composer dump-autoload --optimize --classmap-authoritative --no-dev --no-scripts
 
-# Compile frontend assets for production (Requires DATABASE_URL to be set)
-RUN php bin/console asset-map:compile && \
-    php bin/console tailwind:build --minify
+# Compile frontend assets for production
+RUN php bin/console tailwind:build --minify && \
+    php bin/console asset-map:compile
 
 # --- Cleanup Build Stage ---
 
