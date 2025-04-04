@@ -8,7 +8,6 @@ ARG APP_USER=keyroll
 ARG APP_GROUP=keyroll
 ARG APP_UID=1000
 ARG APP_GID=1000
-ARG DATABASE_URL="mysql://app:!ChangeMe!@127.0.0.1:3306/app"
 
 # ==============================================================================
 # Stage 1: Build Environment
@@ -29,7 +28,6 @@ WORKDIR /app
 
 # Set APP_ENV as an environment variable for this stage
 ENV APP_ENV=${APP_ENV}
-ENV DATABASE_URL=${DATABASE_URL}
 
 # Install essential system packages and PHP extension build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -86,19 +84,16 @@ COPY . .
 # --- Build Application Artifacts ---
 
 # Generate optimized Composer autoloader for production
-RUN composer dump-autoload --optimize --classmap-authoritative --no-dev
+RUN composer dump-autoload --optimize --classmap-authoritative --no-dev --no-scripts
 
-# Execute Composer post-install scripts (e.g., asset mapper preparation)
-RUN composer run-script post-install-cmd --no-dev
-
-# Compile frontend assets for production
+# Compile frontend assets for productions
 RUN php bin/console asset-map:compile && \
     php bin/console tailwind:build --minify
 
 # --- Cleanup Build Stage ---
 
 # Remove development Composer dependencies
-RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-scripts --no-progress
+RUN composer install --prefer-dist --no-dev --no-progress --no-scripts
 
 # Remove development Node packages
 RUN npm prune --production

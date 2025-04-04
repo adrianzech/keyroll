@@ -7,6 +7,15 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
+# Default APP_ENV to prod if not set externally
+: ${APP_ENV:=prod}
+# Make sure APP_USER is set, use value from Dockerfile ENV or default
+: ${APP_USER:=${APP_USER:-keyroll}}
+# Use APP_GROUP from Dockerfile ENV or default to APP_USER
+: ${APP_GROUP:=${APP_GROUP:-${APP_USER}}}
+# Use APP_UID from Dockerfile ENV or default
+: ${APP_UID:=${APP_UID:-1000}}
+
 # --- DATABASE_URL Construction ---
 # Check if DATABASE_URL is already set. If not, try constructing it.
 if [ -z "$DATABASE_URL" ]; then
@@ -29,7 +38,7 @@ if [ -z "$DATABASE_URL" ]; then
   fi
 
   # Construct the MySQL/MariaDB DATABASE_URL
-  DATABASE_URL="mysql://${KEYROLL_DATABASE_USER}:${KEYROLL_DATABASE_PASSWORD}@${KEYROLL_DATABASE_HOST}:${KEYROLL_DATABASE_PORT}/${KEYROLL_DATABASE_NAME}?serverVersion=11.4.5-MariaDB&charset=utf8mb4"
+  DATABASE_URL="mysql://${KEYROLL_DATABASE_USER}:${KEYROLL_DATABASE_PASSWORD}@${KEYROLL_DATABASE_HOST}:${KEYROLL_DATABASE_PORT}/${KEYROLL_DATABASE_NAME}?charset=utf8mb4"
   export DATABASE_URL
   echo "DATABASE_URL constructed successfully."
 else
@@ -47,11 +56,9 @@ if [ "$(id -u)" = "0" ]; then
     # Ensure target directories exist (should be created in Dockerfile)
     mkdir -p "$TARGET_DIRS"
 
-    # Get the Application User's UID from the environment variable
-    TARGET_UID=${APP_UID:-1000}
-
-    echo "Setting ACLs for user ${TARGET_UID} on ${TARGET_DIRS}..."
-    setfacl -Rnm u:"${TARGET_UID}":rwX,d:u:"${TARGET_UID}":rwX "$TARGET_DIRS"
+    echo "Setting ACLs for user ${APP_UID} on ${TARGET_DIRS}..."
+    # Apply ACLs recursively for existing files/dirs and set default ACLs for new ones
+    setfacl -Rnm u:"${APP_UID}":rwX,d:u:"${APP_UID}":rwX "$TARGET_DIRS"
 else
     echo "Warning: Not running as root. Skipping ACL setup." >&2
     echo "Bind mount permissions might be incorrect if host UID/GID differ." >&2
@@ -70,8 +77,7 @@ fi
 # Run setup commands only if the main command is php-fpm, php, or bin/console.
 # These commands will be executed as the APP_USER via gosu later.
 if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
-    echo "Running application setup for command: $1"
-    APP_ENV=${APP_ENV:-prod} # Default to prod if APP_ENV is not set
+    echo "Running application setup for command: $1 (APP_ENV=${APP_ENV})"
 
     # Wait for database connection if DATABASE_URL is configured
     if [ -n "$DATABASE_URL" ]; then
@@ -79,7 +85,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
         ATTEMPTS=0
         MAX_ATTEMPTS=60 # Wait up to 5 minutes (60 * 5 seconds)
         # Use gosu to run the check as the APP_USER
-        until gosu "${APP_USER}" php bin/console doctrine:query:sql "SELECT 1" --env="$APP_ENV" || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
+        until gosu "${APP_USER}" php bin/console doctrine:query:sql "SELECT 1" --env="$APP_ENV" --quiet || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
             ATTEMPTS=$((ATTEMPTS+1))
             echo "Database unavailable, waiting 5 seconds... (Attempt $ATTEMPTS/$MAX_ATTEMPTS)"
             sleep 5
@@ -113,12 +119,14 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
         echo "No migrations directory found or no migrations exist, skipping."
     fi
 
+    # --- Cache Management ---
     # Clear and warm up the application cache (run as APP_USER)
-    echo "Clearing and warming up application cache for $APP_ENV..."
+    # This is essential when composer scripts are skipped during build
+    echo "Clearing and warming up application cache for ${APP_ENV}..."
     gosu "${APP_USER}" php bin/console cache:clear --env="$APP_ENV"
-    # shellcheck disable=SC2086 # Intentionally allow word splitting if multiple warmupers exist
     gosu "${APP_USER}" php bin/console cache:warmup --env="$APP_ENV"
     echo "Cache warmed up."
+    # --- End Cache Management ---
 
     echo "Application setup complete."
 fi
@@ -127,6 +135,5 @@ fi
 # --- Execute Main Command ---
 # Use gosu to drop root privileges and execute the main command (passed as arguments $@)
 # as the non-root user ($APP_USER).
-# shellcheck disable=SC2145
 echo "Executing command as user ${APP_USER}: $@"
 exec gosu "${APP_USER}" "$@"
