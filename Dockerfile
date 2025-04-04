@@ -173,19 +173,15 @@ COPY --from=php_build /usr/local/lib/php/extensions/ /usr/local/lib/php/extensio
 
 # Modify GLOBAL FPM configuration
 RUN \
-    # Ensure FPM runs in foreground mode (required by CMD ["php-fpm", "-F"])
-    # - Try finding and replacing existing daemonize line
+    # Ensure FPM runs in foreground mode
     sed -i 's#^daemonize = .*#daemonize = no#' /usr/local/etc/php-fpm.conf \
-    # - Try finding and uncommenting/replacing commented daemonize line
     && sed -i 's#^;daemonize = .*#daemonize = no#' /usr/local/etc/php-fpm.conf \
-    # Log errors to stdout for Docker capture (trying stdout instead of stderr)
-    # - Try finding and replacing existing error_log line
+    # Log errors to stdout for Docker capture
     && sed -i 's#^error_log = .*#error_log = /dev/stdout#' /usr/local/etc/php-fpm.conf \
-    # - Try finding and uncommenting/replacing commented error_log line
     && sed -i 's#^;error_log = .*#error_log = /dev/stdout#' /usr/local/etc/php-fpm.conf
 
 # Configure PHP-FPM pool: set user/group, enable logging, env vars, TCP listen, healthcheck endpoints
-# (Keep the www.conf modifications as they were in the previous step - NO error_log here)
+# (Keep the www.conf modifications as they were)
 RUN sed -i "s#^user\s*=.*#user = ${APP_USER}#" /usr/local/etc/php-fpm.d/www.conf \
  && sed -i "s#^group\s*=.*#group = ${APP_GROUP}#" /usr/local/etc/php-fpm.d/www.conf \
  && sed -i "s#^;listen.owner\s*=.*#listen.owner = ${APP_USER}#" /usr/local/etc/php-fpm.d/www.conf \
@@ -228,4 +224,4 @@ HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=3 \
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 # Default command: Run PHP-FPM in the foreground
-CMD ["php-fpm", "-F"]
+CMD ["php-fpm"]
