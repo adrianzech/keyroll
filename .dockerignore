@@ -31,6 +31,5 @@ phpstan.dist.neon
 ###< friendsofphp/php-cs-fixer ###
 
 # Docker specific
-Dockerfile
-docker
+docker/build
 .dockerignore

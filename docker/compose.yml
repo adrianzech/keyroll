@@ -24,7 +24,7 @@ services:
     image: ghcr.io/adrianzech/keyroll:0.0.1
     restart: unless-stopped
     ports:
-      - "${KEYROLL_HOST_PORT:-9000}:9000"
+      - "${KEYROLL_HOST_PORT:-9999}:80"
     environment:
       APP_ENV: ${APP_ENV:-prod}
       APP_SECRET: ${APP_SECRET:-Sup3rS3cr3t!}
