@@ -166,15 +166,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy PHP configuration from build stage (includes opcache, etc.)
 COPY --from=php_build /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 
-# Install required runtime PHP extensions
-# NOTE: pdo_sqlite is NOT installed here unless needed at runtime
-RUN docker-php-ext-install -j$(nproc) \
-    intl \
-    opcache \
-    pdo \
-    pdo_pgsql \
-    pdo_mysql \
-    zip
+# Copy compiled PHP extensions from build stage
+COPY --from=php_build /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 
 # Configure PHP-FPM pool: enable logging, env vars, TCP listen, healthcheck endpoints
 RUN sed -i 's#^;clear_env\s*=\s*no#clear_env = no#' /usr/local/etc/php-fpm.d/www.conf \
