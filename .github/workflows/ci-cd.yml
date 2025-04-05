@@ -30,7 +30,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ env.PHP_VERSION }}
-          extensions: mbstring, xml, ctype, iconv, intl, zip, pdo, pdo_sqlite
+          extensions: mbstring, xml, ctype, iconv, intl, zip
           coverage: none
           tools: composer:v2
 
@@ -40,18 +40,15 @@ jobs:
 
       - name: Cache composer dependencies
         uses: actions/cache@v4
-        id: cache-composer
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
+            ${{ runner.os }}-php-
 
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
-
-      - name: Warmup Symfony Cache for PHPStan
-        run: php bin/console cache:warmup --env=${{ env.APP_ENV }}
 
       - name: Run PHPStan
         run: composer phpstan
@@ -86,6 +83,7 @@ jobs:
           key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
+            ${{ runner.os }}-php-
 
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
@@ -122,6 +120,7 @@ jobs:
           key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
+            ${{ runner.os }}-php-
 
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
@@ -158,6 +157,7 @@ jobs:
           key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
+            ${{ runner.os }}-php-
 
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
@@ -194,6 +194,7 @@ jobs:
           key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
+            ${{ runner.os }}-php-
 
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
