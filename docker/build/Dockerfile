@@ -151,7 +151,7 @@ ARG APP_GID
 ENV APP_USER=${APP_USER:-keyroll} \
     APP_GROUP=${APP_GROUP:-keyroll} \
     APP_UID=${APP_UID:-1000} \
-    APP_GID=${APP_GID:-1000}
+    APP_GID=${APP_GID:-1000} \
     APP_ENV=${APP_ENV:-prod}
 
 # Set working directory
