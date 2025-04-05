@@ -16,12 +16,13 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
-  # ----- CI Jobs (Kept Separate as Requested) -----
+  # ----- CI Jobs -----
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
     env:
       APP_ENV: test
+      APP_RUNTIME_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
