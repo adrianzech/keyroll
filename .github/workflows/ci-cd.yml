@@ -3,24 +3,25 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main ]
+    tags: [ 'v*.*.*' ]
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag for the image (overrides VERSION file)'
+        description: 'Version tag for the image (overrides VERSION file or Git tag)'
         required: false
 
 env:
   PHP_VERSION: '8.4'
+  NODE_MAJOR: '22'
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  # ----- CI Jobs -----
+  # ----- CI Jobs (Kept Separate as Requested) -----
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
     env:
-      APP_RUNTIME_ENV: test
+      APP_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -29,7 +30,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ env.PHP_VERSION }}
-          extensions: mbstring, xml, ctype, iconv, intl, zip
+          extensions: mbstring, xml, ctype, iconv, intl, zip, pdo, pdo_sqlite
           coverage: none
           tools: composer:v2
 
@@ -39,14 +40,15 @@ jobs:
 
       - name: Cache composer dependencies
         uses: actions/cache@v4
+        id: cache-composer
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
-            ${{ runner.os }}-php-
 
       - name: Install Dependencies
+        if: steps.cache-composer.outputs.cache-hit != 'true'
         run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run PHPStan
@@ -56,7 +58,7 @@ jobs:
     name: PHP CS Fixer
     runs-on: ubuntu-latest
     env:
-      APP_RUNTIME_ENV: test
+      APP_ENV: test
       PHP_CS_FIXER_IGNORE_ENV: 1
     steps:
       - name: Checkout Code
@@ -76,14 +78,15 @@ jobs:
 
       - name: Cache composer dependencies
         uses: actions/cache@v4
+        id: cache-composer
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
-            ${{ runner.os }}-php-
 
       - name: Install Dependencies
+        if: steps.cache-composer.outputs.cache-hit != 'true'
         run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run PHP CS Fixer (Dry Run)
@@ -93,7 +96,7 @@ jobs:
     name: PHPMD
     runs-on: ubuntu-latest
     env:
-      APP_RUNTIME_ENV: test
+      APP_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -112,14 +115,15 @@ jobs:
 
       - name: Cache composer dependencies
         uses: actions/cache@v4
+        id: cache-composer
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
-            ${{ runner.os }}-php-
 
       - name: Install Dependencies
+        if: steps.cache-composer.outputs.cache-hit != 'true'
         run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run PHPMD
@@ -129,7 +133,7 @@ jobs:
     name: Lint Twig Templates
     runs-on: ubuntu-latest
     env:
-      APP_RUNTIME_ENV: test
+      APP_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -148,14 +152,15 @@ jobs:
 
       - name: Cache composer dependencies
         uses: actions/cache@v4
+        id: cache-composer
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
-            ${{ runner.os }}-php-
 
       - name: Install Dependencies
+        if: steps.cache-composer.outputs.cache-hit != 'true'
         run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run Twig Lint
@@ -165,7 +170,7 @@ jobs:
     name: Lint YAML Files
     runs-on: ubuntu-latest
     env:
-      APP_RUNTIME_ENV: test
+      APP_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -184,14 +189,15 @@ jobs:
 
       - name: Cache composer dependencies
         uses: actions/cache@v4
+        id: cache-composer
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
-            ${{ runner.os }}-php-
 
       - name: Install Dependencies
+        if: steps.cache-composer.outputs.cache-hit != 'true'
         run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run YAML Lint
@@ -200,18 +206,9 @@ jobs:
   security-check:
     name: Symfony Security Check
     runs-on: ubuntu-latest
-    env:
-      APP_RUNTIME_ENV: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ env.PHP_VERSION }}
-          coverage: none
-          tools: composer:v2
 
       - name: Install Symfony CLI
         run: |
@@ -220,16 +217,22 @@ jobs:
           sudo apt-get install symfony-cli -y
 
       - name: Run Symfony Security Check
-        run: symfony check:security
+        run: symfony check:security --no-interaction
 
-  # ----- CD Jobs -----
-  build-and-push:
-    name: Build and Push Docker Image
+  # ----- Build Job -----
+  build:
+    name: Build Docker Image
     runs-on: ubuntu-latest
+    # Depend on all preceding CI jobs
     needs: [ phpstan, cs-check, phpmd, lint-twig, lint-yaml, security-check ]
     permissions:
       contents: read
       packages: write
+    outputs:
+      image_tags: ${{ steps.meta.outputs.tags }}
+      image_labels: ${{ steps.meta.outputs.labels }}
+      intermediate_image: ${{ steps.intermediate-tag.outputs.IMAGE }}
+      image_name: ${{ env.REGISTRY }}/${{ github.repository }}
 
     steps:
       - name: Checkout repository
@@ -248,30 +251,108 @@ jobs:
       - name: Extract version
         id: version
         run: |
+          VERSION=""
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.version }}" != "" ]; then
-            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-          else
+            VERSION=${{ github.event.inputs.version }}
+          elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION=${{ github.ref_name }}
+          elif [ -f VERSION ]; then
             VERSION=$(cat VERSION)
-            echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT 
+          else
+            # Use short SHA as fallback version for intermediate tag
+            VERSION="sha-$(echo ${{ github.sha }} | cut -c1-7)"
+            echo "WARNING: No version tag or VERSION file found. Using commit SHA based version: $VERSION"
           fi
+          echo "Using version: $VERSION"
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
 
-      - name: Set Docker tags
+      # Generate final tags and labels first (needed for output)
+      - name: Set Final Docker tags and labels
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
           tags: |
-            type=raw,value=latest
-            type=raw,value=${{ steps.version.outputs.VERSION }}
+            type=schedule,pattern=latest,enable={{is_default_branch}}
+            type=ref,event=tag # Add tag name (e.g., v1.2.3)
+            type=raw,value=${{ steps.version.outputs.VERSION }} # Add specific extracted version
+            # Maybe add 'latest' tag on main branch pushes directly?
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.created=${{ steps.meta.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ steps.version.outputs.VERSION }}
 
-      - name: Build and push Docker image
+      - name: Define Intermediate Tag
+        id: intermediate-tag
+        run: |
+          IMAGE_NAME="${{ env.REGISTRY }}/${{ github.repository }}"
+          TAG="sha-${{ github.sha }}"
+          echo "Intermediate image: ${IMAGE_NAME}:${TAG}"
+          echo "IMAGE=${IMAGE_NAME}:${TAG}" >> $GITHUB_OUTPUT
+
+      # Build and PUSH the intermediate tag
+      - name: Build and push Intermediate Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./docker/build/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.intermediate-tag.outputs.IMAGE }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
             APP_ENV=prod
+            PHP_VERSION=${{ env.PHP_VERSION }}
+            NODE_MAJOR=${{ env.NODE_MAJOR }}
+
+      - name: Output Final Tags/Labels
+        run: |
+          echo "Final Tags will be: ${{ steps.meta.outputs.tags }}"
+          echo "Final Labels are: ${{ steps.meta.outputs.labels }}"
+          echo "Intermediate Image: ${{ steps.intermediate-tag.outputs.IMAGE }}"
+
+  # ----- Push Job -----
+  push:
+    name: Push Final Docker Tags
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull intermediate image
+        run: |
+          echo "Pulling intermediate image: ${{ needs.build.outputs.intermediate_image }}"
+          docker pull ${{ needs.build.outputs.intermediate_image }}
+
+      - name: Tag image with final tags
+        run: |
+          INTERMEDIATE_IMAGE="${{ needs.build.outputs.intermediate_image }}"
+          # The final tags string includes potentially multiple tags separated by newline
+          FINAL_TAGS=$(echo "${{ needs.build.outputs.image_tags }}" | tr '\n' ' ')
+          echo "Applying final tags: $FINAL_TAGS"
+          for TAG in ${FINAL_TAGS}; do
+            echo "Tagging $INTERMEDIATE_IMAGE as $TAG"
+            docker tag $INTERMEDIATE_IMAGE $TAG
+          done
+
+      - name: Push final tags
+        run: |
+          FINAL_TAGS=$(echo "${{ needs.build.outputs.image_tags }}" | tr '\n' ' ')
+          echo "Pushing final tags: $FINAL_TAGS"
+          for TAG in ${FINAL_TAGS}; do
+            echo "Pushing $TAG"
+            docker push $TAG
+          done

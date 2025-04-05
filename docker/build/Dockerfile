@@ -78,7 +78,6 @@ RUN curl -sS https://get.symfony.com/cli/installer | bash && \
 # Copy dependency manifest files for caching
 COPY composer.json composer.lock symfony.lock ./
 COPY package.json package-lock.json ./
-COPY assets/styles/app.css ./assets/styles/
 
 # Install Composer dependencies (including dev, NO scripts)
 RUN composer install --prefer-dist --no-progress --no-autoloader --no-scripts --no-interaction --ignore-platform-reqs
@@ -118,9 +117,13 @@ RUN rm -rf \
     phpstan.dist.neon \
     phpmd.xml.dist \
     phpunit.xml.dist \
+    .editorconfig \
+    .git \
+    .github \
     .gitignore \
     .php-cs-fixer.dist.php \
-     Dockerfile \
+    docker/build/Dockerfile \
+    docker/compose.yml \
     README.md \
     var/log/* \
     /tmp/* \
@@ -149,6 +152,7 @@ ENV APP_USER=${APP_USER:-keyroll} \
     APP_GROUP=${APP_GROUP:-keyroll} \
     APP_UID=${APP_UID:-1000} \
     APP_GID=${APP_GID:-1000}
+    APP_ENV=${APP_ENV:-prod}
 
 # Set working directory
 WORKDIR /app
@@ -162,7 +166,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libzip4 \
     libmariadb3 \
     libonig5 \
-    mariadb-client \
     openssh-client \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
