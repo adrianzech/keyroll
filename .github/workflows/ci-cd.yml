@@ -7,13 +7,14 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag for the image (overrides VERSION file or Git tag)'
+        description: 'Version tag for the image'
         required: false
 
 env:
   PHP_VERSION: '8.4'
   NODE_MAJOR: '22'
   REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   # ----- CI Jobs -----
@@ -229,7 +230,7 @@ jobs:
       image_tags: ${{ steps.meta.outputs.tags }}
       image_labels: ${{ steps.meta.outputs.labels }}
       intermediate_image: ${{ steps.intermediate-tag.outputs.IMAGE }}
-      image_name: ${{ env.REGISTRY }}/${{ github.repository }}
+      image_name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
     steps:
       - name: Checkout repository
@@ -258,38 +259,40 @@ jobs:
           else
             # Use short SHA as fallback version for intermediate tag
             VERSION="sha-$(echo ${{ github.sha }} | cut -c1-7)"
-            echo "WARNING: No version tag or VERSION file found. Using commit SHA based version: $VERSION"
+            echo "WARNING: No explicit version provided (tag, input, VERSION file). Using commit SHA based version: $VERSION"
           fi
+          # Ensure version is sanitized for Docker tags (e.g., remove leading 'v')
+          VERSION=$(echo ${VERSION} | sed 's/^v//')
           echo "Using version: $VERSION"
           echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
 
-      # Generate final tags and labels first (needed for output)
       - name: Set Final Docker tags and labels
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=schedule,pattern=latest,enable={{is_default_branch}}
-            type=ref,event=tag # Add tag name (e.g., v1.2.3)
-            type=raw,value=${{ steps.version.outputs.VERSION }} # Add specific extracted version
-            # Maybe add 'latest' tag on main branch pushes directly?
+            # Tag 'vX.Y.Z' pushes with 'X.Y.Z'
+            type=ref,event=tag
+            # Add specific extracted version (handles VERSION file, workflow_dispatch, or fallback sha)
+            type=raw,value=${{ steps.version.outputs.VERSION }}
+            # Tag 'main' branch pushes with 'latest'
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.created=${{ steps.meta.outputs.created }}
+            org.opencontainers.image.created=${{ steps.docker_meta_prep.outputs.created }} # Use timestamp from prep step if needed, else remove
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.version=${{ steps.version.outputs.VERSION }}
+            org.opencontainers.image.version=${{ steps.version.outputs.VERSION }} # Use the determined version
 
       - name: Define Intermediate Tag
         id: intermediate-tag
         run: |
-          IMAGE_NAME="${{ env.REGISTRY }}/${{ github.repository }}"
+          IMAGE_NAME="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+          # Use full SHA for uniqueness in intermediate tag
           TAG="sha-${{ github.sha }}"
           echo "Intermediate image: ${IMAGE_NAME}:${TAG}"
           echo "IMAGE=${IMAGE_NAME}:${TAG}" >> $GITHUB_OUTPUT
 
-      # Build and PUSH the intermediate tag
       - name: Build and push Intermediate Docker image
         uses: docker/build-push-action@v5
         with:
@@ -297,7 +300,7 @@ jobs:
           file: ./docker/build/Dockerfile
           push: true
           tags: ${{ steps.intermediate-tag.outputs.IMAGE }}
-          labels: ${{ steps.meta.outputs.labels }}
+          labels: ${{ steps.meta.outputs.labels }} # Apply labels here
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
@@ -305,11 +308,11 @@ jobs:
             PHP_VERSION=${{ env.PHP_VERSION }}
             NODE_MAJOR=${{ env.NODE_MAJOR }}
 
-      - name: Output Final Tags/Labels
+      - name: Output Information
         run: |
-          echo "Final Tags will be: ${{ steps.meta.outputs.tags }}"
-          echo "Final Labels are: ${{ steps.meta.outputs.labels }}"
           echo "Intermediate Image: ${{ steps.intermediate-tag.outputs.IMAGE }}"
+          echo "Final Tags Calculated: ${{ steps.meta.outputs.tags }}"
+          echo "Final Labels Calculated: ${{ steps.meta.outputs.labels }}"
 
   # ----- Push Job -----
   push:
@@ -338,19 +341,31 @@ jobs:
       - name: Tag image with final tags
         run: |
           INTERMEDIATE_IMAGE="${{ needs.build.outputs.intermediate_image }}"
-          # The final tags string includes potentially multiple tags separated by newline
           FINAL_TAGS=$(echo "${{ needs.build.outputs.image_tags }}" | tr '\n' ' ')
           echo "Applying final tags: $FINAL_TAGS"
           for TAG in ${FINAL_TAGS}; do
-            echo "Tagging $INTERMEDIATE_IMAGE as $TAG"
-            docker tag $INTERMEDIATE_IMAGE $TAG
+            if [[ "$TAG" == *":"* ]]; then
+              echo "Tagging $INTERMEDIATE_IMAGE as $TAG"
+              docker tag "$INTERMEDIATE_IMAGE" "$TAG"
+            else
+              FULL_TAG="${{ needs.build.outputs.image_name }}:$TAG"
+              echo "Tagging $INTERMEDIATE_IMAGE as $FULL_TAG"
+              docker tag "$INTERMEDIATE_IMAGE" "$FULL_TAG"
+            fi
           done
+
 
       - name: Push final tags
         run: |
           FINAL_TAGS=$(echo "${{ needs.build.outputs.image_tags }}" | tr '\n' ' ')
           echo "Pushing final tags: $FINAL_TAGS"
           for TAG in ${FINAL_TAGS}; do
-            echo "Pushing $TAG"
-            docker push $TAG
+            if [[ "$TAG" == *":"* ]]; then
+              echo "Pushing $TAG"
+              docker push "$TAG"
+            else
+              FULL_TAG="${{ needs.build.outputs.image_name }}:$TAG"
+              echo "Pushing $FULL_TAG"
+              docker push "$FULL_TAG"
+            fi
           done
