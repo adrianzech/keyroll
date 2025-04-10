@@ -1,0 +1,44 @@
+[PHP]
+; General Settings
+engine = On
+short_open_tag = Off
+asp_tags = Off
+precision = 14
+output_buffering = 4096
+zlib.output_compression = Off
+implicit_flush = Off
+unserialize_callback_func =
+serialize_precision = -1
+disable_functions = pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,
+disable_classes =
+realpath_cache_size = 4096k
+realpath_cache_ttl = 600
+
+; Error reporting and logging for production
+display_errors = Off
+display_startup_errors = Off
+log_errors = On
+error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE
+error_log = /dev/stderr ; Send errors to stderr to be caught by Docker logs
+
+; Set based on ENV or hardcode for production
+; Use ENV[PHP_MEMORY_LIMIT] from Dockerfile ENV
+memory_limit = ${PHP_MEMORY_LIMIT}
+
+; File Uploads
+post_max_size = 16M
+upload_max_filesize = 16M
+max_file_uploads = 20
+
+; Timezone (Set to your application's default)
+date.timezone = UTC
+
+; Session Settings (if applicable)
+; session.save_handler = files
+; session.save_path = /tmp ; Consider using Redis or Memcached for sessions in production
+
+; Intl Settings
+intl.default_locale = en_US
+intl.error_level = E_WARNING
+
+expose_php = Off
