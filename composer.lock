@@ -4,7 +4,7 @@
     "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
     "This file is @generated automatically"
   ],
-  "content-hash": "9d62e7f59f0ced8c470a995578c240d8",
+  "content-hash": "ff74969cd982e6a2ce0186e3a3699897",
   "packages": [
     {
       "name": "composer/semver",
@@ -379,26 +379,29 @@
     },
     {
       "name": "doctrine/deprecations",
-      "version": "1.1.4",
+      "version": "1.1.5",
       "source": {
         "type": "git",
         "url": "https://github.com/doctrine/deprecations.git",
-        "reference": "31610dbb31faa98e6b5447b62340826f54fbc4e9"
+        "reference": "459c2f5dd3d6a4633d3b5f46ee2b1c40f57d3f38"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/doctrine/deprecations/zipball/31610dbb31faa98e6b5447b62340826f54fbc4e9",
-        "reference": "31610dbb31faa98e6b5447b62340826f54fbc4e9",
+        "url": "https://api.github.com/repos/doctrine/deprecations/zipball/459c2f5dd3d6a4633d3b5f46ee2b1c40f57d3f38",
+        "reference": "459c2f5dd3d6a4633d3b5f46ee2b1c40f57d3f38",
         "shasum": ""
       },
       "require": {
         "php": "^7.1 || ^8.0"
       },
+      "conflict": {
+        "phpunit/phpunit": "<=7.5 || >=13"
+      },
       "require-dev": {
-        "doctrine/coding-standard": "^9 || ^12",
-        "phpstan/phpstan": "1.4.10 || 2.0.3",
+        "doctrine/coding-standard": "^9 || ^12 || ^13",
+        "phpstan/phpstan": "1.4.10 || 2.1.11",
         "phpstan/phpstan-phpunit": "^1.0 || ^2",
-        "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5",
+        "phpunit/phpunit": "^7.5 || ^8.5 || ^9.6 || ^10.5 || ^11.5 || ^12",
         "psr/log": "^1 || ^2 || ^3"
       },
       "suggest": {
@@ -418,9 +421,9 @@
       "homepage": "https://www.doctrine-project.org/",
       "support": {
         "issues": "https://github.com/doctrine/deprecations/issues",
-        "source": "https://github.com/doctrine/deprecations/tree/1.1.4"
+        "source": "https://github.com/doctrine/deprecations/tree/1.1.5"
       },
-      "time": "2024-12-07T21:18:45+00:00"
+      "time": "2025-04-07T20:06:18+00:00"
     },
     {
       "name": "doctrine/doctrine-bundle",
@@ -6258,16 +6261,16 @@
     },
     {
       "name": "symfony/stimulus-bundle",
-      "version": "v2.23.0",
+      "version": "v2.24.0",
       "source": {
         "type": "git",
         "url": "https://github.com/symfony/stimulus-bundle.git",
-        "reference": "254f4e05cbaa349d4ae68b9b2e6a22995e0887f9"
+        "reference": "e09840304467cda3324cc116c7f4ee23c8ff227c"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/symfony/stimulus-bundle/zipball/254f4e05cbaa349d4ae68b9b2e6a22995e0887f9",
-        "reference": "254f4e05cbaa349d4ae68b9b2e6a22995e0887f9",
+        "url": "https://api.github.com/repos/symfony/stimulus-bundle/zipball/e09840304467cda3324cc116c7f4ee23c8ff227c",
+        "reference": "e09840304467cda3324cc116c7f4ee23c8ff227c",
         "shasum": ""
       },
       "require": {
@@ -6307,7 +6310,7 @@
         "symfony-ux"
       ],
       "support": {
-        "source": "https://github.com/symfony/stimulus-bundle/tree/v2.23.0"
+        "source": "https://github.com/symfony/stimulus-bundle/tree/v2.24.0"
       },
       "funding": [
         {
@@ -6323,7 +6326,7 @@
           "type": "tidelift"
         }
       ],
-      "time": "2025-01-16T21:55:09+00:00"
+      "time": "2025-03-09T21:10:04+00:00"
     },
     {
       "name": "symfony/stopwatch",
@@ -6918,16 +6921,16 @@
     },
     {
       "name": "symfony/ux-turbo",
-      "version": "v2.23.0",
+      "version": "v2.24.0",
       "source": {
         "type": "git",
         "url": "https://github.com/symfony/ux-turbo.git",
-        "reference": "db96cf04d70a8c820671ce55530e8bf641ada33f"
+        "reference": "22954300bd0b01ca46f17c7890ea15138d9cf67f"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/symfony/ux-turbo/zipball/db96cf04d70a8c820671ce55530e8bf641ada33f",
-        "reference": "db96cf04d70a8c820671ce55530e8bf641ada33f",
+        "url": "https://api.github.com/repos/symfony/ux-turbo/zipball/22954300bd0b01ca46f17c7890ea15138d9cf67f",
+        "reference": "22954300bd0b01ca46f17c7890ea15138d9cf67f",
         "shasum": ""
       },
       "require": {
@@ -6996,7 +6999,7 @@
         "turbo-stream"
       ],
       "support": {
-        "source": "https://github.com/symfony/ux-turbo/tree/v2.23.0"
+        "source": "https://github.com/symfony/ux-turbo/tree/v2.24.0"
       },
       "funding": [
         {
@@ -7012,7 +7015,7 @@
           "type": "tidelift"
         }
       ],
-      "time": "2025-02-06T08:47:30+00:00"
+      "time": "2025-04-04T17:29:20+00:00"
     },
     {
       "name": "symfony/validator",
@@ -7427,16 +7430,16 @@
     },
     {
       "name": "symfonycasts/tailwind-bundle",
-      "version": "v0.9.0",
+      "version": "v0.10.0",
       "source": {
         "type": "git",
         "url": "https://github.com/SymfonyCasts/tailwind-bundle.git",
-        "reference": "408c65b9ed0a7a25e17f9f86d5d5d60bbbfcc464"
+        "reference": "380502c39bf403f772d050ff9904932040de8cf1"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/SymfonyCasts/tailwind-bundle/zipball/408c65b9ed0a7a25e17f9f86d5d5d60bbbfcc464",
-        "reference": "408c65b9ed0a7a25e17f9f86d5d5d60bbbfcc464",
+        "url": "https://api.github.com/repos/SymfonyCasts/tailwind-bundle/zipball/380502c39bf403f772d050ff9904932040de8cf1",
+        "reference": "380502c39bf403f772d050ff9904932040de8cf1",
         "shasum": ""
       },
       "require": {
@@ -7477,9 +7480,9 @@
       ],
       "support": {
         "issues": "https://github.com/SymfonyCasts/tailwind-bundle/issues",
-        "source": "https://github.com/SymfonyCasts/tailwind-bundle/tree/v0.9.0"
+        "source": "https://github.com/SymfonyCasts/tailwind-bundle/tree/v0.10.0"
       },
-      "time": "2025-03-22T13:36:15+00:00"
+      "time": "2025-04-09T15:18:46+00:00"
     },
     {
       "name": "twig/extra-bundle",
