@@ -1,13 +1,44 @@
 <header>
-    <nav class="navbar bg-neutral text-neutral-content shadow-sm">
+    <div class="navbar bg-base-100 shadow-sm">
         <div class="flex-1">
-            <a href="{{ path('app_host_index') }}" class="btn btn-ghost text-xl">KeyRoll</a>
+            <a href="{{ path('app_host_index') }}" class="btn btn-ghost text-xl">{{ "app.title"|trans }}</a>
         </div>
         <div class="flex-none">
             <ul class="menu menu-horizontal px-1">
-                <li><a href="{{ path('app_host_index') }}">Hosts</a></li>
-                <li><a href="{{ path('app_ssh_key_index') }}">SSH keys</a></li>
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <li><a href="{{ path('app_host_index') }}">{{ "host.hosts"|trans }}</a></li>
+                    <li><a href="{{ path('app_ssh_key_index') }}">{{ "key.ssh_keys"|trans }}</a></li>
+                {% endif %}
+                {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <li>
+                        <a href="{{ path('app_login') }}">{{ "auth.login"|trans }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('app_register') }}">{{ "auth.register"|trans }}</a>
+                    </li>
+                {% endif %}
             </ul>
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+                        <div class="grid place-items-center w-full h-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0-8 0M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <ul tabindex="0"
+                        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                        <li>
+                            <a href="#">{{ "label.settings"|trans }}</a>
+                            <a href="{{ path('app_logout') }}">{{ "auth.logout"|trans }}</a>
+                        </li>
+                    </ul>
+                </div>
+            {% endif %}
         </div>
-    </nav>
+    </div>
 </header>
