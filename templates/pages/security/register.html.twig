@@ -1,24 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ "app_register"|trans }}{% endblock %}
+{% block title %}{{ "auth.register"|trans }}{% endblock %}
 
 {% block body %}
     <div class="card bg-base-100 h-full w-full flex items-center justify-center py-12">
         <div class="card-body">
-            <h2 class="card-title text-center text-2xl font-bold mb-6">{{ "app_register"|trans }}</h2>
+            <h2 class="card-title text-center text-2xl font-bold mb-6">{{ "auth.register"|trans }}</h2>
 
             {{ form_start(registrationForm) }}
             <!-- Email Input -->
             <div class="form-control w-full mb-4">
-                {{ form_label(registrationForm.email, 'app_email'|trans, {'label_attr': {'class': 'label-text'}}) }}
-                {{ form_widget(registrationForm.email, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'app_email_placeholder'|trans, 'required': true, 'autofocus': true}}) }}
+                {{ form_label(registrationForm.email, 'label.email', {'label_attr': {'class': 'label-text'}}) }}
+                {{ form_widget(registrationForm.email, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'auth.email_placeholder', 'required': true, 'autofocus': true}}) }}
                 {{ form_errors(registrationForm.email) }}
             </div>
 
             <!-- Password Input -->
             <div class="form-control w-full mb-6">
-                {{ form_label(registrationForm.plainPassword, 'app_password'|trans, {'label_attr': {'class': 'label-text'}}) }}
-                {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'app_password_placeholder'|trans, 'required': true}}) }}
+                {{ form_label(registrationForm.plainPassword, 'label.password', {'label_attr': {'class': 'label-text'}}) }}
+                {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'auth.password_placeholder', 'required': true}}) }}
                 {{ form_errors(registrationForm.plainPassword) }}
             </div>
 
@@ -26,20 +26,20 @@
             <div class="form-control mb-6">
                 <label class="cursor-pointer label justify-start">
                     {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'checkbox checkbox-primary mr-2'}}) }}
-                    <span class="label-text">{{ "app_register_terms"|trans }}</span>
+                    <span class="label-text">{{ "auth.register_terms"|trans }}</span>
                 </label>
                 {{ form_errors(registrationForm.agreeTerms) }}
             </div>
 
             <!-- Submit Button -->
             <div class="card-actions justify-end">
-                <button type="submit" class="btn btn-primary w-full">{{ "app_register"|trans }}</button>
+                <button type="submit" class="btn btn-primary w-full">{{ "auth.register"|trans }}</button>
             </div>
 
             <!-- Login Link -->
             <div class="text-center mt-4">
-                <p>{{ "app_register_account_exists"|trans }} <a href="{{ path('app_login') }}"
-                                               class="link link-primary">{{ "app_login"|trans }}</a></p>
+                <p>{{ "auth.register_account_exists"|trans }} <a href="{{ path('app_login') }}"
+                                                                 class="link link-primary">{{ "auth.login"|trans }}</a></p>
             </div>
 
             {{ form_end(registrationForm) }}

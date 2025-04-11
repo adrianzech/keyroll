@@ -22,8 +22,8 @@
                     <thead>
                     <tr>
                         <th>{{ 'key.name'|trans }}</th>
-                        <th>{{ 'key.created_at'|trans }}</th>
-                        <th>{{ 'key.updated_at'|trans }}</th>
+                        <th>{{ 'label.created_at'|trans }}</th>
+                        <th>{{ 'label.updated_at'|trans }}</th>
 
                     </tr>
                     </thead>
@@ -31,8 +31,8 @@
                     {% for key in keys %}
                         <tr>
                             <td>{{ key.name }}</td>
-                            <td>{{ key.createdAt|date('d.m.Y H:i') }}</td>
-                            <td>{{ key.updatedAt|date('d.m.Y H:i') }}</td>
+                            <td>{{ label.createdAt|date('d.m.Y H:i') }}</td>
+                            <td>{{ label.updatedAt|date('d.m.Y H:i') }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

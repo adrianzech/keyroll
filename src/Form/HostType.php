@@ -52,7 +52,7 @@ class HostType extends AbstractType
             ->add('port', IntegerType::class, [
                 'label' => 'host.port',
                 'attr' => [
-                    'placeholder' => '22',
+                    'placeholder' => 'host.default_port',
                 ],
                 'constraints' => [
                     new NotBlank([
@@ -69,14 +69,14 @@ class HostType extends AbstractType
             ->add('username', TextType::class, [
                 'label' => 'host.username',
                 'attr' => [
-                    'placeholder' => 'adrian',
+                    'placeholder' => 'host.default_user',
                 ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'host.username_required',
                     ]),
                 ],
-                'data' => 'adrian',
+                'data' => 'host.default_user',
             ]);
     }
 

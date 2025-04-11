@@ -24,9 +24,9 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-                'label' => 'app_email',
+                'label' => 'label.email',
                 'attr' => [
-                    'placeholder' => 'app_email_placeholder',
+                    'placeholder' => 'auth.email_placeholder',
                     'autofocus' => true,
                 ],
             ])
@@ -34,7 +34,7 @@ class RegistrationFormType extends AbstractType
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'app_register_need_to_agree',
+                        'message' => 'auth.register_need_to_agree',
                     ]),
                 ],
             ])
@@ -42,14 +42,15 @@ class RegistrationFormType extends AbstractType
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,
+                'label' => 'label.password',
                 'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'app_enter_password',
+                        'message' => 'auth.error.enter_password',
                     ]),
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'app_settings_password_min_length',
+                        'minMessage' => 'auth.error.password_min_length',
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
