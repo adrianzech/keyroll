@@ -22,9 +22,6 @@
                 <div class="form-control mb-4">
                     {{ form_label(form.hostname, null, {'label_attr': {'class': 'label'}}) }}
                     {{ form_widget(form.hostname, {'attr': {'class': 'input input-bordered w-full'}}) }}
-                    {% if form.hostname.vars.help is defined %}
-                        <div class="text-sm text-gray-500 mt-1">{{ form.hostname.vars.help|trans }}</div>
-                    {% endif %}
                     {{ form_errors(form.hostname) }}
                 </div>
 

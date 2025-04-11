@@ -13,12 +13,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @extends AbstractType<Host>
  */
 class HostType extends AbstractType
 {
+    function __construct(
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -30,6 +36,10 @@ class HostType extends AbstractType
                 'constraints' => [
                     new NotBlank([
                         'message' => 'host.name_required',
+                    ]),
+                    new Regex([
+                        'pattern' => '/^[a-zA-Z0-9.\-\s]+$/',
+                        'message' => 'host.name_invalid_format',
                     ]),
                 ],
             ])
@@ -46,8 +56,7 @@ class HostType extends AbstractType
                         'pattern' => '/^[a-zA-Z0-9.-]+$/',
                         'message' => 'host.hostname_invalid_format',
                     ]),
-                ],
-                'help' => 'host.hostname_help',
+                ]
             ])
             ->add('port', IntegerType::class, [
                 'label' => 'host.port',
@@ -76,7 +85,7 @@ class HostType extends AbstractType
                         'message' => 'host.username_required',
                     ]),
                 ],
-                'data' => 'host.default_user',
+                'data' => $this->translator->trans('host.default_user', [], 'messages'),
             ]);
     }
 
