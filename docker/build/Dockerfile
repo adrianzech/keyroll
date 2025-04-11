@@ -203,6 +203,9 @@ COPY --from=php_build /app /app
 # Ensure the base application directory is owned by root but readable/executable by others
 RUN chown -R root:root /app && chmod -R ogu+rX /app
 
+# Ensure console is executable
+RUN chmod +x /app/bin/console
+
 # Create the non-root application user and group using Alpine's tools
 RUN \
   if ! getent group ${APP_GROUP} > /dev/null 2>&1 && ! getent group ${APP_GID} > /dev/null 2>&1; then \
