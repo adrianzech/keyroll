@@ -1,11 +1,14 @@
-# Authentication
+label:
+  email: 'Email'
+
 auth:
   email_already_exists: 'This email is already used by another user.'
+  email_invalid: 'Please enter a valid email address.'
   enter_password: 'Please enter a password'
   password_min_length: 'Your password should be at least {{ limit }} characters'
+  password_mismatch: 'The password fields must match.'
   register_need_to_agree: 'You need to agree to our terms.'
 
-# Host Management
 host:
   hostname_invalid_format: 'The hostname contains invalid characters. Only letters, numbers, dots (.), and hyphens (-) are allowed.'
   hostname_required: 'Please enter a hostname or IP address'
@@ -16,8 +19,13 @@ host:
   port_required: 'Please enter an SSH port'
   username_required: 'Please enter an SSH username'
 
-# SSH Key Management
 key:
   name_required: 'Please enter a name for your SSH key'
   public_key_invalid_format: 'Invalid public key format. It should start with ssh-rsa, ssh-ed25519, or another valid key format'
   public_key_required: 'Please enter your SSH public key'
+
+settings:
+  account:
+    current_password: 'Current Password' # Label used in validation? Seems redundant with label.password
+    new_password: 'New Password' # Label used in validation? Seems redundant with label.password
+    confirm_new_password: 'Confirm New Password' # Label used in validation?

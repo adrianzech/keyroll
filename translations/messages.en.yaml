@@ -109,6 +109,29 @@ label:
   status: 'Status'
   updated_at: 'Updated At'
 
+# Settings Page Specific
+settings:
+  title: 'Settings'
+  account:
+    title: 'Account Settings'
+    update_email: 'Update Email'
+    update_password: 'Update Password'
+    current_password: 'Current Password'
+    new_password: 'New Password'
+    confirm_new_password: 'Confirm New Password'
+  general:
+    language: 'Language'
+  flash:
+    info:
+      no_changes: 'No changes were made to your account.'
+    success:
+      email_updated: 'Your email address has been updated successfully.'
+      password_updated: 'Your password has been updated successfully.'
+    error:
+      new_password_required: 'Please enter a new password if you want to change it.'
+      current_password_required: 'Please enter your current password to confirm the change.'
+      current_password_incorrect: 'The current password you entered is incorrect.'
+
 # Theme
 theme:
   dark: 'Dark Mode'
