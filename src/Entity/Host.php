@@ -6,10 +6,12 @@ namespace App\Entity;
 
 use App\Repository\HostRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: HostRepository::class)]
 #[ORM\Table(name: '`host`')]
+#[UniqueEntity(fields: ['name'], message: 'host.name_already_exists')]
 class Host
 {
     #[ORM\Id]
@@ -23,7 +25,7 @@ class Host
 
     #[ORM\Column]
     #[Assert\NotBlank]
-    #[Assert\Regex(pattern: '/^[a-zA-Z0-9.-]+$/', message: 'The hostname contains invalid characters')]
+    #[Assert\Regex(pattern: '/^[a-zA-Z0-9.-]+$/', message: 'host.hostname_invalid_format')]
     private ?string $hostname = null;
 
     #[ORM\Column]
@@ -33,7 +35,7 @@ class Host
 
     #[ORM\Column]
     #[Assert\NotBlank]
-    private string $username = 'adrian';
+    private string $username = '';
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
