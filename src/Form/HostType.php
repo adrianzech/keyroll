@@ -20,7 +20,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class HostType extends AbstractType
 {
-    function __construct(
+    public function __construct(
         private readonly TranslatorInterface $translator,
     ) {
     }
@@ -56,7 +56,7 @@ class HostType extends AbstractType
                         'pattern' => '/^[a-zA-Z0-9.-]+$/',
                         'message' => 'host.hostname_invalid_format',
                     ]),
-                ]
+                ],
             ])
             ->add('port', IntegerType::class, [
                 'label' => 'host.port',
