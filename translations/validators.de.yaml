@@ -1,0 +1,31 @@
+label:
+  email: 'E-Mail'
+
+auth:
+  email_already_exists: 'Diese E-Mail wird bereits von einem anderen Benutzer verwendet.'
+  email_invalid: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'
+  enter_password: 'Bitte geben Sie ein Passwort ein'
+  password_min_length: 'Ihr Passwort sollte mindestens {{ limit }} Zeichen lang sein'
+  password_mismatch: 'Die Passwortfelder müssen übereinstimmen.'
+  register_need_to_agree: 'Sie müssen unseren Bedingungen zustimmen.'
+
+host:
+  hostname_invalid_format: 'Der Hostname enthält ungültige Zeichen. Nur Buchstaben, Zahlen, Punkte (.) und Bindestriche (-) sind erlaubt.'
+  hostname_required: 'Bitte geben Sie einen Hostnamen oder eine IP-Adresse ein'
+  name_already_exists: 'Dieser Name wird bereits von einem anderen Host verwendet.'
+  name_invalid_format: 'Der Name enthält ungültige Zeichen. Nur Buchstaben, Zahlen, Punkte (.), Bindestriche (-) und Leerzeichen sind erlaubt.'
+  name_required: 'Bitte geben Sie einen Namen für den Server ein'
+  port_invalid_range: 'Der Port muss zwischen 1 und 65535 liegen'
+  port_required: 'Bitte geben Sie einen SSH-Port ein'
+  username_required: 'Bitte geben Sie einen SSH-Benutzernamen ein'
+
+key:
+  name_required: 'Bitte geben Sie einen Namen für Ihren SSH-Schlüssel ein'
+  public_key_invalid_format: 'Ungültiges Format des öffentlichen Schlüssels. Es sollte mit ssh-rsa, ssh-ed25519 oder einem anderen gültigen Schlüsselformat beginnen'
+  public_key_required: 'Bitte geben Sie Ihren öffentlichen SSH-Schlüssel ein'
+
+settings:
+  account:
+    current_password: 'Aktuelles Passwort'
+    new_password: 'Neues Passwort'
+    confirm_new_password: 'Neues Passwort bestätigen'
