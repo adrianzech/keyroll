@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class SettingsController extends AbstractController
 {
@@ -30,7 +29,7 @@ class SettingsController extends AbstractController
         $user = $this->getUser();
 
         if (!$user) {
-            throw new AccessDeniedException('User not found or not logged in.');
+            throw $this->createAccessDeniedException('User not found or not logged in.');
         }
 
         /** @var FormInterface<User> $form */
@@ -42,9 +41,7 @@ class SettingsController extends AbstractController
 
             if ($changesMade) {
                 $this->entityManager->flush();
-                // Success messages are added within the helper methods
             } elseif ($form->isSubmitted()) {
-                // Add 'no changes' only if submitted and valid but nothing was altered
                 $this->addFlash('info', 'settings.flash.info.no_changes');
             }
 
@@ -56,6 +53,9 @@ class SettingsController extends AbstractController
         ]);
     }
 
+    /**
+     * @param FormInterface<User> $form
+     */
     private function handleAccountUpdate(FormInterface $form, User $user): bool
     {
         $emailChanged = $this->updateEmailIfChanged($form, $user);
@@ -64,6 +64,9 @@ class SettingsController extends AbstractController
         return $emailChanged || $passwordChanged;
     }
 
+    /**
+     * @param FormInterface<User> $form
+     */
     private function updateEmailIfChanged(FormInterface $form, User $user): bool
     {
         $submittedEmail = $form->get('email')->getData();
@@ -78,6 +81,9 @@ class SettingsController extends AbstractController
         return false;
     }
 
+    /**
+     * @param FormInterface<User> $form
+     */
     private function updatePasswordIfProvided(FormInterface $form, User $user): bool
     {
         $currentPassword = $form->get('currentPassword')->getData();
@@ -89,16 +95,19 @@ class SettingsController extends AbstractController
 
         if (empty($plainPassword)) {
             $this->addFlash('error', 'settings.flash.error.new_password_required');
+
             return false;
         }
 
         if (empty($currentPassword)) {
             $this->addFlash('error', 'settings.flash.error.current_password_required');
+
             return false;
         }
 
         if (!$this->passwordHasher->isPasswordValid($user, $currentPassword)) {
             $this->addFlash('error', 'settings.flash.error.current_password_incorrect');
+
             return false;
         }
 
@@ -120,12 +129,11 @@ class SettingsController extends AbstractController
         $request->getSession()->set('_locale', $locale);
 
         $referer = $request->headers->get('referer');
-        $fallbackUrl = $this->generateUrl('app_settings_index');
 
         if ($referer && str_starts_with($referer, $request->getSchemeAndHttpHost())) {
             return $this->redirect($referer);
         }
 
-        return $this->redirect($fallbackUrl);
+        return $this->redirectToRoute('app_settings_index');
     }
 }
