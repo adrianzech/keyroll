@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SSHKeyRepository::class)]
 #[ORM\Table(name: '`ssh_key`')]
+#[ORM\HasLifecycleCallbacks]
 class SSHKey
 {
     #[ORM\Id]
@@ -35,10 +36,17 @@ class SSHKey
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    public function __construct()
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateTimestamps(): void
     {
-        $this->createdAt = new \DateTimeImmutable();
+        // Always update 'updatedAt' on both create and update
         $this->updatedAt = new \DateTimeImmutable();
+
+        // Set 'createdAt' only if it's currently null (i.e., during PrePersist)
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTimeImmutable();
+        }
     }
 
     public function getId(): ?int

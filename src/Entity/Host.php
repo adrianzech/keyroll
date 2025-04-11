@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: HostRepository::class)]
 #[ORM\Table(name: '`host`')]
+#[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['name'], message: 'host.name_already_exists')]
 class Host
 {
@@ -43,10 +44,17 @@ class Host
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    public function __construct()
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateTimestamps(): void
     {
-        $this->createdAt = new \DateTimeImmutable();
+        // Always update 'updatedAt' on both create and update
         $this->updatedAt = new \DateTimeImmutable();
+
+        // Set 'createdAt' only if it's currently null (i.e., during PrePersist)
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTimeImmutable();
+        }
     }
 
     public function getId(): ?int

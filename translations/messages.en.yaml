@@ -28,6 +28,8 @@ common:
   edit: 'Edit'
   save: 'Save'
   view: 'View'
+  update: 'Update'
+  invalid_csrf_token: 'Invalid security token. Please try again.'
 
 # Host Management
 host:
