@@ -1,6 +1,7 @@
 parameters:
   keyroll.private_key_path: '%kernel.project_dir%/var/ssh/keyroll_ed25519'
   keyroll.connection_timeout: 10
+  keyroll.supported_locales: 'en|de'
 
 services:
   # default configuration for services in *this* file

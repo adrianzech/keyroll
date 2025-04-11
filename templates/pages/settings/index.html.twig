@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'settings.title'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto py-8 px-4">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">{{ 'settings.title'|trans }}</h1>
+        </div>
+
+        <!-- Flash Messages -->
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert {{ label == 'success' ? 'alert-success' : 'alert-error' }} mb-6">
+                    <div class="flex">
+                        {% if label == 'success' %}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        {% else %}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        {% endif %}
+                        &nbsp;{{ message|trans }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <!-- Account Settings -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">{{ 'settings.account.title'|trans }}</h1>
+        </div>
+
+        <!-- Account Form -->
+        <div class="card bg-base-100 shadow-xl mb-8">
+            <div class="card-body">
+                {{ form_start(accountForm) }}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Email Update Section -->
+                    <div>
+                        <h3 class="text-lg font-medium mb-4">{{ 'settings.account.update_email'|trans }}</h3>
+                        <div class="form-control w-full">
+                            {{ form_label(accountForm.email, 'label.email', {'label_attr': {'class': 'label'}}) }}
+                            {{ form_widget(accountForm.email, {'attr': {'class': 'input input-bordered w-full'}}) }}
+                            {{ form_errors(accountForm.email, {'attr': {'class': 'text-error mt-1'}}) }}
+                        </div>
+                    </div>
+
+                    <!-- Password Update Section -->
+                    <div>
+                        <h3 class="text-lg font-medium mb-4">{{ 'settings.account.update_password'|trans }}</h3>
+                        <div class="form-control w-full mb-4">
+                            {{ form_label(accountForm.currentPassword, 'settings.account.current_password', {'label_attr': {'class': 'label'}}) }}
+                            {{ form_widget(accountForm.currentPassword, {'attr': {'class': 'input input-bordered w-full'}}) }}
+                            {{ form_errors(accountForm.currentPassword, {'attr': {'class': 'text-error mt-1'}}) }}
+                        </div>
+                        <div class="form-control w-full mb-4">
+                            {{ form_label(accountForm.plainPassword.first, 'settings.account.new_password', {'label_attr': {'class': 'label'}}) }}
+                            {{ form_widget(accountForm.plainPassword.first, {'attr': {'class': 'input input-bordered w-full'}}) }}
+                            {{ form_errors(accountForm.plainPassword.first, {'attr': {'class': 'text-error mt-1'}}) }}
+                        </div>
+                        <div class="form-control w-full">
+                            {{ form_label(accountForm.plainPassword.second, 'settings.account.confirm_new_password', {'label_attr': {'class': 'label'}}) }}
+                            {{ form_widget(accountForm.plainPassword.second, {'attr': {'class': 'input input-bordered w-full'}}) }}
+                            {{ form_errors(accountForm.plainPassword.second, {'attr': {'class': 'text-error mt-1'}}) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end mt-6">
+                    <button type="submit" class="btn btn-primary">{{ 'common.save'|trans }}</button>
+                </div>
+                {{ form_end(accountForm) }}
+            </div>
+        </div>
+
+        <!-- General Settings -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">{{ 'label.general'|trans }}</h1>
+        </div>
+
+        <!-- Language Selector -->
+        <div class="card bg-base-100 shadow-xl mb-8">
+            <div class="card-body">
+                <h3 class="text-lg font-medium mb-4">{{ 'label.language'|trans }}</h3>
+                <div class="flex items-center gap-4">
+                    <div class="join">
+                        <a href="{{ path('app_settings_change_locale', {'locale': 'en'}) }}"
+                           class="btn btn-sm join-item {{ app.request.locale == 'en' ? 'btn-active' : '' }}">
+                            {{ 'label.language_en'|trans }}
+                        </a>
+                        <a href="{{ path('app_settings_change_locale', {'locale': 'de'}) }}"
+                           class="btn btn-sm join-item {{ app.request.locale == 'de' ? 'btn-active' : '' }}">
+                            {{ 'label.language_de'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        </div>
+    </div>
+{% endblock %}
