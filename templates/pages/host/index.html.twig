@@ -7,11 +7,13 @@
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold">{{ 'host.hosts'|trans }}</h1>
 
-            <div>
-                <a href="{{ path('app_host_new') }}" class="btn btn-primary">
-                    {{ 'host.create_new'|trans }}
-                </a>
-            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div>
+                    <a href="{{ path('app_host_new') }}" class="btn btn-primary">
+                        {{ 'host.create_new'|trans }}
+                    </a>
+                </div>
+            {% endif %}
         </div>
 
         {% include 'partials/_flash_messages.html.twig' %}
@@ -25,7 +27,9 @@
                         <th>{{ 'host.hostname'|trans }}</th>
                         <th>{{ 'host.port'|trans }}</th>
                         <th>{{ 'host.username'|trans }}</th>
-                        <th>{{ 'common.actions'|trans }}</th>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <th>{{ 'common.actions'|trans }}</th>
+                        {% endif %}
                     </tr>
                     </thead>
                     <tbody>
@@ -35,22 +39,25 @@
                             <td>{{ host.hostname }}</td>
                             <td>{{ host.port }}</td>
                             <td>{{ host.username }}</td>
-                            <td class="flex space-x-1">
-                                <form method="post" action="{{ path('app_host_delete', {'id': host.id}) }}"
-                                      onsubmit="return confirm('{{ 'host.delete_confirm'|trans({'%name%': host.name}) }}');"
-                                      class="inline">
-                                    <input type="hidden" name="_method" value="POST">
-                                    {# CSRF Token #}
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ host.id) }}">
-                                    <button type="submit" class="btn btn-ghost btn-error btn-xs">
-                                        {{ 'common.delete'|trans }}
-                                    </button>
-                                </form>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <td class="flex space-x-1">
+                                    <form method="post" action="{{ path('app_host_delete', {'id': host.id}) }}"
+                                          onsubmit="return confirm('{{ 'host.delete_confirm'|trans({'%name%': host.name}) }}');"
+                                          class="inline">
+                                        <input type="hidden" name="_method" value="POST">
+                                        {# CSRF Token #}
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ host.id) }}">
+                                        <button type="submit" class="btn btn-ghost btn-error btn-xs">
+                                            {{ 'common.delete'|trans }}
+                                        </button>
+                                    </form>
 
-                                <a href="{{ path('app_host_edit', {'id': host.id}) }}" class="btn btn-ghost btn-primary btn-xs">
-                                    {{ 'common.edit'|trans }}
-                                </a>
-                            </td>
+                                    <a href="{{ path('app_host_edit', {'id': host.id}) }}"
+                                       class="btn btn-ghost btn-primary btn-xs">
+                                        {{ 'common.edit'|trans }}
+                                    </a>
+                                </td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                     </tbody>

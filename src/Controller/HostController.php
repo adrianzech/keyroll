@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/host')]
-// #[IsGranted('ROLE_USER')]
+#[IsGranted('ROLE_USER')]
 class HostController extends AbstractController
 {
     public function __construct(
@@ -33,7 +33,7 @@ class HostController extends AbstractController
     }
 
     #[Route('/new', name: 'app_host_new', methods: ['GET', 'POST'])]
-    // #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_ADMIN')]
     public function new(
         Request $request,
     ): Response {
@@ -57,7 +57,7 @@ class HostController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_host_edit', methods: ['GET', 'POST'])]
-    // #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_ADMIN')]
     public function edit(
         Request $request,
         Host $host,
@@ -80,7 +80,7 @@ class HostController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_host_delete', methods: ['POST'])]
-    // #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(
         Request $request,
         Host $host,

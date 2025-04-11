@@ -13,9 +13,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/ssh-key')]
-// #[IsGranted('ROLE_USER')]
+#[IsGranted('ROLE_USER')]
 class SSHKeyController extends AbstractController
 {
     public function __construct(
@@ -33,7 +34,7 @@ class SSHKeyController extends AbstractController
     }
 
     #[Route('/new', name: 'app_ssh_key_new', methods: ['GET', 'POST'])]
-    // #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_ADMIN')]
     public function new(
         Request $request,
     ): Response {
@@ -67,7 +68,7 @@ class SSHKeyController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_ssh_key_edit', methods: ['GET', 'POST'])]
-    // #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_ADMIN')]
     public function edit(
         Request $request,
         SSHKey $key,
@@ -90,7 +91,7 @@ class SSHKeyController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_ssh_key_delete', methods: ['POST'])]
-    // #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(
         Request $request,
         SSHKey $key,
@@ -111,6 +112,6 @@ class SSHKeyController extends AbstractController
         $this->addFlash('success', 'host.deleted_successfully');
 
         // Redirect after successful deletion
-        return $this->redirectToRoute('app_host_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_ssh_key_index', [], Response::HTTP_SEE_OTHER);
     }
 }

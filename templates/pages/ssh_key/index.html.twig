@@ -7,11 +7,13 @@
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold">{{ 'key.ssh_keys'|trans }}</h1>
 
-            <div>
-                <a href="{{ path('app_ssh_key_new') }}" class="btn btn-primary">
-                    {{ 'key.create_new'|trans }}
-                </a>
-            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div>
+                    <a href="{{ path('app_ssh_key_new') }}" class="btn btn-primary">
+                        {{ 'key.create_new'|trans }}
+                    </a>
+                </div>
+            {% endif %}
         </div>
 
         {% include 'partials/_flash_messages.html.twig' %}
@@ -24,7 +26,10 @@
                         <th>{{ 'key.name'|trans }}</th>
                         <th>{{ 'label.created_at'|trans }}</th>
                         <th>{{ 'label.updated_at'|trans }}</th>
-                        <th>{{ 'common.actions'|trans }}</th>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <th>{{ 'common.actions'|trans }}</th>
+                        {% endif %}
+
                     </tr>
                     </thead>
                     <tbody>
@@ -33,22 +38,26 @@
                             <td>{{ key.name }}</td>
                             <td>{{ key.createdAt|date('d.m.Y H:i') }}</td>
                             <td>{{ key.updatedAt|date('d.m.Y H:i') }}</td>
-                            <td class="flex space-x-1">
-                                <form method="post" action="{{ path('app_ssh_key_delete', {'id': key.id}) }}"
-                                      onsubmit="return confirm('{{ 'key.delete_confirm'|trans({'%name%': key.name}) }}');"
-                                      class="inline">
-                                    <input type="hidden" name="_method" value="POST">
-                                    {# CSRF Token #}
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ key.id) }}">
-                                    <button type="submit" class="btn btn-ghost btn-error btn-xs">
-                                        {{ 'common.delete'|trans }}
-                                    </button>
-                                </form>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <td class="flex space-x-1">
+                                    <form method="post" action="{{ path('app_ssh_key_delete', {'id': key.id}) }}"
+                                          onsubmit="return confirm('{{ 'key.delete_confirm'|trans({'%name%': key.name}) }}');"
+                                          class="inline">
+                                        <input type="hidden" name="_method" value="POST">
+                                        {# CSRF Token #}
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ key.id) }}">
+                                        <button type="submit" class="btn btn-ghost btn-error btn-xs">
+                                            {{ 'common.delete'|trans }}
+                                        </button>
+                                    </form>
 
-                                <a href="{{ path('app_ssh_key_edit', {'id': key.id}) }}" class="btn btn-ghost btn-primary btn-xs">
-                                    {{ 'common.edit'|trans }}
-                                </a>
-                            </td>
+                                    <a href="{{ path('app_ssh_key_edit', {'id': key.id}) }}"
+                                       class="btn btn-ghost btn-primary btn-xs">
+                                        {{ 'common.edit'|trans }}
+                                    </a>
+                                </td>
+                            {% endif %}
+
                         </tr>
                     {% endfor %}
                     </tbody>
