@@ -1,9 +1,7 @@
-# Application Core
 app:
   subtitle: 'SSH Key Management System'
   title: 'KeyRoll'
 
-# Authentication
 auth:
   account_disabled: 'Your account is disabled'
   email_placeholder: 'your@email.com'
@@ -17,8 +15,13 @@ auth:
   register: 'Register'
   register_account_exists: 'Already have an account?'
   register_terms: 'Agree to terms and conditions'
+  email_already_exists: 'This email is already used by another user.'
+  email_invalid: 'Please enter a valid email address.'
+  enter_password: 'Please enter a password'
+  password_min_length: 'Your password should be at least {{ limit }} characters'
+  password_mismatch: 'The password fields must match.'
+  register_need_to_agree: 'You need to agree to our terms.'
 
-# Common Actions
 common:
   actions: 'Actions'
   back: 'Back'
@@ -30,8 +33,12 @@ common:
   view: 'View'
   update: 'Update'
   invalid_csrf_token: 'Invalid security token. Please try again.'
+  flash:
+    error:
+      login_required: 'Please log in to access this page.' # Assuming this based on controller code
+      invalid_form: 'The form contains errors. Please check the fields below.' # Assuming this based on controller code
+      unexpected_error: 'An unexpected error occurred. Please try again later.' # Assuming this based on controller code
 
-# Host Management
 host:
   activate: 'Activate Server'
   activated_successfully: 'Server has been activated successfully'
@@ -65,8 +72,15 @@ host:
   toggle_confirm: 'Are you sure you want to toggle the status of this server?'
   updated_successfully: 'Server has been updated successfully'
   username: 'Username'
+  hostname_invalid_format: 'The hostname contains invalid characters. Only letters, numbers, dots (.), and hyphens (-) are allowed.'
+  hostname_required: 'Please enter a hostname or IP address'
+  name_already_exists: 'This name is already used by another host.'
+  name_invalid_format: 'The name contains invalid characters. Only letters, numbers, dots (.), hyphens (-), and spaces are allowed.'
+  name_required: 'Please enter a name for the server'
+  port_invalid_range: 'Port must be between 1 and 65535'
+  port_required: 'Please enter an SSH port'
+  username_required: 'Please enter an SSH username'
 
-# SSH Key Management
 key:
   activate: 'Activate Key'
   activated_successfully: 'SSH key has been activated successfully'
@@ -91,8 +105,10 @@ key:
   status: 'Status'
   toggle_confirm: 'Are you sure you want to toggle the status of this SSH key?'
   updated_successfully: 'SSH key has been updated successfully'
+  name_required: 'Please enter a name for your SSH key'
+  public_key_invalid_format: 'Invalid public key format. It should start with ssh-rsa, ssh-ed25519, or another valid key format'
+  public_key_required: 'Please enter your SSH public key'
 
-# Common Labels
 label:
   account: 'Account'
   active: 'Active'
@@ -109,7 +125,6 @@ label:
   status: 'Status'
   updated_at: 'Updated At'
 
-# Settings Page Specific
 settings:
   title: 'Settings'
   account:
@@ -132,7 +147,6 @@ settings:
       current_password_required: 'Please enter your current password to confirm the change.'
       current_password_incorrect: 'The current password you entered is incorrect.'
 
-# Theme
 theme:
   dark: 'Dark Mode'
   light: 'Light Mode'

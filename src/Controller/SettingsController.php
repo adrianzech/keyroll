@@ -6,134 +6,108 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\AccountFormType;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\UserSettingsUpdater;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SettingsController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly TranslatorInterface $translator,
+        private readonly UserSettingsUpdater $userSettingsUpdater,
     ) {
     }
 
     #[Route('/settings', name: 'app_settings_index')]
     public function index(Request $request): Response
     {
-        /** @var User|null $user */
         $user = $this->getUser();
+        if (!$user instanceof User) {
+            $this->addFlash('warning', $this->translator->trans('common.flash.error.login_required'));
 
-        if (!$user) {
-            throw $this->createAccessDeniedException('User not found or not logged in.');
+            return $this->redirectToRoute('app_login');
         }
 
-        /** @var FormInterface<User> $form */
         $form = $this->createForm(AccountFormType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $changesMade = $this->handleAccountUpdate($form, $user);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $updateResult = $this->userSettingsUpdater->updateSettings($form, $user);
+                $this->addUpdateFlashMessages($updateResult);
 
-            if ($changesMade) {
-                $this->entityManager->flush();
-            } elseif ($form->isSubmitted()) {
-                $this->addFlash('info', 'settings.flash.info.no_changes');
+                // Redirect after processing to follow the Post-Redirect-Get pattern
+                return $this->redirectToRoute('app_settings_index');
             }
 
-            return $this->redirectToRoute('app_settings_index');
+            // Form was submitted but is invalid
+            $this->addFlash('error', $this->translator->trans('common.flash.error.invalid_form'));
         }
 
         return $this->render('pages/settings/index.html.twig', [
-            'accountForm' => $form,
+            'accountForm' => $form->createView(),
         ]);
     }
 
     /**
-     * @param FormInterface<User> $form
+     * Adds appropriate flash messages based on the result of the settings update operation.
+     *
+     * @param array{changes_made: bool, email_changed: bool, password_changed: bool, error: bool} $updateResult the results from the UserSettingsUpdater service
      */
-    private function handleAccountUpdate(FormInterface $form, User $user): bool
+    private function addUpdateFlashMessages(array $updateResult): void
     {
-        $emailChanged = $this->updateEmailIfChanged($form, $user);
-        $passwordChanged = $this->updatePasswordIfProvided($form, $user);
+        if ($updateResult['error']) {
+            $this->addFlash('error', $this->translator->trans('common.flash.error.unexpected_error'));
 
-        return $emailChanged || $passwordChanged;
-    }
-
-    /**
-     * @param FormInterface<User> $form
-     */
-    private function updateEmailIfChanged(FormInterface $form, User $user): bool
-    {
-        $submittedEmail = $form->get('email')->getData();
-
-        if (!empty($submittedEmail) && $submittedEmail !== $user->getEmail()) {
-            $user->setEmail($submittedEmail);
-            $this->addFlash('success', 'settings.flash.success.email_updated');
-
-            return true;
+            return; // Stop if a persistence error occurred
         }
 
-        return false;
-    }
+        if (!$updateResult['changes_made']) {
+            $this->addFlash('info', $this->translator->trans('settings.flash.info.no_changes'));
 
-    /**
-     * @param FormInterface<User> $form
-     */
-    private function updatePasswordIfProvided(FormInterface $form, User $user): bool
-    {
-        $currentPassword = $form->get('currentPassword')->getData();
-        $plainPassword = $form->get('plainPassword')->getData();
-
-        if (empty($currentPassword) && empty($plainPassword)) {
-            return false;
+            return; // No changes were detected or saved
         }
 
-        if (empty($plainPassword)) {
-            $this->addFlash('error', 'settings.flash.error.new_password_required');
-
-            return false;
+        // Add specific success messages if changes were successfully saved
+        if ($updateResult['email_changed']) {
+            $this->addFlash('success', $this->translator->trans('settings.flash.success.email_updated'));
         }
-
-        if (empty($currentPassword)) {
-            $this->addFlash('error', 'settings.flash.error.current_password_required');
-
-            return false;
+        if ($updateResult['password_changed']) {
+            $this->addFlash('success', $this->translator->trans('settings.flash.success.password_updated'));
         }
-
-        if (!$this->passwordHasher->isPasswordValid($user, $currentPassword)) {
-            $this->addFlash('error', 'settings.flash.error.current_password_incorrect');
-
-            return false;
-        }
-
-        $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
-        $user->setPassword($hashedPassword);
-        $this->addFlash('success', 'settings.flash.success.password_updated');
-
-        return true;
     }
 
     #[Route('/settings/change-locale/{locale}', name: 'app_settings_change_locale')]
     public function changeLocale(string $locale, Request $request): Response
     {
-        $supportedLocales = $this->getParameter('keyroll.supported_locales');
-        if (!in_array($locale, explode('|', $supportedLocales))) {
+        $supportedLocalesRaw = $this->getParameter('keyroll.supported_locales');
+        $supportedLocales = [];
+
+        // PHPStan believes $supportedLocalesRaw is already string, making is_string redundant.
+        // However, getParameter() returns mixed. We keep the check for robustness against
+        // potential non-string values (e.g., null/false from config errors) which !== '' doesn't prevent.
+        // @phpstan-ignore-next-line function.alreadyNarrowedType
+        if (is_string($supportedLocalesRaw) && $supportedLocalesRaw !== '') {
+            $supportedLocales = explode('|', $supportedLocalesRaw);
+        }
+
+        // Fall back to default locale if the requested one is not supported
+        if (!in_array($locale, $supportedLocales, true)) {
             $locale = $request->getDefaultLocale();
         }
 
         $request->getSession()->set('_locale', $locale);
 
+        // Redirect back to the previous page if possible and safe
         $referer = $request->headers->get('referer');
-
         if ($referer && str_starts_with($referer, $request->getSchemeAndHttpHost())) {
             return $this->redirect($referer);
         }
 
+        // Fallback redirect if referer is not available or external
         return $this->redirectToRoute('app_settings_index');
     }
 }
