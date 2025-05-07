@@ -35,9 +35,9 @@ common:
   invalid_csrf_token: 'Invalid security token. Please try again.'
   flash:
     error:
-      login_required: 'Please log in to access this page.' # Assuming this based on controller code
-      invalid_form: 'The form contains errors. Please check the fields below.' # Assuming this based on controller code
-      unexpected_error: 'An unexpected error occurred. Please try again later.' # Assuming this based on controller code
+      login_required: 'Please log in to access this page.'
+      invalid_form: 'The form contains errors. Please check the fields below.'
+      unexpected_error: 'An unexpected error occurred. Please try again later.'
 
 host:
   activate: 'Activate Server'
@@ -108,6 +108,33 @@ key:
   name_required: 'Please enter a name for your SSH key'
   public_key_invalid_format: 'Invalid public key format. It should start with ssh-rsa, ssh-ed25519, or another valid key format'
   public_key_required: 'Please enter your SSH public key'
+
+category:
+  category: 'Category' # General term
+  categories: 'Categories' # Plural / Index page title
+  create_new: 'Add New Category'
+  edit: 'Edit Category'
+  name: 'Category Name' # General usage for category name, e.g. titles
+  name_placeholder: 'Enter a name for the category (e.g. "Production Servers")'
+  assign_hosts: 'Assign Servers'
+  assign_users: 'Assign Users'
+  assigned_hosts: 'Assigned Servers' # Table header in index
+  assigned_users: 'Assigned Users' # Table header in index
+  delete_confirm: 'Are you sure you want to delete the category "%name%"? This action cannot be undone.'
+  no_categories_found: 'No categories found. Create your first category using the button above.'
+  created_successfully: 'Category has been created successfully.' # Flash message
+  updated_successfully: 'Category has been updated successfully.' # Flash message
+  deleted_successfully: 'Category has been deleted successfully.' # Flash message
+  form: # NEU: Spezifische Übersetzungen für Formularelemente
+    name: 'Name' # Label for the category name input field in forms
+    associated_hosts: 'Associated Servers' # Label for the hosts selection field
+    associated_users: 'Associated Users' # Label for the users selection field
+    search_hosts: 'Search Servers' # Label for the host search input in the custom selector
+    search_hosts_placeholder: 'Type to search servers...' # Placeholder for the host search input
+    no_hosts_added: 'No servers added.' # Message when no hosts are currently assigned/selected
+    search_users: 'Search Users' # Label for the user search input in the custom selector
+    search_users_placeholder: 'Type to search users (e.g., by email)...' # Placeholder for the user search input
+    no_users_added: 'No users added.' # Message when no users are currently assigned/selected
 
 label:
   account: 'Account'

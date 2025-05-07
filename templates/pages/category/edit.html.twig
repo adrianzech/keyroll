@@ -1,0 +1,41 @@
+{# templates/pages/category/edit.html.twig #}
+{# This template is used to display the category edit page. #}
+{# It extends the base layout. #}
+{% extends 'base.html.twig' %}
+
+{# Block for setting the page title. Displays the name of the category being edited. #}
+{% block title %}{{ 'category.edit.title'|trans({'%name%': category.name}) }}{% endblock %}
+
+{# Block for the main content of the page. #}
+{% block body %}
+    <div class="container mx-auto px-4 py-8">
+        {# Header section for the edit page. #}
+        <div class="flex justify-between items-center mb-6">
+            {# Page heading, displaying the category name. #}
+            <h1 class="text-2xl font-bold">{{ 'category.category'|trans({'%name%': category.name}) }}</h1>
+            {# Form for deleting the current category. #}
+            <form method="post" action="{{ path('app_category_delete', {'id': category.id}) }}"
+                  onsubmit="return confirm('{{ 'category.delete_confirm'|trans({'%name%': category.name}) }}');" class="text-right">
+                {# CSRF token for delete protection. #}
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+                {# Delete button. #}
+                <button class="btn btn-error btn-sm">{{ 'common.delete'|trans }}</button>
+            </form>
+        </div>
+
+        {# Include a partial for displaying flash messages (e.g., success or error notifications). #}
+        {% include 'partials/_flash_messages.html.twig' %}
+
+        {# Card component to wrap the category edit form. #}
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                {# Include the category form partial (_form.html.twig). #}
+                {# Pass the form object and a custom button label for editing. #}
+                {% include 'pages/category/_form.html.twig' with {
+                    'form': form,
+                    'button_label': 'category.edit'|trans
+                } %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

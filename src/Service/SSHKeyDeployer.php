@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Category;
 use App\Entity\Host;
 use App\Entity\SSHKey;
+use App\Entity\User;
 use App\Repository\HostRepository;
 use App\Repository\SSHKeyRepository;
-use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -128,19 +129,50 @@ readonly class SSHKeyDeployer
     {
         $this->verifyHostConnection($host);
 
-        // Get Keys
-        $keys = $this->sshKeyRepository->findAll();
-
-        if (empty($keys)) {
-            $this->logger->info('No keys to deploy to {host}', [
+        // 1. Get Categories for the Host
+        $hostCategories = $host->getCategories();
+        if ($hostCategories->isEmpty()) {
+            $this->logger->info('Host {host} has no categories assigned. Skipping key deployment.', [
                 'host' => $host->getName(),
             ]);
 
+            // Decide if you want to *remove* all keys or leave existing ones.
+            // For now, we'll just skip deployment if no categories are assigned.
+            // If you want to ensure only categorized keys are present, you might
+            // want to call updateAuthorizedKeysFile with an empty string or just the marker.
+            // $this->updateAuthorizedKeysFile($host, self::KEYROLL_MARKER);
+            return;
+        }
+
+        // 2. Find Users associated with these Categories
+        $usersToDeploy = $this->getUsersForCategories($hostCategories);
+        if (empty($usersToDeploy)) {
+            $this->logger->info('No users found for the categories assigned to host {host}. Skipping key deployment.', [
+                'host' => $host->getName(),
+            ]);
+
+            // Similar decision as above: maybe clear keys?
+            // $this->updateAuthorizedKeysFile($host, self::KEYROLL_MARKER);
+            return;
+        }
+
+        // 3. Get SSH Keys for those Users
+        $keysToDeploy = $this->sshKeyRepository->findBy(['user' => $usersToDeploy]);
+
+        if (empty($keysToDeploy)) {
+            $this->logger->info('No SSH keys found for users associated with categories of host {host}', [
+                'host' => $host->getName(),
+            ]);
+
+            // Similar decision as above: maybe clear keys?
+            // $this->updateAuthorizedKeysFile($host, self::KEYROLL_MARKER);
             return;
         }
 
         // Create an array of public key strings
-        $publicKeysToAdd = array_map(fn (SSHKey $key) => $key->getPublicKey(), $keys);
+        $publicKeysToAdd = array_map(fn (SSHKey $key) => $key->getPublicKey(), $keysToDeploy);
+
+        // --- End of modified logic ---
 
         // Get existing keys from the server
         $existingKeys = $this->getExistingAuthorizedKeys($host);
@@ -150,7 +182,7 @@ readonly class SSHKeyDeployer
 
         // If nothing changed, don't update the file
         if ($mergedKeys === $existingKeys) {
-            $this->logger->info('No changes needed for host {host}, all keys already deployed', [
+            $this->logger->info('No changes needed for host {host}, relevant keys already deployed', [
                 'host' => $host->getName(),
             ]);
 
@@ -158,6 +190,31 @@ readonly class SSHKeyDeployer
         }
 
         $this->updateAuthorizedKeysFile($host, $mergedKeys);
+    }
+
+    /**
+     * Finds all unique users associated with a collection of categories.
+     *
+     * @param Collection<int, Category> $categories
+     *
+     * @return array<int, User>
+     */
+    private function getUsersForCategories(Collection $categories): array
+    {
+        $users = [];
+        $userIds = []; // Keep track of IDs to ensure uniqueness
+
+        foreach ($categories as $category) {
+            foreach ($category->getUsers() as $user) {
+                $userId = $user->getId();
+                if ($userId !== null && !isset($userIds[$userId])) {
+                    $users[] = $user;
+                    $userIds[$userId] = true;
+                }
+            }
+        }
+
+        return $users;
     }
 
     /**
@@ -228,36 +285,64 @@ readonly class SSHKeyDeployer
     /**
      * Merges existing keys with new keys, avoiding duplicates.
      *
-     * @param string             $existingKeysString The existing authorized_keys content
-     * @param array<int, string> $newKeysArray       Array of new SSH public keys to add
+     * @param string $existingKeysString The existing authorized_keys content
      *
      * @return string The merged authorized_keys content
      */
-    private function mergeKeys(string $existingKeysString, array $newKeysArray): string
+    private function mergeKeys(string $existingKeysString, array $targetKeysArray): string
     {
-        // Normalize line endings and split into array
+        // Normalize line endings
         $existingKeysString = str_replace("\r\n", "\n", $existingKeysString);
-        $existingKeysArray = $existingKeysString ? explode("\n", $existingKeysString) : [];
+        $lines = $existingKeysString ? explode("\n", $existingKeysString) : [];
 
-        // Normalize and clean up existing keys
-        $existingKeysArray = array_map('trim', $existingKeysArray);
-        $existingKeysArray = array_filter($existingKeysArray, $this->isValidKey(...));
+        // Normalize and clean up target keys
+        $targetKeysArray = array_map('trim', $targetKeysArray);
+        $targetKeysArray = array_filter($targetKeysArray, $this->isValidKey(...));
+        // Use key signature for efficient lookup
+        $targetKeySignatures = [];
+        foreach ($targetKeysArray as $key) {
+            $parts = preg_split('/\s+/', $key, 3);
+            $signature = (count($parts) >= 2) ? $parts[0] . ' ' . $parts[1] : $key;
+            $targetKeySignatures[$signature] = $key;
+        }
 
-        // Normalize and clean up new keys
-        $newKeysArray = array_map('trim', $newKeysArray);
-        $newKeysArray = array_filter($newKeysArray, $this->isValidKey(...));
+        $finalKeys = [];
+        $inKeyRollSection = false;
 
-        // Process existing keys
-        $existingKeyParts = $this->processExistingKeys($existingKeysArray);
+        foreach ($lines as $line) {
+            $trimmedLine = trim($line);
 
-        // Add KeyRoll marker
-        $existingKeyParts['keyroll_marker'] = self::KEYROLL_MARKER;
+            if ($trimmedLine === trim(self::KEYROLL_MARKER)) {
+                $inKeyRollSection = true;
+                // Add the marker once, at the end of non-KeyRoll keys
+                continue; // Don't add the marker itself multiple times if it exists already
+            }
 
-        // Add new keys
-        $existingKeyParts = $this->addNewKeys($existingKeyParts, $newKeysArray, $existingKeysArray);
+            if (!$inKeyRollSection) {
+                // Keep lines outside the KeyRoll section if they are valid
+                if ($this->isValidKey($trimmedLine)) {
+                    $finalKeys[] = $trimmedLine;
+                }
+            }
+            // Ignore lines within the old KeyRoll section - we will rebuild it
+        }
 
-        // Convert back to single string
-        return implode("\n", array_values($existingKeyParts));
+        // Add the KeyRoll marker (ensures it's present)
+        $finalKeys[] = self::KEYROLL_MARKER;
+
+        // Add the target keys (these are the ones that should be in the section)
+        foreach ($targetKeySignatures as $key) {
+            $finalKeys[] = $key;
+        }
+
+        // Remove potential duplicates introduced if keys existed both outside and inside the marker before
+        // This is a simple approach; a more robust one might involve signature checking again.
+        $finalKeys = array_unique($finalKeys);
+
+        // Filter out any empty lines that might have crept in
+        $finalKeys = array_filter($finalKeys, fn ($k) => $k !== '');
+
+        return implode("\n", $finalKeys);
     }
 
     /**

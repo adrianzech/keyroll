@@ -20,6 +20,9 @@ key:
   name_required: 'Please enter a name for your SSH key'
   public_key_invalid_format: 'Invalid public key format. It should start with ssh-rsa, ssh-ed25519, or another valid key format'
   public_key_required: 'Please enter your SSH public key'
+category:
+  name_required: 'Please enter a name for the category.'
+  name_already_exists: 'This category name is already in use.' # Added for potential UniqueEntity constraint
 settings:
   account:
     current_password: 'Current Password'

@@ -8,6 +8,7 @@
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                     <li><a href="{{ path('app_host_index') }}">{{ "host.hosts"|trans }}</a></li>
                     <li><a href="{{ path('app_ssh_key_index') }}">{{ "key.ssh_keys"|trans }}</a></li>
+                    <li><a href="{{ path('app_category_index') }}">{{ "category.category"|trans }}</a></li>
                 {% endif %}
                 {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
                     <li>

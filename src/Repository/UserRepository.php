@@ -35,28 +35,27 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    //    /**
-    //     * @return User[] Returns an array of User objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Finds users by email, optionally excluding certain IDs.
+     *
+     * @param string $query       the search query for the user email
+     * @param int[]  $excludedIds an array of user IDs to exclude from the results
+     *
+     * @return User[] returns an array of User objects
+     */
+    public function findByEmailLike(string $query, array $excludedIds = []): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('LOWER(u.email) LIKE LOWER(:query)')
+            ->setParameter('query', '%' . mb_strtolower($query) . '%')
+            ->orderBy('u.email', 'ASC')
+            ->setMaxResults(10); // Limit search results
 
-    //    public function findOneBySomeField($value): ?User
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        if (!empty($excludedIds)) {
+            $qb->andWhere('u.id NOT IN (:excludedIds)')
+                ->setParameter('excludedIds', $excludedIds);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

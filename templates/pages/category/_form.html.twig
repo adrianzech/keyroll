@@ -1,0 +1,83 @@
+{# templates/pages/category/_form.html.twig #}
+{# This is a partial Twig template for rendering the category form. #}
+
+{# Import custom form widget macros. #}
+{% import "macros/_form_widgets.html.twig" as form_widgets %}
+
+{# Prepare initial data for JavaScript-powered entity selectors. #}
+{# The category entity is accessed from the form's variables. #}
+{% set category_entity = form.vars.data %}
+
+{# Initialize an empty array for hosts data. #}
+{% set initial_hosts_data = [] %}
+{# If a category entity exists, has an ID, and its hosts property is iterable and not empty, #}
+{# map the hosts to a simpler structure for the entity selector. #}
+{% if category_entity and category_entity.id and category_entity.hosts is iterable and category_entity.hosts is not empty %}
+    {% set initial_hosts_data = category_entity.hosts|map(host_entity => {
+        'id': host_entity.id,
+        'name': host_entity.name ~ ' (' ~ host_entity.hostname ~ ')'
+    }) %}
+{% endif %}
+
+{# Initialize an empty array for users data. #}
+{% set initial_users_data = [] %}
+{# If a category entity exists, has an ID, and its users property is iterable and not empty, #}
+{# map the users to a simpler structure for the entity selector. #}
+{% if category_entity and category_entity.id and category_entity.users is iterable and category_entity.users is not empty %}
+    {% set initial_users_data = category_entity.users|map(user_entity => {
+        'id': user_entity.id,
+        'name': user_entity.email
+    }) %}
+{% endif %}
+
+{# Start rendering the Symfony form. #}
+{{ form_start(form) }}
+
+{# Render the category name form field. #}
+{{ form_row(form.name) }}
+
+{# Container for the host and user entity selectors, arranged in a grid. #}
+<div class="grid md:grid-cols-2 gap-x-6 gap-y-4 mt-4 mb-6">
+
+    {# Host selector section. #}
+    {# Uses the custom 'entity_selector' macro for an interactive selection UI. #}
+    {{ form_widgets.entity_selector(
+        form.hosts,
+        'api_hosts_search',
+        'host',
+        initial_hosts_data,
+        'category.form.search_hosts',
+        'category.form.search_hosts_placeholder',
+        'category.form.no_hosts_added'
+    ) }}
+
+    {# User selector section. #}
+    {# Uses the custom 'entity_selector' macro for an interactive selection UI. #}
+    {{ form_widgets.entity_selector(
+        form.users,
+        'api_users_search',
+        'user',
+        initial_users_data,
+        'category.form.search_users',
+        'category.form.search_users_placeholder',
+        'category.form.no_users_added'
+    ) }}
+
+</div>
+{# End of the grid container. #}
+
+{# Placeholder for rendering any remaining form fields. #}
+{# {{ form_rest(form) }} #}
+
+{# Form action buttons section. #}
+<div class="card-actions justify-end mt-6">
+    {# Cancel button, linking to the category index page. #}
+    <a href="{{ path('app_category_index') }}" class="btn btn-ghost">
+        {{ 'common.cancel'|trans }}
+    </a>
+    {# Submit button. The label can be customized or defaults to 'Save'. #}
+    <button type="submit" class="btn btn-primary">{{ button_label|default('common.save'|trans) }}</button>
+</div>
+
+{# End rendering the Symfony form. #}
+{{ form_end(form) }}

@@ -1,0 +1,96 @@
+{# templates/pages/category/index.html.twig #}
+{# This template displays a list of all categories. #}
+{# It extends the base layout. #}
+{% extends 'base.html.twig' %}
+
+{# Block for setting the page title. #}
+{% block title %}{{ 'category.categories'|trans }}{% endblock %}
+
+{# Block for the main content of the page. #}
+{% block body %}
+    <div class="container mx-auto px-4 py-8">
+        {# Header section for the category list page. #}
+        <div class="flex justify-between items-center mb-6">
+            {# Page heading. #}
+            <h1 class="text-2xl font-bold">{{ 'category.categories'|trans }}</h1>
+
+            {# Display "Create New" button if the user has ROLE_ADMIN. #}
+            {% if is_granted('ROLE_ADMIN') %}
+                <div>
+                    <a href="{{ path('app_category_new') }}" class="btn btn-primary">
+                        {{ 'category.create_new'|trans }}
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        {# Include a partial for displaying flash messages. #}
+        {% include 'partials/_flash_messages.html.twig' %}
+
+        {# Check if there are categories to display. #}
+        {% if categories is defined and categories|length > 0 %}
+            {# Table for displaying the list of categories. #}
+            <div class="overflow-x-auto">
+                <table class="table table-zebra w-full">
+                    {# Table header. #}
+                    <thead>
+                    <tr>
+                        <th>{{ 'category.name'|trans }}</th>
+                        <th>{{ 'category.assigned_hosts'|trans }}</th>
+                        <th>{{ 'category.assigned_users'|trans }}</th>
+                        {# Actions column, visible only to admins. #}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <th>{{ 'common.actions'|trans }}</th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    {# Table body. Iterate over each category. #}
+                    <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            {# Display category name. #}
+                            <td>{{ category.name }}</td>
+                            {# Display count of hosts associated with the category. #}
+                            <td>{{ category.hosts.count }}</td>
+                            {# Display count of users associated with the category. #}
+                            <td>{{ category.users.count }}</td>
+                            {# Actions for each category, visible only to admins. #}
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <td class="flex space-x-1">
+                                    {# Delete category form. #}
+                                    <form method="post" action="{{ path('app_category_delete', {'id': category.id}) }}"
+                                          onsubmit="return confirm('{{ 'category.delete_confirm'|trans({'%name%': category.name}) }}');"
+                                          class="inline">
+                                        <input type="hidden" name="_method" value="POST">
+                                        {# CSRF token for delete protection, specific to the category. #}
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+                                        <button type="submit" class="btn btn-ghost btn-error btn-xs">
+                                            {{ 'common.delete'|trans }}
+                                        </button>
+                                    </form>
+
+                                    {# Link to edit the category. #}
+                                    <a href="{{ path('app_category_edit', {'id': category.id}) }}"
+                                       class="btn btn-ghost btn-primary btn-xs">
+                                        {{ 'common.edit'|trans }}
+                                    </a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            {# Message displayed if no categories are found. #}
+            <div class="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                     class="stroke-info shrink-0 w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>{{ 'category.no_categories_found'|trans }}</span>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

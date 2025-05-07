@@ -44,9 +44,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: SSHKey::class, mappedBy: 'user')]
     private Collection $sshKeys;
 
+    /**
+     * @var Collection<int, Category>
+     */
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'users')]
+    #[ORM\JoinTable(name: 'user_category')]
+    private Collection $categories;
+
     public function __construct()
     {
         $this->sshKeys = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -120,7 +128,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
+        // If we store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
 
@@ -150,6 +158,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $sshKey->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Category $category): static
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): static
+    {
+        $this->categories->removeElement($category);
 
         return $this;
     }
