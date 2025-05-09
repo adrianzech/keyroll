@@ -110,31 +110,31 @@ key:
   public_key_required: 'Please enter your SSH public key'
 
 category:
-  category: 'Category' # General term
-  categories: 'Categories' # Plural / Index page title
+  category: 'Category'
+  categories: 'Categories'
   create_new: 'Add New Category'
   edit: 'Edit Category'
-  name: 'Category Name' # General usage for category name, e.g. titles
+  name: 'Category Name'
   name_placeholder: 'Enter a name for the category (e.g. "Production Servers")'
   assign_hosts: 'Assign Servers'
   assign_users: 'Assign Users'
-  assigned_hosts: 'Assigned Servers' # Table header in index
-  assigned_users: 'Assigned Users' # Table header in index
+  assigned_hosts: 'Assigned Servers'
+  assigned_users: 'Assigned Users'
   delete_confirm: 'Are you sure you want to delete the category "%name%"? This action cannot be undone.'
   no_categories_found: 'No categories found. Create your first category using the button above.'
-  created_successfully: 'Category has been created successfully.' # Flash message
-  updated_successfully: 'Category has been updated successfully.' # Flash message
-  deleted_successfully: 'Category has been deleted successfully.' # Flash message
-  form: # NEU: Spezifische Übersetzungen für Formularelemente
-    name: 'Name' # Label for the category name input field in forms
-    associated_hosts: 'Associated Servers' # Label for the hosts selection field
-    associated_users: 'Associated Users' # Label for the users selection field
-    search_hosts: 'Search Servers' # Label for the host search input in the custom selector
-    search_hosts_placeholder: 'Type to search servers...' # Placeholder for the host search input
-    no_hosts_added: 'No servers added.' # Message when no hosts are currently assigned/selected
-    search_users: 'Search Users' # Label for the user search input in the custom selector
-    search_users_placeholder: 'Type to search users (e.g., by email)...' # Placeholder for the user search input
-    no_users_added: 'No users added.' # Message when no users are currently assigned/selected
+  created_successfully: 'Category has been created successfully.'
+  updated_successfully: 'Category has been updated successfully.'
+  deleted_successfully: 'Category has been deleted successfully.'
+  form:
+    name: 'Name'
+    associated_hosts: 'Associated Servers'
+    associated_users: 'Associated Users'
+    search_hosts: 'Search Servers'
+    search_hosts_placeholder: 'Type to search servers...'
+    no_hosts_added: 'No servers added.'
+    search_users: 'Search Users'
+    search_users_placeholder: 'Type to search users...'
+    no_users_added: 'No users added.'
 
 label:
   account: 'Account'

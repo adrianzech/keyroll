@@ -97,7 +97,7 @@ export default class extends Controller {
         if (!this.hasResultsContainerTarget) return;
         this.resultsContainerTarget.innerHTML = '';
         if (items.length === 0) {
-            this.resultsContainerTarget.innerHTML = `<li><span class="px-4 py-2 italic text-sm">No ${this.itemSingularNameValue}s found.</span></li>`;
+            this.resultsContainerTarget.innerHTML = `<li><span class="px-4 py-2 text-sm">No ${this.itemSingularNameValue}s found</span></li>`;
         } else {
             items.forEach(item => {
                 const listItem = document.createElement('li');
@@ -167,12 +167,12 @@ export default class extends Controller {
 
         const itemDiv = document.createElement('div');
         itemDiv.dataset.itemId = itemId;
-        itemDiv.className = 'flex justify-between items-center p-2 pl-3 bg-base-100/50 dark:bg-base-300/50 rounded-md shadow-sm text-sm';
+        itemDiv.className = 'flex justify-between items-center p-2 pl-3 bg-base-100/50 dark:bg-base-300/50';
         itemDiv.innerHTML = `<span class="truncate mr-2">${itemName}</span>
                              <button type="button"
-                                     class="btn btn-xs btn-circle btn-ghost text-error hover:bg-error hover:text-error-content"
+                                     class="btn btn-square btn-sm btn-ghosttext-error hover:bg-error hover:text-error-content"
                                      aria-label="Remove ${itemName}"
-                                     data-action="click->${this.identifier}#removeItem">&#x2715;</button>`;
+                                     data-action="click->${this.identifier}#removeItem"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"/></svg></button>`;
         if (this.hasSelectedListTarget) {
             this.selectedListTarget.appendChild(itemDiv);
         }
