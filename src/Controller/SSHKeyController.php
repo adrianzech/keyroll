@@ -85,7 +85,7 @@ class SSHKeyController extends AbstractController
         }
 
         return $this->render('pages/ssh_key/edit.html.twig', [
-            'host' => $key,
+            'key' => $key,
             'form' => $form,
         ]);
     }
