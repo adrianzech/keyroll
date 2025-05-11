@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\User;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -13,9 +12,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @extends AbstractType<User>
+ * @extends AbstractBaseType<User>
  */
-class LoginFormType extends AbstractType
+class LoginFormType extends AbstractBaseType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -41,6 +40,7 @@ class LoginFormType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
+        parent::configureOptions($resolver);
         $resolver->setDefaults([
             'csrf_protection' => true,
             'csrf_field_name' => '_csrf_token',
