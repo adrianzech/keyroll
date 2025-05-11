@@ -1,27 +1,36 @@
+{# templates/base.html.twig #}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app.request.locale|split('_')|first }}" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Welcome!{% endblock %}</title>
-    <link rel="icon"
-          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ 'app.title'|trans }} - {{ 'app.subtitle'|trans }}{% endblock %}</title>
     {% block stylesheets %}
-        <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+        {{ importmap('app') }}
+    {% endblock %}
+
+    {% block javascript_theme_initial %}
+        <script src="{{ asset('theme-initial.js') }}"></script>
     {% endblock %}
 
     {% block javascripts %}
         {% block importmap %}{{ importmap('app') }}{% endblock %}
     {% endblock %}
 </head>
-<body class="flex flex-col min-h-screen">
-{% block header %}
-    {% include 'partials/_header.html.twig' %}
-{% endblock %}
 
-<main id="main-content" class="flex-grow">
+<body class="bg-base-200 min-h-screen flex flex-col">
+<header class="bg-base-100 shadow-md sticky top-0 z-50">
+    {% block header_navigation %}
+        {% include 'partials/_header.html.twig' %}
+    {% endblock %}
+</header>
+
+<main class="flex-grow container mx-auto p-4">
+    {% block flash_messages %}
+        {% include 'components/_flash_messages.html.twig' %}
+    {% endblock %}
+
     {% block body %}{% endblock %}
 </main>
-
 </body>
 </html>

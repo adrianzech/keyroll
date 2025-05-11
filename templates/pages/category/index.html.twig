@@ -24,9 +24,6 @@
             {% endif %}
         </div>
 
-        {# Include a partial for displaying flash messages. #}
-        {% include 'partials/_flash_messages.html.twig' %}
-
         {# Check if there are categories to display. #}
         {% if categories is defined and categories|length > 0 %}
             {# Table for displaying the list of categories. #}
