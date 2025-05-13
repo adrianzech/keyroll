@@ -1,24 +1,21 @@
-# Anwendungs-Kern
 app:
-  subtitle: 'SSH Schlüssel Verwaltungssystem'
   title: 'KeyRoll'
+  subtitle: 'SSH Schlüssel Verwaltungssystem'
 
-# Authentifizierung
 auth:
-  account_disabled: 'Ihr Konto ist deaktiviert'
-  email_placeholder: 'deine@email.com'
-  invalid_credentials: 'Ungültige Anmeldedaten'
   login: 'Anmelden'
-  login_already_logged_in: 'Sie sind bereits angemeldet'
-  login_no_account: 'Noch kein Konto?'
-  login_remember_me: 'Angemeldet bleiben'
   logout: 'Abmelden'
-  password_placeholder: '••••••••'
   register: 'Registrieren'
+  email_placeholder: 'deine@email.com'
+  password_placeholder: '••••••••'
+  login_remember_me: 'Angemeldet bleiben'
+  login_no_account: 'Noch kein Konto?'
   register_account_exists: 'Bereits ein Konto?'
-  register_terms: 'Den Nutzungsbedingungen zustimmen'
+  register_terms: 'Ich stimme den Nutzungsbedingungen zu'
+  invalid_credentials: 'Ungültige Anmeldedaten.'
+  account_disabled: 'Ihr Konto ist deaktiviert.'
+  login_already_logged_in: 'Sie sind bereits angemeldet als '
 
-# Allgemeine Aktionen
 common:
   actions: 'Aktionen'
   back: 'Zurück'
@@ -27,89 +24,126 @@ common:
   delete: 'Löschen'
   edit: 'Bearbeiten'
   save: 'Speichern'
-  view: 'Anzeigen'
   update: 'Aktualisieren'
+  view: 'Anzeigen'
+  save_changes: 'Änderungen speichern'
+  no_items_found: 'Keine Einträge gefunden.'
+  confirm_delete_generic: 'Sind Sie sicher, dass Sie diesen Eintrag löschen möchten?'
   invalid_csrf_token: 'Ungültiges Sicherheitstoken. Bitte versuchen Sie es erneut.'
+  button:
+    create_new: 'Neu erstellen'
+    edit: 'Bearbeiten'
+    delete: 'Löschen'
+    save: 'Speichern'
+    update: 'Aktualisieren'
+    cancel: 'Abbrechen'
+    back_to_list: 'Zurück zur Übersicht'
+    back_to_dashboard: 'Zurück zum Dashboard'
+  label:
+    name: 'Name'
+    created_at: 'Erstellt am'
+    updated_at: 'Aktualisiert am'
+    status: 'Status'
+    active: 'Aktiv'
+    inactive: 'Inaktiv'
+  flash:
+    error:
+      login_required: 'Bitte melden Sie sich an, um auf diese Seite zuzugreifen.'
+      invalid_form: 'Das Formular enthält Fehler. Bitte überprüfen Sie die untenstehenden Felder.'
+      unexpected_error: 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.'
 
-# Host-Verwaltung
 host:
-  activate: 'Server aktivieren'
-  activated_successfully: 'Server wurde erfolgreich aktiviert'
-  back_to_list: 'Zurück zu den Servern'
-  basic_info: 'Serverinformationen'
-  category: 'Kategorie'
-  category_required: 'Bitte wählen Sie eine Kategorie'
-  create_new: 'Neuen Server hinzufügen'
-  created_successfully: 'Server wurde erfolgreich erstellt'
-  deactivate: 'Server deaktivieren'
-  deactivated_successfully: 'Server wurde erfolgreich deaktiviert'
-  default_port: '22'
-  default_user: 'adrian'
-  delete_confirm: 'Sind Sie sicher, dass Sie diesen Server löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
-  deleted_successfully: 'Server wurde erfolgreich gelöscht'
-  details: 'Serverdetails'
-  edit: 'Server bearbeiten'
-  hostname: 'Hostname oder IP'
-  hostname_help: 'Hostname oder IP-Adresse des Servers'
-  hostname_placeholder: 'Hostname oder IP-Adresse eingeben'
+  host_singular: 'Server'
   hosts: 'Server'
-  last_connection_attempt: 'Letzter Verbindungsversuch'
-  last_error: 'Letzter Fehler'
-  name: 'Servername'
-  name_placeholder: 'Geben Sie einen Namen für diesen Server ein (z.B. "Webserver 1")'
-  no_hosts_found: 'Keine Server gefunden. Fügen Sie Ihren ersten Server über die Schaltfläche oben hinzu.'
-  port: 'Port'
-  select_category: 'Kategorie auswählen'
-  status: 'Status'
-  status_info: 'Statusinformationen'
-  toggle_confirm: 'Sind Sie sicher, dass Sie den Status dieses Servers ändern möchten?'
-  updated_successfully: 'Server wurde erfolgreich aktualisiert'
-  username: 'Benutzername'
+  title:
+    index: 'Serverübersicht'
+    create_new: 'Neuen Server erstellen'
+    edit: 'Server bearbeiten'
+  button:
+    create_new: 'Neuen Server hinzufügen'
+  label:
+    name: 'Servername'
+    hostname: 'Hostname/IP'
+    port: 'Port'
+    username: 'Benutzername'
+    category: 'Kategorie'
+    categories: 'Kategorien'
+  placeholder:
+    name: 'z.B. Webserver 1'
+    hostname: 'z.B. srv1.beispiel.com oder 192.168.1.10'
+    port: 'Standard: 22'
+    username: 'z.B. root, admin'
+  help:
+    hostname: 'Hostname oder IP-Adresse des Servers.'
+  alert:
+    no_hosts_found: 'Keine Server gefunden. Fügen Sie Ihren ersten Server hinzu.'
+    delete_confirm: 'Sind Sie sicher, dass Sie den Server "%name%" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
+  flash:
+    created_successfully: 'Server wurde erfolgreich erstellt.'
+    updated_successfully: 'Server wurde erfolgreich aktualisiert.'
+    deleted_successfully: 'Server wurde erfolgreich gelöscht.'
 
-# SSH-Schlüssel-Verwaltung
 key:
-  activate: 'Schlüssel aktivieren'
-  activated_successfully: 'SSH-Schlüssel wurde erfolgreich aktiviert'
-  back_to_list: 'Zurück zu den SSH-Schlüsseln'
-  basic_info: 'Grundlegende Informationen'
-  count: '{count, plural, =0{Keine Schlüssel} =1{Ein Schlüssel} other{# Schlüssel}}'
-  create_new: 'Neuen SSH-Schlüssel hinzufügen'
-  created_successfully: 'SSH-Schlüssel wurde erfolgreich erstellt'
-  deactivate: 'Schlüssel deaktivieren'
-  deactivated_successfully: 'SSH-Schlüssel wurde erfolgreich deaktiviert'
-  delete_confirm: 'Sind Sie sicher, dass Sie diesen SSH-Schlüssel löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
-  deleted_successfully: 'SSH-Schlüssel wurde erfolgreich gelöscht'
-  details: 'SSH-Schlüssel Details'
-  edit: 'SSH-Schlüssel bearbeiten'
-  name: 'Schlüsselname'
-  name_placeholder: 'Geben Sie einen Namen für diesen Schlüssel ein (z.B. "Arbeitslaptop")'
-  no_keys_found: 'Keine SSH-Schlüssel gefunden. Fügen Sie Ihren ersten Schlüssel über die Schaltfläche oben hinzu.'
-  public_key: 'Öffentlicher Schlüssel'
-  public_key_help: 'Kopieren und fügen Sie Ihren öffentlichen Schlüssel ein, normalerweise zu finden in ~/.ssh/id_rsa.pub oder ähnlich'
-  public_key_placeholder: 'Fügen Sie Ihren öffentlichen Schlüssel hier ein (Format ssh-rsa oder ssh-ed25519)'
-  ssh_keys: 'SSH-Schlüssel'
-  status: 'Status'
-  toggle_confirm: 'Sind Sie sicher, dass Sie den Status dieses SSH-Schlüssels ändern möchten?'
-  updated_successfully: 'SSH-Schlüssel wurde erfolgreich aktualisiert'
+  ssh_key_singular: 'SSH Schlüssel'
+  ssh_keys: 'SSH Schlüssel'
+  title:
+    index: 'SSH Schlüsselübersicht'
+    create_new: 'Neuen SSH Schlüssel hinzufügen'
+    edit: 'SSH Schlüssel bearbeiten'
+  button:
+    create_new: 'Neuen SSH Schlüssel hinzufügen'
+  label:
+    name: 'Schlüsselname'
+    public_key: 'Öffentlicher Schlüssel'
+    user: 'Benutzer'
+  placeholder:
+    name: 'z.B. Mein Laptop, Server Key'
+    public_key: 'Beginnt mit ssh-rsa, ssh-ed25519, etc.'
+  help:
+    public_key: 'Fügen Sie hier den Inhalt Ihrer öffentlichen Schlüsseldatei ein (z.B. id_rsa.pub).'
+  alert:
+    no_keys_found: 'Keine SSH Schlüssel gefunden. Fügen Sie Ihren ersten Schlüssel hinzu.'
+    delete_confirm: 'Sind Sie sicher, dass Sie den SSH Schlüssel "%name%" löschen möchten?'
+  flash:
+    created_successfully: 'SSH Schlüssel wurde erfolgreich erstellt.'
+    updated_successfully: 'SSH Schlüssel wurde erfolgreich aktualisiert.'
+    deleted_successfully: 'SSH Schlüssel wurde erfolgreich gelöscht.'
 
-# Allgemeine Bezeichnungen
-label:
-  account: 'Konto'
-  active: 'Aktiv'
-  category: 'Kategorie'
-  created_at: 'Erstellt am'
-  email: 'E-Mail'
-  general: 'Allgemein'
-  inactive: 'Inaktiv'
-  language: 'Sprache'
-  language_de: 'Deutsch'
-  language_en: 'Englisch'
-  password: 'Passwort'
-  settings: 'Einstellungen'
-  status: 'Status'
-  updated_at: 'Aktualisiert am'
+category:
+  category_singular: 'Kategorie'
+  categories: 'Kategorien'
+  title:
+    index: 'Kategorienübersicht'
+    create_new: 'Neue Kategorie erstellen'
+    edit: 'Kategorie bearbeiten'
+  button:
+    create_new: 'Neue Kategorie hinzufügen'
+  label:
+    name: 'Kategoriename'
+    assigned_hosts: 'Zugeordnete Server'
+    assigned_users: 'Zugeordnete Benutzer'
+    assigned_hosts_count: 'Server'
+    assigned_users_count: 'Benutzer'
+  placeholder:
+    name: 'z.B. Produktion, Entwicklung'
+  alert:
+    no_categories_found: 'Keine Kategorien gefunden. Erstellen Sie Ihre erste Kategorie.'
+    delete_confirm: 'Sind Sie sicher, dass Sie die Kategorie "%name%" löschen möchten?'
+  flash:
+    created_successfully: 'Kategorie wurde erfolgreich erstellt.'
+    updated_successfully: 'Kategorie wurde erfolgreich aktualisiert.'
+    deleted_successfully: 'Kategorie wurde erfolgreich gelöscht.'
+  form:
+    name: 'Name'
+    associated_hosts: 'Zugeordnete Server'
+    associated_users: 'Zugeordnete Benutzer'
+    search_hosts: 'Server suchen...'
+    search_hosts_placeholder: 'Tippen, um Server zu suchen...'
+    no_hosts_added: 'Keine Server hinzugefügt.'
+    search_users: 'Benutzer suchen...'
+    search_users_placeholder: 'Tippen, um Benutzer zu suchen...'
+    no_users_added: 'Keine Benutzer hinzugefügt.'
 
-# Spezifisch für die Einstellungsseite
 settings:
   title: 'Einstellungen'
   account:
@@ -120,6 +154,7 @@ settings:
     new_password: 'Neues Passwort'
     confirm_new_password: 'Neues Passwort bestätigen'
   general:
+    title: 'Allgemeine Einstellungen'
     language: 'Sprache'
   flash:
     info:
@@ -127,13 +162,20 @@ settings:
     success:
       email_updated: 'Ihre E-Mail-Adresse wurde erfolgreich aktualisiert.'
       password_updated: 'Ihr Passwort wurde erfolgreich aktualisiert.'
-    error:
-      new_password_required: 'Bitte geben Sie ein neues Passwort ein, wenn Sie es ändern möchten.'
-      current_password_required: 'Bitte geben Sie Ihr aktuelles Passwort ein, um die Änderung zu bestätigen.'
-      current_password_incorrect: 'Das eingegebene aktuelle Passwort ist falsch.'
 
-# Theme
+label:
+  email: 'E-Mail'
+  password: 'Passwort'
+  language: 'Sprache'
+  language_de: 'Deutsch'
+  language_en: 'Englisch'
+  settings: 'Einstellungen'
+  account: 'Konto'
+
 theme:
-  dark: 'Dunkelmodus'
-  light: 'Heller Modus'
   toggle: 'Theme wechseln'
+  light: 'Heller Modus'
+  dark: 'Dunkler Modus'
+
+user:
+  user_singular: 'Benutzer'

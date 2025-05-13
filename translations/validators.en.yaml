@@ -1,41 +1,34 @@
-label:
-  email: 'Email'
 auth:
-  email_already_exists: 'This email is already used by another user.'
+  email_already_exists: 'This email address is already in use.'
   email_invalid: 'Please enter a valid email address.'
-  enter_password: 'Please enter a password'
-  password_min_length: 'Your password should be at least {{ limit }} characters'
-  password_mismatch: 'The password fields must match.'
-  register_need_to_agree: 'You need to agree to our terms.'
+  password_min_length: 'Your password must be at least {{ limit }} characters long.'
+  password_mismatch: 'The passwords do not match.'
+  register_need_to_agree: 'You must agree to the terms and conditions.'
+  enter_password: 'Please enter a password.'
+
 host:
-  hostname_invalid_format: 'The hostname contains invalid characters. Only letters, numbers, dots (.), and hyphens (-) are allowed.'
-  hostname_required: 'Please enter a hostname or IP address'
-  name_already_exists: 'This name is already used by another host.'
-  name_invalid_format: 'The name contains invalid characters. Only letters, numbers, dots (.), hyphens (-), and spaces are allowed.'
-  name_required: 'Please enter a name for the server'
-  port_invalid_range: 'Port must be between 1 and 65535'
-  port_required: 'Please enter an SSH port'
-  username_required: 'Please enter an SSH username'
+  name_required: 'Please enter a name for the host.'
+  name_already_exists: 'A host with this name already exists.'
+  name_invalid_format: 'The host name contains invalid characters.'
+  hostname_required: 'Please enter a hostname or IP address.'
+  hostname_invalid_format: 'The hostname format is invalid.'
+  port_required: 'Please enter a port.'
+  port_invalid_range: 'The port must be between 1 and 65535.'
+  username_required: 'Please enter a username.'
+
 key:
-  name_required: 'Please enter a name for your SSH key'
-  public_key_invalid_format: 'Invalid public key format. It should start with ssh-rsa, ssh-ed25519, or another valid key format'
-  public_key_required: 'Please enter your SSH public key'
+  name_required: 'Please enter a name for the SSH key.'
+  public_key_required: 'Please enter the SSH public key.'
+  public_key_invalid_format: 'The SSH public key format is invalid. It should start with ssh-rsa, ssh-ed25519, etc.'
+
 category:
   name_required: 'Please enter a name for the category.'
-  name_already_exists: 'This category name is already in use.' # Added for potential UniqueEntity constraint
+  name_already_exists: 'A category with this name already exists.'
+
 settings:
-  account:
-    current_password: 'Current Password'
-    new_password: 'New Password'
-    confirm_new_password: 'Confirm New Password'
   flash:
-    info:
-      no_changes: 'No changes were made to your account.'
-    success:
-      email_updated: 'Your email address has been updated successfully.'
-      password_updated: 'Your password has been updated successfully.'
     error:
-      new_password_required: 'Please enter a new password if you want to change it.'
-      new_password_blank: 'New password cannot be empty.'
-      current_password_required: 'Please enter your current password to confirm the change.'
-      current_password_incorrect: 'The current password you entered is incorrect.'
+      current_password_required: 'Please enter your current password to make changes.'
+      current_password_incorrect: 'The current password entered is incorrect.'
+      new_password_required: 'Please enter a new password if you intend to change it.'
+      new_password_blank: 'The new password cannot be blank.'
