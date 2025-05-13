@@ -1,0 +1,34 @@
+{# templates/components/button.html.twig #}
+{% macro primary(label_key, path, icon_class = null, additional_classes = '', attributes = {}) %}
+    <a href="{{ path }}" class="btn btn-primary {{ additional_classes }}"
+    {% for attr, value in attributes %} {{ attr }}="{{ value }}"{% endfor %}>
+    {% if icon_class %}<i class="{{ icon_class }} mr-2"></i>{% endif %}
+    {{ label_key|trans }}
+    </a>
+{% endmacro %}
+
+{% macro secondary(label_key, path, icon_class = null, additional_classes = '', attributes = {}) %}
+    <a href="{{ path }}" class="btn btn-secondary {{ additional_classes }}"
+    {% for attr, value in attributes %} {{ attr }}="{{ value }}"{% endfor %}>
+    {% if icon_class %}<i class="{{ icon_class }} mr-2"></i>{% endif %}
+    {{ label_key|trans }}
+    </a>
+{% endmacro %}
+
+{% macro delete(label_key, form_action_path, csrf_token_value, csrf_token_name = '_token', confirm_message_key = 'common.confirm_delete_generic', icon_class = 'fas fa-trash-alt', additional_classes = 'btn-error') %}
+    <form method="post" action="{{ form_action_path }}" onsubmit="return confirm('{{ confirm_message_key|trans }}');"
+          class="inline-block">
+        <input type="hidden" name="{{ csrf_token_name }}" value="{{ csrf_token_value }}">
+        <button type="submit" class="btn {{ additional_classes }}">
+            {% if icon_class %}<i class="{{ icon_class }} mr-2"></i>{% endif %}
+            {{ label_key|trans }}
+        </button>
+    </form>
+{% endmacro %}
+
+{% macro submit(label_key, icon_class = null, additional_classes = 'btn-primary') %}
+    <button type="submit" class="btn {{ additional_classes }}">
+        {% if icon_class %}<i class="{{ icon_class }} mr-2"></i>{% endif %}
+        {{ label_key|trans }}
+    </button>
+{% endmacro %}

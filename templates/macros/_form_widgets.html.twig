@@ -29,6 +29,7 @@
         <div class="relative">
             {# Text input field for typing search queries. #}
             {# Stimulus targets and actions are used to handle input and focus events. #}
+            <label for="{{ form_field.vars.id ~ '_search_input' }}"></label>
             <input type="text" id="{{ form_field.vars.id ~ '_search_input' }}"
                    data-entity-selector-target="searchInput"
                    data-action="input->entity-selector#handleSearchInput focus->entity-selector#handleFocus"
@@ -43,10 +44,9 @@
         </div>
         {# Container where the currently selected items are displayed (e.g., as tags). #}
         <ul class="list bg-base-100 rounded-box shadow-md">
-        <li data-entity-selector-target="selectedList">
-            {# Selected items will be dynamically inserted here by the Stimulus controller. #}
-        </li>
+            <li data-entity-selector-target="selectedList">
+                {# Selected items will be dynamically inserted here by the Stimulus controller. #}
+            </li>
         </ul>
-        {# The noItemsMessage paragraph has been removed from here. #}
     </div>
 {% endmacro %}

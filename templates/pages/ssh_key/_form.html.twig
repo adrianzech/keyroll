@@ -1,0 +1,22 @@
+{{ form_start(form) }}
+<div class="form-control mb-4">
+    {{ form_label(form.name, null, {'label_attr': {'class': 'label'}}) }}
+    {{ form_widget(form.name, {'attr': {'class': 'input input-bordered w-full'}}) }}
+    {{ form_errors(form.name) }}
+</div>
+
+<div class="form-control mb-6">
+    {{ form_label(form.publicKey, null, {'label_attr': {'class': 'label'}}) }}
+    {{ form_widget(form.publicKey, {'attr': {'class': 'textarea textarea-bordered w-full'}}) }}
+    {{ form_errors(form.publicKey) }}
+</div>
+
+{{ form_rest(form) }}
+
+<div class="card-actions justify-end">
+    <a href="{{ path('app_host_index') }}" class="btn btn-outline">
+        {{ 'common.cancel'|trans }}
+    </a>
+    <button type="submit" class="btn btn-primary">{{ 'common.save'|trans }}</button>
+</div>
+{{ form_end(form) }}

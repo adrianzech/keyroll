@@ -18,23 +18,20 @@
                 </div>
             {% else %}
 
-                <!-- Login Form -->
                 {{ form_start(loginForm) }}
-                <!-- Email Input -->
+
                 <div class="form-control w-full mb-4">
                     {{ form_label(loginForm.email, 'label.email', {'label_attr': {'class': 'label-text'}}) }}
                     {{ form_widget(loginForm.email, {'attr': {'class': 'input input-bordered w-full', 'value': last_username, 'required': true, 'autofocus': true}}) }}
                     {{ form_errors(loginForm.email) }}
                 </div>
 
-                <!-- Password Input -->
                 <div class="form-control w-full mb-6">
                     {{ form_label(loginForm.password, 'label.password', {'label_attr': {'class': 'label-text'}}) }}
                     {{ form_widget(loginForm.password, {'attr': {'class': 'input input-bordered w-full'}}) }}
                     {{ form_errors(loginForm.password) }}
                 </div>
 
-                <!-- Remember Me Checkbox -->
                 <div class="form-control mb-6">
                     <label class="cursor-pointer label justify-start">
                         {{ form_widget(loginForm.rememberMe, {'attr': {'class': 'checkbox checkbox-primary mr-2'}}) }}
@@ -43,17 +40,16 @@
                     {{ form_errors(loginForm.rememberMe) }}
                 </div>
 
-                <!-- Submit Button -->
                 <div class="card-actions justify-end">
                     <button type="submit" class="btn btn-primary w-full">{{ "auth.login"|trans }}</button>
                 </div>
 
-                <!-- Register Link -->
                 <div class="text-center mt-4">
-                    <p>{{ "auth.login_no_account"|trans }} <a href="{{ path('app_register') }}"
-                                                              class="link link-primary">{{ "auth.register"|trans }}</a>
+                    <p>{{ "auth.login_no_account"|trans }}
+                        <a href="{{ path('app_register') }}" class="link link-primary">{{ "auth.register"|trans }}</a>
                     </p>
                 </div>
+
                 {{ form_end(loginForm) }}
 
             {% endif %}

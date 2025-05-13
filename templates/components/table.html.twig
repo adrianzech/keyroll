@@ -1,0 +1,89 @@
+{# templates/components/table.html.twig #}
+{% props
+    items = [],
+    headers = [],
+    item_properties = [],
+    column_configs = {},
+    no_items_message_key = 'common.no_items_found',
+    show_actions_column = false,
+    delete_path_route = null,
+    edit_path_route = null,
+    delete_confirm_trans_key = 'common.delete_confirm_default',
+    entity_name_property_for_confirm = 'name',
+    csrf_token_prefix = 'delete',
+    entity_id_property = 'id' %}
+
+{% if items|length > 0 %}
+    <div class="overflow-x-auto">
+        <table class="table table-zebra w-full">
+            <thead>
+            <tr>
+                {% for header_key in headers %}
+                    <th>{{ header_key|trans }}</th>
+                {% endfor %}
+                {% if show_actions_column and (delete_path_route or edit_path_route) %}
+                    <th>{{ 'common.actions'|trans }}</th>
+                {% endif %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in items %}
+                <tr>
+                    {% for data_key in item_properties %}
+                        <td>
+                            {% set config = column_configs[data_key] ?? {} %}
+                            {# Get the base value using the data_key, e.g., item.hosts (the collection) or item.createdAt (a DateTime object) #}
+                            {% set cell_content = attribute(item, data_key) %}
+
+                            {# Step 1: If an 'accessor' is defined, apply it to the base value.
+                                   This is used for things like item.collection.count() or item.object.getSubProperty #}
+                            {% if config.accessor is defined and config.accessor is not empty and cell_content is not null %}
+                                {% set cell_content = attribute(cell_content, config.accessor) %}
+                                {# cell_content is now the result of the accessor, e.g., the count #}
+                            {% endif %}
+
+                            {# Step 2: Apply 'type'-based formatting to the (potentially accessor-modified) value #}
+                            {% if config.type is defined and config.type == 'date' and cell_content is not null %}
+                                {{ cell_content|date(config.format_string | default('Y-m-d H:i:s')) }}
+                            {% elseif config.type is defined and config.type == 'length_filter' and cell_content is not null %}
+                                {{ cell_content|length }}
+                            {% else %}
+                                {{ cell_content }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+
+                    {% if show_actions_column and (delete_path_route or edit_path_route) %}
+                        <td class="flex space-x-1">
+                            {% if delete_path_route %}
+                                <form method="post"
+                                      action="{{ path(delete_path_route, { (entity_id_property): attribute(item, entity_id_property) }) }}"
+                                      onsubmit="return confirm('{{ delete_confirm_trans_key|trans({'%name%': attribute(item, entity_name_property_for_confirm)}) }}');"
+                                      class="inline">
+                                    <input type="hidden" name="_method" value="POST">
+                                    <input type="hidden" name="_token"
+                                           value="{{ csrf_token(csrf_token_prefix ~ attribute(item, entity_id_property)) }}">
+                                    <button type="submit" class="btn btn-ghost btn-error btn-xs">
+                                        {{ 'common.delete'|trans }}
+                                    </button>
+                                </form>
+                            {% endif %}
+
+                            {% if edit_path_route %}
+                                <a href="{{ path(edit_path_route, { (entity_id_property): attribute(item, entity_id_property) }) }}"
+                                   class="btn btn-ghost btn-primary btn-xs">
+                                    {{ 'common.edit'|trans }}
+                                </a>
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert">
+        <span>{{ no_items_message_key|trans }}</span>
+    </div>
+{% endif %}

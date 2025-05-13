@@ -1,0 +1,19 @@
+{# templates/layouts/crud_layout.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="mx-auto">
+        {% block page_header %}
+            <div class="mb-6 flex justify-between items-center">
+                <h1 class="text-3xl font-semibold">{% block page_title %}{% endblock %}</h1>
+                {% block page_actions %}{% endblock %}
+            </div>
+        {% endblock %}
+
+        {% block content_wrapper %}
+            <div class="bg-base-100 shadow-xl rounded-lg p-6">
+                {% block content %}{% endblock %}
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}

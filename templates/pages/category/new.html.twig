@@ -1,31 +1,18 @@
 {# templates/pages/category/new.html.twig #}
-{# This template is used to display the page for creating a new category. #}
-{# It extends the base layout. #}
-{% extends 'base.html.twig' %}
+{% extends 'layouts/crud_layout.html.twig' %}
+{% import 'components/page_header.html.twig' as page_header %}
 
-{# Block for setting the page title. #}
-{% block title %}{{ 'category.create_new'|trans }}{% endblock %}
+{% set page_title = 'category.title.create_new' %}
+{% block title %}{{ page_title|trans }} - {{ parent() }}{% endblock %}
 
-{# Block for the main content of the page. #}
-{% block body %}
-    <div class="container mx-auto px-4 py-8">
-        {# Header section for the new category page. #}
-        <div class="flex justify-between items-center mb-6">
-            {# Page heading. #}
-            <h1 class="text-2xl font-bold">{{ 'category.create_new'|trans }}</h1>
-        </div>
+{% block page_header %}
+    {{ page_header.default(
+        title=page_title
+    ) }}
+{% endblock %}
 
-
-        {# Card component to wrap the new category form. #}
-        <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-                {# Include the category form partial (_form.html.twig). #}
-                {# Pass the form object and a custom button label for creation. #}
-                {% include 'pages/category/_form.html.twig' with {
-                    'form': form,
-                    'button_label': 'category.create_new'|trans
-                } %}
-            </div>
-        </div>
-    </div>
+{% block content %}
+    {% include 'pages/category/_form.html.twig' with {
+        'form': form
+    } %}
 {% endblock %}

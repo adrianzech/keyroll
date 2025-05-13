@@ -1,75 +1,41 @@
-{% extends 'base.html.twig' %}
+{# templates/pages/host/index.html.twig #}
+{% extends 'layouts/crud_layout.html.twig' %}
+{% import 'components/page_header.html.twig' as page_header %}
+{% import 'components/table.html.twig' as table %}
 
-{% block title %}{{ 'host.hosts'|trans }}{% endblock %}
+{% set page_title = 'host.title.index' %}
+{% block title %}{{ page_title|trans }} - {{ parent() }}{% endblock %}
 
-{% block body %}
-    <div class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold">{{ 'host.hosts'|trans }}</h1>
+{% block page_header %}
+    {{ page_header.default(
+        title=page_title,
+        button_label='host.button.create_new',
+        button_path=path('app_host_new')
+    ) }}
+{% endblock %}
 
-            {% if is_granted('ROLE_ADMIN') %}
-                <div>
-                    <a href="{{ path('app_host_new') }}" class="btn btn-primary">
-                        {{ 'host.create_new'|trans }}
-                    </a>
-                </div>
-            {% endif %}
-        </div>
-
-        {% if hosts|length > 0 %}
-            <div class="overflow-x-auto">
-                <table class="table table-zebra w-full">
-                    <thead>
-                    <tr>
-                        <th>{{ 'host.name'|trans }}</th>
-                        <th>{{ 'host.hostname'|trans }}</th>
-                        <th>{{ 'host.port'|trans }}</th>
-                        <th>{{ 'host.username'|trans }}</th>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <th>{{ 'common.actions'|trans }}</th>
-                        {% endif %}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for host in hosts %}
-                        <tr>
-                            <td>{{ host.name }}</td>
-                            <td>{{ host.hostname }}</td>
-                            <td>{{ host.port }}</td>
-                            <td>{{ host.username }}</td>
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <td class="flex space-x-1">
-                                    <form method="post" action="{{ path('app_host_delete', {'id': host.id}) }}"
-                                          onsubmit="return confirm('{{ 'host.delete_confirm'|trans({'%name%': host.name}) }}');"
-                                          class="inline">
-                                        <input type="hidden" name="_method" value="POST">
-                                        {# CSRF Token #}
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ host.id) }}">
-                                        <button type="submit" class="btn btn-ghost btn-error btn-xs">
-                                            {{ 'common.delete'|trans }}
-                                        </button>
-                                    </form>
-
-                                    <a href="{{ path('app_host_edit', {'id': host.id}) }}"
-                                       class="btn btn-ghost btn-primary btn-xs">
-                                        {{ 'common.edit'|trans }}
-                                    </a>
-                                </td>
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% else %}
-            <div class="alert">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                     class="stroke-info shrink-0 w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <span>{{ 'host.no_hosts_found'|trans }}</span>
-            </div>
-        {% endif %}
-    </div>
+{% block content %}
+    {{ component('table', {
+        items: hosts,
+        headers: [
+            'host.label.name',
+            'host.label.hostname',
+            'host.label.port',
+            'host.label.username'
+        ],
+        item_properties: [
+            'name',
+            'hostname',
+            'port',
+            'username'
+        ],
+        show_actions_column: is_granted('ROLE_ADMIN'),
+        delete_path_route: 'app_host_delete',
+        edit_path_route: 'app_host_edit',
+        delete_confirm_trans_key: 'host.alert.delete_confirm',
+        entity_name_property_for_confirm: 'name',
+        csrf_token_prefix: 'delete',
+        entity_id_property: 'id',
+        no_items_message_key: 'host.no_hosts_found'
+    }) }}
 {% endblock %}

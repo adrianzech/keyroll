@@ -8,21 +8,19 @@
             <h2 class="card-title text-center text-2xl font-bold mb-6">{{ "auth.register"|trans }}</h2>
 
             {{ form_start(registrationForm) }}
-            <!-- Email Input -->
+
             <div class="form-control w-full mb-4">
                 {{ form_label(registrationForm.email, 'label.email', {'label_attr': {'class': 'label-text'}}) }}
                 {{ form_widget(registrationForm.email, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'auth.email_placeholder', 'required': true, 'autofocus': true}}) }}
                 {{ form_errors(registrationForm.email) }}
             </div>
 
-            <!-- Password Input -->
             <div class="form-control w-full mb-6">
                 {{ form_label(registrationForm.plainPassword, 'label.password', {'label_attr': {'class': 'label-text'}}) }}
                 {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'auth.password_placeholder', 'required': true}}) }}
                 {{ form_errors(registrationForm.plainPassword) }}
             </div>
 
-            <!-- Terms Checkbox -->
             <div class="form-control mb-6">
                 <label class="cursor-pointer label justify-start">
                     {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'checkbox checkbox-primary mr-2'}}) }}
@@ -31,15 +29,14 @@
                 {{ form_errors(registrationForm.agreeTerms) }}
             </div>
 
-            <!-- Submit Button -->
             <div class="card-actions justify-end">
                 <button type="submit" class="btn btn-primary w-full">{{ "auth.register"|trans }}</button>
             </div>
 
-            <!-- Login Link -->
             <div class="text-center mt-4">
-                <p>{{ "auth.register_account_exists"|trans }} <a href="{{ path('app_login') }}"
-                                                                 class="link link-primary">{{ "auth.login"|trans }}</a></p>
+                <p>{{ "auth.register_account_exists"|trans }}
+                    <a href="{{ path('app_login') }}" class="link link-primary">{{ "auth.login"|trans }}</a>
+                </p>
             </div>
 
             {{ form_end(registrationForm) }}

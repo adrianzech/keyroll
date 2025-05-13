@@ -4,7 +4,7 @@
            class="{{ app.request.attributes.get('_route') starts with 'app_host_' ? 'active' : '' }}">{{ 'host.hosts'|trans }}</a>
     </li>
     <li><a href="{{ path('app_ssh_key_index') }}"
-           class="{{ app.request.attributes.get('_route') starts with 'app_ssh_key_' ? 'active' : '' }}">{{ 'key.ssh_keys'|trans }}</a>
+           class="{{ app.request.attributes.get('_route') starts with 'app_ssh_key_' ? 'active' : '' }}">{{ 'ssh_key.ssh_keys'|trans }}</a>
     </li>
 {% endif %}
 {% if is_granted('ROLE_ADMIN') %}

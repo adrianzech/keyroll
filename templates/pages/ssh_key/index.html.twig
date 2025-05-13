@@ -1,75 +1,43 @@
-{% extends 'base.html.twig' %}
+{# templates/pages/ssh_key/index.html.twig #}
+{% extends 'layouts/crud_layout.html.twig' %}
+{% import 'components/page_header.html.twig' as page_header %}
 
-{% block title %}{{ 'key.ssh_keys'|trans }}{% endblock %}
+{% set page_title = 'ssh_key.title.index' %}
+{% block title %}{{ page_title|trans }} - {{ parent() }}{% endblock %}
 
-{% block body %}
-    <div class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold">{{ 'key.ssh_keys'|trans }}</h1>
+{% block page_header %}
+    {{ page_header.default(
+        title=page_title,
+        button_label='ssh_key.button.create_new',
+        button_path=path('app_ssh_key_new')
+    ) }}
+{% endblock %}
 
-            {% if is_granted('ROLE_ADMIN') %}
-                <div>
-                    <a href="{{ path('app_ssh_key_new') }}" class="btn btn-primary">
-                        {{ 'key.create_new'|trans }}
-                    </a>
-                </div>
-            {% endif %}
-        </div>
 
-        {% if keys|length > 0 %}
-            <div class="overflow-x-auto">
-                <table class="table table-zebra w-full">
-                    <thead>
-                    <tr>
-                        <th>{{ 'key.name'|trans }}</th>
-                        <th>{{ 'label.created_at'|trans }}</th>
-                        <th>{{ 'label.updated_at'|trans }}</th>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <th>{{ 'common.actions'|trans }}</th>
-                        {% endif %}
-
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for key in keys %}
-                        <tr>
-                            <td>{{ key.name }}</td>
-                            <td>{{ key.createdAt|date('d.m.Y H:i') }}</td>
-                            <td>{{ key.updatedAt|date('d.m.Y H:i') }}</td>
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <td class="flex space-x-1">
-                                    <form method="post" action="{{ path('app_ssh_key_delete', {'id': key.id}) }}"
-                                          onsubmit="return confirm('{{ 'key.delete_confirm'|trans({'%name%': key.name}) }}');"
-                                          class="inline">
-                                        <input type="hidden" name="_method" value="POST">
-                                        {# CSRF Token #}
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ key.id) }}">
-                                        <button type="submit" class="btn btn-ghost btn-error btn-xs">
-                                            {{ 'common.delete'|trans }}
-                                        </button>
-                                    </form>
-
-                                    <a href="{{ path('app_ssh_key_edit', {'id': key.id}) }}"
-                                       class="btn btn-ghost btn-primary btn-xs">
-                                        {{ 'common.edit'|trans }}
-                                    </a>
-                                </td>
-                            {% endif %}
-
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% else %}
-            <div class="alert">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                     class="stroke-info shrink-0 w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <span>{{ 'key.no_keys_found'|trans }}</span>
-            </div>
-        {% endif %}
-    </div>
+{% block content %}
+    {{ component('table', {
+        items: keys,
+        headers: [
+            'ssh_key.label.name',
+            'common.label.created_at',
+            'common.label.updated_at'
+        ],
+        item_properties: [
+            'name',
+            'createdAt',
+            'updatedAt'
+        ],
+        column_configs: {
+            createdAt: { type: 'date', format_string: 'd.m.Y H:i' },
+            updatedAt: { type: 'date', format_string: 'd.m.Y H:i' }
+        },
+        show_actions_column: is_granted('ROLE_ADMIN'),
+        delete_path_route: 'app_ssh_key_delete',
+        edit_path_route: 'app_ssh_key_edit',
+        delete_confirm_trans_key: 'ssh_key.alert.delete_confirm',
+        entity_name_property_for_confirm: 'name',
+        csrf_token_prefix: 'delete',
+        entity_id_property: 'id',
+        no_items_message_key: 'ssh_key.no_keys_found'
+    }) }}
 {% endblock %}

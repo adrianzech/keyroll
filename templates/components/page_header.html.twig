@@ -1,0 +1,10 @@
+{# templates/components/page_header.html.twig #}
+{% macro default(title, button_label = null, button_path = null, button_icon = null) %}
+    <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+        <h1 class="text-3xl font-semibold mb-4 md:mb-0">{{ title|trans }}</h1>
+        {% if button_label and button_path %}
+            {% import "components/button.html.twig" as button %}
+            {{ button.primary(button_label, button_path, button_icon) }}
+        {% endif %}
+    </div>
+{% endmacro %}
