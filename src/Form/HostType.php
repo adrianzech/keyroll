@@ -22,8 +22,8 @@ class HostType extends AbstractBaseType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'host.name',
-                'attr' => ['placeholder' => 'host.name_placeholder'],
+                'label' => 'host.label.name',
+                'attr' => ['placeholder' => 'host.placeholder.name'],
                 'constraints' => [
                     new NotBlank(['message' => 'host.name_required']),
                     new Regex([
@@ -33,8 +33,8 @@ class HostType extends AbstractBaseType
                 ],
             ])
             ->add('hostname', TextType::class, [
-                'label' => 'host.hostname',
-                'attr' => ['placeholder' => 'host.hostname_placeholder'],
+                'label' => 'host.label.hostname',
+                'attr' => ['placeholder' => 'host.placeholder.hostname'],
                 'constraints' => [
                     new NotBlank(['message' => 'host.hostname_required']),
                     new Regex([
@@ -44,9 +44,9 @@ class HostType extends AbstractBaseType
                 ],
             ])
             ->add('port', IntegerType::class, [
-                'label' => 'host.port',
+                'label' => 'host.label.port',
                 'attr' => [
-                    'placeholder' => 'host.default_port',
+                    'placeholder' => 'host.placeholder.port',
                     'min' => 1,
                     'max' => 65535,
                 ],
@@ -60,8 +60,8 @@ class HostType extends AbstractBaseType
                 ],
             ])
             ->add('username', TextType::class, [
-                'label' => 'host.username',
-                'attr' => ['placeholder' => 'host.default_user'],
+                'label' => 'host.label.username',
+                'attr' => ['placeholder' => 'host.placeholder.username'],
                 'constraints' => [
                     new NotBlank(['message' => 'host.username_required']),
                 ],

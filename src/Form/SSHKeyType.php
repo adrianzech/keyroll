@@ -21,16 +21,16 @@ class SSHKeyType extends AbstractBaseType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'ssh_key.name',
-                'attr' => ['placeholder' => 'ssh_key.name_placeholder'],
+                'label' => 'ssh_key.label.name',
+                'attr' => ['placeholder' => 'ssh_key.placeholder.name'],
                 'constraints' => [
                     new NotBlank(['message' => 'ssh_key.name_required']),
                 ],
             ])
             ->add('publicKey', TextareaType::class, [
-                'label' => 'ssh_key.public_key',
+                'label' => 'ssh_key.label.public_key',
                 'attr' => [
-                    'placeholder' => 'ssh_key.public_key_placeholder',
+                    'placeholder' => 'ssh_key.placeholder.public_key',
                     'rows' => 5,
                 ],
                 'constraints' => [

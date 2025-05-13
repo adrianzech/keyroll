@@ -21,9 +21,9 @@ class CategoryType extends AbstractBaseType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'category.name',
+                'label' => 'category.label.name',
                 'attr' => [
-                    'placeholder' => 'category.name_placeholder',
+                    'placeholder' => 'category.placeholder.name',
                 ],
             ])
             ->add('hosts', EntityType::class, [
@@ -34,7 +34,7 @@ class CategoryType extends AbstractBaseType
                 'multiple' => true,
                 'expanded' => false,
                 'required' => false,
-                'label' => 'category.hosts',
+                'label' => 'category.label.assigned_hosts',
                 'attr' => [
                     'class' => 'hidden-symfony-entity-selector',
                     'data-entity-selector-target' => 'symfonyField',
@@ -47,7 +47,7 @@ class CategoryType extends AbstractBaseType
                 'multiple' => true,
                 'expanded' => false,
                 'required' => false,
-                'label' => 'category.users',
+                'label' => 'category.label.assigned_users',
                 'attr' => [
                     'class' => 'hidden-symfony-entity-selector',
                     'data-entity-selector-target' => 'symfonyField',
