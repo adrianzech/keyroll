@@ -19,7 +19,7 @@ abstract class AbstractBaseType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'row_attr' => ['class' => 'form-control w-full mb-4'],
+            'row_attr' => ['class' => 'form-control w-full mb-6'],
             'label_attr' => ['class' => 'label'],
             'data_class' => null,
         ]);
