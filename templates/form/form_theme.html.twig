@@ -1,0 +1,31 @@
+{# templates/form/form_theme.html.twig #}
+
+{% use "form_div_layout.html.twig" %}
+
+{# Override the block for simple input widgets (text, email, password, number, etc.) #}
+{%- block form_widget_simple -%}
+    {% set type = type|default('text') %}
+    {% set attr = attr|merge({
+        class: (attr.class|default('') ~ ' input input-bordered w-full')|trim
+    }) %}
+    <label>
+        <input type="{{ type }}" {{ block('widget_attributes') }} />
+    </label>
+{%- endblock form_widget_simple -%}
+
+{%- block textarea_widget -%}
+    {% set attr = attr|merge({
+        class: (attr.class|default('') ~ ' textarea textarea-bordered w-full')|trim
+    }) %}
+    <label>
+        <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
+    </label>
+{%- endblock textarea_widget -%}
+
+{# Override the block for select (choice) widgets #}
+{%- block choice_widget_collapsed -%}
+    {% set attr = attr|merge({
+        class: (attr.class|default('') ~ ' select select-bordered w-full')|trim
+    }) %}
+    {{- parent() -}}
+{%- endblock choice_widget_collapsed -%}

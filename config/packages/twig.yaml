@@ -2,6 +2,8 @@ twig:
   file_name_pattern: '*.twig'
   date:
     timezone: '%env(TIMEZONE)%'
+  default_path: '%kernel.project_dir%/templates'
+  form_themes: [ 'form/form_theme.html.twig' ]
 
 when@test:
   twig:
