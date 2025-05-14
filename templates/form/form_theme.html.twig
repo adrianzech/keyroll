@@ -8,9 +8,13 @@
     {% set attr = attr|merge({
         class: (attr.class|default('') ~ ' input input-bordered w-full')|trim
     }) %}
-    <label>
-        <input type="{{ type }}" {{ block('widget_attributes') }} />
-    </label>
+    {%- if type == 'hidden' -%}
+        <input type="hidden" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+    {%- else -%}
+        <label>
+            <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+        </label>
+    {%- endif -%}
 {%- endblock form_widget_simple -%}
 
 {%- block textarea_widget -%}
