@@ -30,21 +30,21 @@
 
     {# Current Password #}
     <div class="form-control">
-        {{ form_label(accountForm.currentPassword, 'settings.account.current_password'|trans, {'label_attr': {'class': 'label-text'}}) }}
-        {{ form_widget(accountForm.currentPassword, {'attr': {'class': 'input input-bordered w-full', 'autocomplete': 'current-password', 'placeholder': '••••••••'}}) }}
+        {{ form_label(accountForm.currentPassword, 'settings.account.current_password', {'label_attr': {'class': 'label-text'}}) }}
+        {{ form_widget(accountForm.currentPassword, {'attr': {'class': 'input input-bordered w-full', 'autocomplete': 'current-password', 'placeholder': 'auth.password_placeholder'}}) }}
         {{ form_errors(accountForm.currentPassword) }}
     </div>
 
     {# New Password Fields #}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="form-control">
-            {{ form_label(accountForm.plainPassword.first, 'settings.account.new_password'|trans, {'label_attr': {'class': 'label-text'}}) }}
-            {{ form_widget(accountForm.plainPassword.first, {'attr': {'class': 'input input-bordered w-full', 'autocomplete': 'new-password', 'placeholder': '••••••••'}}) }}
+            {{ form_label(accountForm.plainPassword.first, 'settings.account.new_password', {'label_attr': {'class': 'label-text'}}) }}
+            {{ form_widget(accountForm.plainPassword.first, {'attr': {'class': 'input input-bordered w-full', 'autocomplete': 'new-password', 'placeholder': 'auth.password_placeholder'}}) }}
             {{ form_errors(accountForm.plainPassword.first) }}
         </div>
         <div class="form-control">
-            {{ form_label(accountForm.plainPassword.second, 'settings.account.confirm_new_password'|trans, {'label_attr': {'class': 'label-text'}}) }}
-            {{ form_widget(accountForm.plainPassword.second, {'attr': {'class': 'input input-bordered w-full', 'autocomplete': 'new-password', 'placeholder': '••••••••'}}) }}
+            {{ form_label(accountForm.plainPassword.second, 'settings.account.confirm_new_password', {'label_attr': {'class': 'label-text'}}) }}
+            {{ form_widget(accountForm.plainPassword.second, {'attr': {'class': 'input input-bordered w-full', 'autocomplete': 'new-password', 'placeholder': 'auth.password_placeholder'}}) }}
             {{ form_errors(accountForm.plainPassword.second) }}
         </div>
     </div>
