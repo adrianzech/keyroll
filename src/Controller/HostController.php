@@ -45,7 +45,7 @@ class HostController extends AbstractController
             $this->entityManager->persist($host);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'host.created_successfully');
+            $this->addFlash('success', 'host.flash.created_successfully');
 
             return $this->redirectToRoute('app_host_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -68,7 +68,7 @@ class HostController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'host.updated_successfully');
+            $this->addFlash('success', 'host.flash.updated_successfully');
 
             return $this->redirectToRoute('app_host_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -98,7 +98,7 @@ class HostController extends AbstractController
         $this->entityManager->remove($host);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'host.deleted_successfully');
+        $this->addFlash('success', 'host.flash.deleted_successfully');
 
         // Redirect after successful deletion
         return $this->redirectToRoute('app_host_index', [], Response::HTTP_SEE_OTHER);

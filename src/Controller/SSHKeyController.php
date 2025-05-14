@@ -57,7 +57,7 @@ class SSHKeyController extends AbstractController
             $this->entityManager->persist($key);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'key.created_successfully');
+            $this->addFlash('success', 'key.flash.created_successfully');
 
             return $this->redirectToRoute('app_ssh_key_index');
         }
@@ -79,7 +79,7 @@ class SSHKeyController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'key.updated_successfully');
+            $this->addFlash('success', 'key.flash.updated_successfully');
 
             return $this->redirectToRoute('app_ssh_key_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -109,7 +109,7 @@ class SSHKeyController extends AbstractController
         $this->entityManager->remove($key);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'host.deleted_successfully');
+        $this->addFlash('success', 'host.flash.deleted_successfully');
 
         // Redirect after successful deletion
         return $this->redirectToRoute('app_ssh_key_index', [], Response::HTTP_SEE_OTHER);
