@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7da7c7c725d6f715bf9b46fbaec03714",
+    "content-hash": "383f4d2d1a41d25d61e0d6f9d90bae28",
     "packages": [
         {
             "name": "composer/semver",
@@ -6920,104 +6920,6 @@
             "time": "2025-03-24T09:03:36+00:00"
         },
         {
-            "name": "symfony/ux-turbo",
-            "version": "v2.24.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/ux-turbo.git",
-                "reference": "22954300bd0b01ca46f17c7890ea15138d9cf67f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-turbo/zipball/22954300bd0b01ca46f17c7890ea15138d9cf67f",
-                "reference": "22954300bd0b01ca46f17c7890ea15138d9cf67f",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.1",
-                "symfony/stimulus-bundle": "^2.9.1"
-            },
-            "conflict": {
-                "symfony/flex": "<1.13"
-            },
-            "require-dev": {
-                "dbrekelmans/bdi": "dev-main",
-                "doctrine/doctrine-bundle": "^2.4.3",
-                "doctrine/orm": "^2.8 | 3.0",
-                "phpstan/phpstan": "^1.10",
-                "symfony/asset-mapper": "^6.4|^7.0",
-                "symfony/debug-bundle": "^5.4|^6.0|^7.0",
-                "symfony/expression-language": "^5.4|^6.0|^7.0",
-                "symfony/form": "^5.4|^6.0|^7.0",
-                "symfony/framework-bundle": "^6.4|^7.0",
-                "symfony/mercure-bundle": "^0.3.7",
-                "symfony/messenger": "^5.4|^6.0|^7.0",
-                "symfony/panther": "^2.1",
-                "symfony/phpunit-bridge": "^5.4|^6.0|^7.0",
-                "symfony/process": "^5.4|6.3.*|^7.0",
-                "symfony/property-access": "^5.4|^6.0|^7.0",
-                "symfony/security-core": "^5.4|^6.0|^7.0",
-                "symfony/stopwatch": "^5.4|^6.0|^7.0",
-                "symfony/twig-bundle": "^6.4|^7.0",
-                "symfony/ux-twig-component": "^2.21",
-                "symfony/web-profiler-bundle": "^5.4|^6.0|^7.0"
-            },
-            "type": "symfony-bundle",
-            "extra": {
-                "thanks": {
-                    "url": "https://github.com/symfony/ux",
-                    "name": "symfony/ux"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\UX\\Turbo\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Kévin Dunglas",
-                    "email": "kevin@dunglas.fr"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Hotwire Turbo integration for Symfony",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "hotwire",
-                "javascript",
-                "mercure",
-                "symfony-ux",
-                "turbo",
-                "turbo-stream"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/ux-turbo/tree/v2.24.0"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2025-04-04T17:29:20+00:00"
-        },
-        {
             "name": "symfony/ux-twig-component",
             "version": "v2.24.0",
             "source": {
@@ -8700,16 +8602,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.14",
+            "version": "2.1.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "8f2e03099cac24ff3b379864d171c5acbfc6b9a2"
+                "reference": "402d11c1aa40ae2e1c3a512e6a4edb957527b20b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8f2e03099cac24ff3b379864d171c5acbfc6b9a2",
-                "reference": "8f2e03099cac24ff3b379864d171c5acbfc6b9a2",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/402d11c1aa40ae2e1c3a512e6a4edb957527b20b",
+                "reference": "402d11c1aa40ae2e1c3a512e6a4edb957527b20b",
                 "shasum": ""
             },
             "require": {
@@ -8754,20 +8656,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-02T15:32:28+00:00"
+            "time": "2025-05-14T11:16:08+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
-            "version": "2.0.5",
+            "version": "2.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-symfony.git",
-                "reference": "582ddbc641cee028386e985972c631d57ceef406"
+                "reference": "5005288e07583546ea00b52de4a9ac412eb869d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/582ddbc641cee028386e985972c631d57ceef406",
-                "reference": "582ddbc641cee028386e985972c631d57ceef406",
+                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/5005288e07583546ea00b52de4a9ac412eb869d7",
+                "reference": "5005288e07583546ea00b52de4a9ac412eb869d7",
                 "shasum": ""
             },
             "require": {
@@ -8823,9 +8725,9 @@
             "description": "Symfony Framework extensions and rules for PHPStan",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-symfony/issues",
-                "source": "https://github.com/phpstan/phpstan-symfony/tree/2.0.5"
+                "source": "https://github.com/phpstan/phpstan-symfony/tree/2.0.6"
             },
-            "time": "2025-05-13T13:36:35+00:00"
+            "time": "2025-05-14T07:00:05+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

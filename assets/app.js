@@ -39,11 +39,5 @@ function initializeThemeToggle() {
 // Initialize on first page load
 document.addEventListener('DOMContentLoaded', initializeThemeToggle);
 
-// Initialize again after Turbo page loads (for Symfony UX Turbo)
-document.addEventListener('turbo:load', initializeThemeToggle);
-
 // For regular page navigations without Turbo
 document.addEventListener('page:load', initializeThemeToggle);
-
-// For legacy Turbo
-document.addEventListener('turbolinks:load', initializeThemeToggle);
