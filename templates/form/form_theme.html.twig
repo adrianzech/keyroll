@@ -2,7 +2,21 @@
 
 {% use "form_div_layout.html.twig" %}
 
-{# Override the block for simple input widgets (text, email, password, number, etc.) #}
+{# Override the form_label block to add a default class #}
+{%- block form_label -%}
+    {%- if label is not same as(false) -%}
+        {# Ensure label_attr is initialized if not already set #}
+        {% set label_attr = label_attr|default({}) %}
+        {# Add your custom 'label' class, preserving any existing classes #}
+        {% set label_attr = label_attr|merge({
+            class: (label_attr.class|default('') ~ ' label')|trim
+        }) %}
+    {%- endif -%}
+    {# Call the parent block to render the label with the modified attributes #}
+    {{- parent() -}}
+{%- endblock form_label -%}
+
+{# Override the block for simple input widgets #}
 {%- block form_widget_simple -%}
     {% set type = type|default('text') %}
     {% set attr = attr|merge({
@@ -11,25 +25,71 @@
     {%- if type == 'hidden' -%}
         <input type="hidden" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
     {%- else -%}
-        <label>
-            <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-        </label>
+        <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
     {%- endif -%}
 {%- endblock form_widget_simple -%}
 
+{# Override the block for textarea widgets #}
 {%- block textarea_widget -%}
     {% set attr = attr|merge({
         class: (attr.class|default('') ~ ' textarea textarea-bordered w-full')|trim
     }) %}
-    <label>
-        <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
-    </label>
+    <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
 {%- endblock textarea_widget -%}
 
-{# Override the block for select (choice) widgets #}
 {%- block choice_widget_collapsed -%}
     {% set attr = attr|merge({
         class: (attr.class|default('') ~ ' select select-bordered w-full')|trim
     }) %}
     {{- parent() -}}
 {%- endblock choice_widget_collapsed -%}
+
+{%- block form_row -%}
+    {# Prepare widget attributes for aria-describedby if help text is present #}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~ "_help"}} -%}
+    {%- endif -%}
+
+    {# Construct the class string carefully to avoid extra spaces #}
+    {%- set base_class = 'form-control mb-4' -%}
+    {%- set extra_class = '' -%}
+    {%- if row_attr.class is defined and row_attr.class is not empty -%}
+        {%- set extra_class = ' ' ~ row_attr.class|e('html_attr') -%}
+    {%- endif -%}
+    <div class="{{ base_class }}{{ extra_class }}"
+            {# Loop for other attributes (excluding 'class') #}
+            {%- if row_attr is defined -%}
+                {%- for attrname, attrvalue in row_attr -%}
+                    {%- if attrname != 'class' -%} {# Condition moved inside the loop #}
+                        {{- ' ' ~ attrname|e('html_attr') ~ '="' ~ attrvalue|e('html_attr') ~ '"' -}}
+                    {%- endif -%}
+                {%- endfor -%}
+            {%- endif -%}
+    >
+        {{- form_label(form) -}}
+        {{- form_widget(form, widget_attr) -}}
+        {{- form_errors(form) -}}
+        {{- form_help(form) -}}
+    </div>
+{%- endblock form_row -%}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <div role="alert" class="alert alert-error alert-soft mt-4">
+            <ul class="list-none p-0 m-0">
+                {%- for error in errors -%}
+                    <li>{{ error.message }}</li>
+                {%- endfor -%}
+            </ul>
+        </div>
+    {%- endif -%}
+{%- endblock form_errors -%}
+
+{%- block form_help -%}
+    {%- if help is not empty -%}
+        <div id="{{ id }}_help" class="text-xs text-gray-500 mt-1 {{ help_attr.class|default('') }}">
+            {{- help|trans(help_translation_parameters, translation_domain) -}}
+        </div>
+    {%- endif -%}
+{%- endblock form_help -%}

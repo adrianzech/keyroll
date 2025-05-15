@@ -1,36 +1,21 @@
-{{ form_start(form) }}
-<div class="form-control mb-4">
-    {{ form_label(form.name, null, {'label_attr': {'class': 'label'}}) }}
-    {{ form_widget(form.name, {'attr': {'class': 'input input-bordered w-full'}}) }}
-    {{ form_errors(form.name) }}
-</div>
+{# templates/pages/host/_form.html.twig #}
+{% import "components/button.html.twig" as button %}
 
-<div class="form-control mb-4">
-    {{ form_label(form.hostname, null, {'label_attr': {'class': 'label'}}) }}
-    {{ form_widget(form.hostname, {'attr': {'class': 'input input-bordered w-full'}}) }}
-    {{ form_errors(form.hostname) }}
-</div>
+{{ form_start(form) }}
+
+{{ form_row(form.name) }}
+{{ form_row(form.hostname) }}
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-    <div class="form-control">
-        {{ form_label(form.port, null, {'label_attr': {'class': 'label'}}) }}
-        {{ form_widget(form.port, {'attr': {'class': 'input input-bordered w-full'}}) }}
-        {{ form_errors(form.port) }}
-    </div>
-
-    <div class="form-control">
-        {{ form_label(form.username, null, {'label_attr': {'class': 'label'}}) }}
-        {{ form_widget(form.username, {'attr': {'class': 'input input-bordered w-full'}}) }}
-        {{ form_errors(form.username) }}
-    </div>
+    {{ form_row(form.port) }}
+    {{ form_row(form.username) }}
 </div>
 
 {{ form_rest(form) }}
 
 <div class="card-actions justify-end">
-    <a href="{{ path('app_host_index') }}" class="btn btn-outline">
-        {{ 'common.cancel'|trans }}
-    </a>
-    <button type="submit" class="btn btn-primary">{{ 'common.save'|trans }}</button>
+    {{ button.outline(label_key='common.cancel', path=path('app_host_index')) }}
+    {{ button.submit(label_key='common.save') }}
 </div>
+
 {{ form_end(form) }}

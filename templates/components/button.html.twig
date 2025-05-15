@@ -15,6 +15,22 @@
     </a>
 {% endmacro %}
 
+{% macro ghost(label_key, path, icon_class = null, additional_classes = '', attributes = {}) %}
+    <a href="{{ path }}" class="btn btn-ghost {{ additional_classes }}"
+    {% for attr, value in attributes %} {{ attr }}="{{ value }}"{% endfor %}>
+    {% if icon_class %}<i class="{{ icon_class }} mr-2"></i>{% endif %}
+    {{ label_key|trans }}
+    </a>
+{% endmacro %}
+
+{% macro outline(label_key, path, icon_class = null, additional_classes = '', attributes = {}) %}
+    <a href="{{ path }}" class="btn btn-outline {{ additional_classes }}"
+    {% for attr, value in attributes %} {{ attr }}="{{ value }}"{% endfor %}>
+    {% if icon_class %}<i class="{{ icon_class }} mr-2"></i>{% endif %}
+    {{ label_key|trans }}
+    </a>
+{% endmacro %}
+
 {% macro delete(label_key, form_action_path, csrf_token_value, csrf_token_name = '_token', confirm_message_key = 'common.confirm_delete_generic', icon_class = 'fas fa-trash-alt', additional_classes = 'btn-error') %}
     <form method="post" action="{{ form_action_path }}" onsubmit="return confirm('{{ confirm_message_key|trans }}');"
           class="inline-block">

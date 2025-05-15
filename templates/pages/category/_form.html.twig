@@ -1,5 +1,6 @@
 {# templates/pages/category/_form.html.twig #}
 {% import "macros/_form_widgets.html.twig" as form_widgets %}
+{% import "components/button.html.twig" as button %}
 
 {% set category_entity = form.vars.data %}
 
@@ -22,7 +23,6 @@
 {{ form_start(form) }}
 
 {{ form_row(form.name) }}
-{{ form_errors(form.name) }}
 
 <div class="grid md:grid-cols-2 gap-x-6 gap-y-4 mt-4 mb-6">
 
@@ -50,11 +50,10 @@
 
 {{ form_rest(form) }}
 
-<div class="card-actions justify-end mt-6">
-    <a href="{{ path('app_category_index') }}" class="btn btn-ghost">
-        {{ 'common.cancel'|trans }}
-    </a>
-    <button type="submit" class="btn btn-primary">{{ button_label|default('common.save'|trans) }}</button>
+<div class="card-actions justify-end">
+    {{ button.outline(label_key='common.cancel', path=path('app_category_index')) }}
+    {{ button.submit(label_key='common.save') }}
 </div>
+
 
 {{ form_end(form) }}

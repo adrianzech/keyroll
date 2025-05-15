@@ -1,22 +1,17 @@
-{{ form_start(form) }}
-<div class="form-control mb-4">
-    {{ form_label(form.name, null, {'label_attr': {'class': 'label'}}) }}
-    {{ form_widget(form.name, {'attr': {'class': 'input input-bordered w-full'}}) }}
-    {{ form_errors(form.name) }}
-</div>
+{# templates/pages/ssh_key/_form.html.twig #}
+{% import "components/button.html.twig" as button %}
 
-<div class="form-control mb-6">
-    {{ form_label(form.publicKey, null, {'label_attr': {'class': 'label'}}) }}
-    {{ form_widget(form.publicKey, {'attr': {'class': 'textarea textarea-bordered w-full'}}) }}
-    {{ form_errors(form.publicKey) }}
-</div>
+{{ form_start(form) }}
+
+{{ form_row(form.name) }}
+{{ form_row(form.publicKey) }}
+
 
 {{ form_rest(form) }}
 
 <div class="card-actions justify-end">
-    <a href="{{ path('app_host_index') }}" class="btn btn-outline">
-        {{ 'common.cancel'|trans }}
-    </a>
-    <button type="submit" class="btn btn-primary">{{ 'common.save'|trans }}</button>
+    {{ button.outline(label_key='common.cancel', path=path('app_ssh_key_index')) }}
+    {{ button.submit(label_key='common.save') }}
 </div>
+
 {{ form_end(form) }}

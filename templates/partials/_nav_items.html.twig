@@ -11,4 +11,7 @@
     <li><a href="{{ path('app_category_index') }}"
            class="{{ app.request.attributes.get('_route') starts with 'app_category_' ? 'active' : '' }}">{{ 'category.categories'|trans }}</a>
     </li>
+    <li><a href="{{ path('app_user_index') }}"
+           class="{{ app.request.attributes.get('_route') starts with 'app_user_' ? 'active' : '' }}">{{ 'user.users'|trans }}</a>
+    </li>
 {% endif %}

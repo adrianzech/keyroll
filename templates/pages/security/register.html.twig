@@ -10,6 +10,12 @@
             {{ form_start(registrationForm) }}
 
             <div class="form-control w-full mb-4">
+                {{ form_label(registrationForm.name, 'label.name', {'label_attr': {'class': 'label-text'}}) }}
+                {{ form_widget(registrationForm.name, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'auth.name_placeholder', 'required': true, 'autofocus': true}}) }}
+                {{ form_errors(registrationForm.name) }}
+            </div>
+
+            <div class="form-control w-full mb-4">
                 {{ form_label(registrationForm.email, 'label.email', {'label_attr': {'class': 'label-text'}}) }}
                 {{ form_widget(registrationForm.email, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'auth.email_placeholder', 'required': true, 'autofocus': true}}) }}
                 {{ form_errors(registrationForm.email) }}
