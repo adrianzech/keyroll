@@ -15,47 +15,28 @@
 {% block content %}
     <h2 class="text-xl font-semibold mb-4">{{ 'settings.account.title'|trans }}</h2>
 
-    {{ form_start(accountForm, {'attr': {'class': 'space-y-6'}}) }}
+    {{ form_start(form) }}
 
     <div class="divider">{{ 'label.email'|trans }}</div>
 
-    {# Email #}
-    <div class="form-control">
-        {{ form_label(accountForm.email, null, {'label_attr': {'class': 'label-text'}}) }}
-        {{ form_widget(accountForm.email, {'attr': {'class': 'input input-bordered w-full', 'autocomplete': 'email'}}) }}
-        {{ form_errors(accountForm.email) }}
-    </div>
+    {{ form_row(form.email) }}
 
     <div class="divider">{{ 'label.password'|trans }}</div>
 
-    {# Current Password #}
-    <div class="form-control">
-        {{ form_label(accountForm.currentPassword, 'settings.account.current_password', {'label_attr': {'class': 'label-text'}}) }}
-        {{ form_widget(accountForm.currentPassword, {'attr': {'class': 'input input-bordered w-full', 'autocomplete': 'current-password', 'placeholder': 'auth.password_placeholder'}}) }}
-        {{ form_errors(accountForm.currentPassword) }}
-    </div>
+    {{ form_row(form.currentPassword) }}
 
-    {# New Password Fields #}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="form-control">
-            {{ form_label(accountForm.plainPassword.first, 'settings.account.new_password', {'label_attr': {'class': 'label-text'}}) }}
-            {{ form_widget(accountForm.plainPassword.first, {'attr': {'class': 'input input-bordered w-full', 'autocomplete': 'new-password', 'placeholder': 'auth.password_placeholder'}}) }}
-            {{ form_errors(accountForm.plainPassword.first) }}
-        </div>
-        <div class="form-control">
-            {{ form_label(accountForm.plainPassword.second, 'settings.account.confirm_new_password', {'label_attr': {'class': 'label-text'}}) }}
-            {{ form_widget(accountForm.plainPassword.second, {'attr': {'class': 'input input-bordered w-full', 'autocomplete': 'new-password', 'placeholder': 'auth.password_placeholder'}}) }}
-            {{ form_errors(accountForm.plainPassword.second) }}
-        </div>
+        {{ form_row(form.plainPassword.first) }}
+        {{ form_row(form.plainPassword.second) }}
     </div>
-    {{ form_errors(accountForm.plainPassword) }}
 
+    {{ form_rest(form) }}
 
-    {{ form_rest(accountForm) }}
-
-    <div class="flex justify-end pt-4">
-        {{ button.submit('common.save_changes', null, 'btn-primary') }}
+    <div class="card-actions justify-end">
+        {{ button.outline(label_key='common.cancel', path=path('app_host_index')) }}
+        {{ button.submit(label_key='common.save') }}
     </div>
-    {{ form_end(accountForm) }}
+
+    {{ form_end(form) }}
 
 {% endblock %}
