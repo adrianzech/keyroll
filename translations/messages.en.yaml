@@ -6,6 +6,7 @@ auth:
   login: 'Login'
   logout: 'Logout'
   register: 'Register'
+  name_placeholder: 'John Doe'
   email_placeholder: 'your@email.com'
   password_placeholder: '••••••••'
   login_remember_me: 'Remember me'
@@ -144,6 +145,29 @@ category:
     search_users_placeholder: 'Type to search users...'
     no_users_added: 'No users added.'
 
+user:
+  user_singular: 'User'
+  users: 'Users'
+  title:
+    index: 'Users Overview'
+    create_new: 'Create New User'
+    edit: 'Edit User'
+  button:
+    create_new: 'Add New User'
+  label:
+    name: 'Name'
+    email: 'Email'
+  placeholder:
+    name: 'e.g., John Doe'
+    email: 'e.g., your@email.com'
+  alert:
+    no_users_found: 'No users found. Add your first user.'
+    delete_confirm: 'Are you sure you want to delete the user "%email%"? This action cannot be undone.'
+  flash:
+    created_successfully: 'User has been created successfully.'
+    updated_successfully: 'User has been updated successfully.'
+    deleted_successfully: 'User has been deleted successfully.'
+
 settings:
   title: 'Settings'
   account:
@@ -164,6 +188,7 @@ settings:
       password_updated: 'Your password has been updated successfully.'
 
 label:
+  name: 'Name'
   email: 'Email'
   password: 'Password'
   language: 'Language'
@@ -176,6 +201,3 @@ theme:
   toggle: 'Toggle Theme'
   light: 'Light Mode'
   dark: 'Dark Mode'
-
-user:
-  user_singular: 'User'

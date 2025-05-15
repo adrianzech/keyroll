@@ -1,0 +1,37 @@
+{# templates/pages/user/index.html.twig #}
+{% extends 'layouts/crud_layout.html.twig' %}
+{% import 'components/page_header.html.twig' as page_header %}
+{% import 'components/table.html.twig' as table %}
+
+{% set page_title = 'user.title.index' %}
+{% block title %}{{ page_title|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header %}
+    {{ page_header.default(
+        title=page_title,
+        button_label='user.button.create_new',
+        button_path=path('app_user_new')
+    ) }}
+{% endblock %}
+
+{% block content %}
+    {{ component('table', {
+        items: users,
+        headers: [
+            'user.label.name',
+            'user.label.email',
+        ],
+        item_properties: [
+            'name',
+            'email',
+        ],
+        show_actions_column: is_granted('ROLE_ADMIN'),
+        delete_path_route: 'app_user_delete',
+        edit_path_route: 'app_user_edit',
+        delete_confirm_trans_key: 'user.alert.delete_confirm',
+        entity_name_property_for_confirm: 'email',
+        csrf_token_prefix: 'delete',
+        entity_id_property: 'id',
+        no_items_message_key: 'user.no_users_found'
+    }) }}
+{% endblock %}

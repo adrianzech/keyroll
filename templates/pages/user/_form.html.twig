@@ -1,0 +1,17 @@
+{# templates/pages/user/_form.html.twig #}
+{% import "components/button.html.twig" as button %}
+
+{{ form_start(form) }}
+
+{{ form_row(form.name) }}
+{{ form_row(form.email) }}
+{{ form_row(form.plainPassword) }}
+
+{{ form_rest(form) }}
+
+<div class="card-actions justify-end">
+    {{ button.outline(label_key='common.cancel', path=path('app_user_index')) }}
+    {{ button.submit(label_key='common.save') }}
+</div>
+
+{{ form_end(form) }}

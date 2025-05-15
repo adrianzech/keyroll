@@ -144,6 +144,29 @@ category:
     search_users_placeholder: 'Tippen, um Benutzer zu suchen...'
     no_users_added: 'Keine Benutzer hinzugefügt.'
 
+user:
+  user_singular: 'Benutzer'
+  users: 'Benutzer'
+  title:
+    index: 'Benutzerübersicht'
+    create_new: 'Neuen Benutzer erstellen'
+    edit: 'Benutzer bearbeiten'
+  button:
+    create_new: 'Neuen Benutzer hinzufügen'
+  label:
+    name: 'Name'
+    email: 'E-Mail'
+  placeholder:
+    name: 'z.B. Max Mustermann'
+    email: 'z.B. deine@email.com'
+  alert:
+    no_users_found: 'Keine Benutzer gefunden. Fügen Sie Ihren ersten Benutzer hinzu.'
+    delete_confirm: 'Sind Sie sicher, dass Sie den Benutzer "%email%" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
+  flash:
+    created_successfully: 'Benutzer wurde erfolgreich erstellt.'
+    updated_successfully: 'Benutzer wurde erfolgreich aktualisiert.'
+    deleted_successfully: 'Benutzer wurde erfolgreich gelöscht.'
+
 settings:
   title: 'Einstellungen'
   account:
@@ -164,6 +187,7 @@ settings:
       password_updated: 'Ihr Passwort wurde erfolgreich aktualisiert.'
 
 label:
+  name: 'Name'
   email: 'E-Mail'
   password: 'Passwort'
   language: 'Sprache'
@@ -176,6 +200,3 @@ theme:
   toggle: 'Theme wechseln'
   light: 'Heller Modus'
   dark: 'Dunkler Modus'
-
-user:
-  user_singular: 'Benutzer'
