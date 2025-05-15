@@ -56,9 +56,15 @@
                     {% if show_actions_column and (delete_path_route or edit_path_route) %}
                         <td class="flex space-x-1">
                             {% if delete_path_route %}
+                                {% set _delete_confirm_message_js_escaped = (delete_confirm_trans_key|trans({'%name%': attribute(item, entity_name_property_for_confirm)}))|json_encode|raw %}
+
+                                {% set _onsubmit_js = (app.user and attribute(item, entity_id_property) is defined and attribute(item, entity_id_property) == app.user.id)
+                                    ? 'return true;'
+                                    : 'return confirm(' ~ _delete_confirm_message_js_escaped ~ ');' %}
+
                                 <form method="post"
                                       action="{{ path(delete_path_route, { (entity_id_property): attribute(item, entity_id_property) }) }}"
-                                      onsubmit="return confirm('{{ delete_confirm_trans_key|trans({'%name%': attribute(item, entity_name_property_for_confirm)}) }}');"
+                                      onsubmit="{{ _onsubmit_js }}"
                                       class="inline">
                                     <input type="hidden" name="_method" value="POST">
                                     <input type="hidden" name="_token"

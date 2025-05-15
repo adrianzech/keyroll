@@ -113,6 +113,13 @@ class UserController extends AbstractController
             return $this->redirectToRoute('app_host_index', [], Response::HTTP_SEE_OTHER);
         }
 
+        // Prevent logged-in user from deleting themselves
+        $loggedInUser = $this->getUser();
+        if ($loggedInUser instanceof User && $loggedInUser->getId() === $user->getId()) {
+            $this->addFlash('error', 'user.flash.cannot_delete_self');
+            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+        }
+
         $this->entityManager->remove($user);
         $this->entityManager->flush();
 

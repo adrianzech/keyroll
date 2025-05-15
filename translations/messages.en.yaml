@@ -167,6 +167,7 @@ user:
     created_successfully: 'User has been created successfully.'
     updated_successfully: 'User has been updated successfully.'
     deleted_successfully: 'User has been deleted successfully.'
+    cannot_delete_self: 'You cannot delete your own account.'
 
 settings:
   title: 'Settings'
