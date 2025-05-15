@@ -21,14 +21,21 @@
             'host.label.name',
             'host.label.hostname',
             'host.label.port',
-            'host.label.username'
+            'host.label.username',
+            'host.label.categories',
         ],
         item_properties: [
             'name',
             'hostname',
             'port',
-            'username'
+            'username',
+            'categories',
         ],
+        column_configs: {
+            'categories': {
+                'component': 'category_badge'
+            }
+        },
         show_actions_column: is_granted('ROLE_ADMIN'),
         delete_path_route: 'app_host_delete',
         edit_path_route: 'app_host_edit',

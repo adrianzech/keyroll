@@ -1,0 +1,15 @@
+{# templates/components/category_badges.html.twig #}
+{% props
+    data
+%}
+
+{% if data is not empty and data is iterable %}
+    <div class="flex flex-wrap gap-1">
+        {% for category in data %}
+            <span class="badge badge-soft badge-primary badge-sm">{{ category.name }}</span>
+        {% endfor %}
+    </div>
+{% else %}
+    {# Display a message if there are no categories. Create this translation key. #}
+    <span class="text-xs italic text-base-content/70">{{ 'host.label.no_categories_assigned'|trans }}</span>
+{% endif %}

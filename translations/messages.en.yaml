@@ -69,6 +69,7 @@ host:
     username: 'Username'
     category: 'Category'
     categories: 'Categories'
+    no_categories_assigned: 'No categories assigned'
   placeholder:
     name: 'e.g., Web Server 1'
     hostname: 'e.g., srv1.example.com or 192.168.1.10'
