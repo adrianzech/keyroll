@@ -1,6 +1,3 @@
-{# macros/_form_widgets.html.twig #}
-{# This macro renders a dynamic entity selector component. #}
-
 {% macro entity_selector(
     form_field,
     api_url_path,
@@ -10,42 +7,38 @@
     search_placeholder_trans_key,
     no_items_trans_key
     ) %}
-    {# Main wrapper for the entity selector component. #}
-    {# Initializes the Stimulus controller and passes necessary data via data attributes. #}
     <div class="form-control entity-selector-wrapper"
          data-controller="entity-selector"
          data-entity-selector-api-url-value="{{ path(api_url_path) }}"
          data-entity-selector-item-singular-name-value="{{ item_singular_name }}"
          data-entity-selector-initial-data-value="{{ initial_data|json_encode|escape('html_attr') }}">
 
-        {# Renders the Symfony form field's label and the underlying (often hidden) select input. #}
-        {# This input will store the actual selected entity IDs. #}
-        {{ form_row(form_field) }}
+        {{ form_label(form_field, null, {
+            'label_attr': {
+                'class': 'mb-0'
+            }
+        }) }}
 
-        {# Custom HTML structure for the interactive search and selection UI. #}
-        {# Label for the text input used to search for entities. #}
-
-        {# Container for the search input and its results dropdown. #}
         <div class="relative">
-            {# Text input field for typing search queries. #}
-            {# Stimulus targets and actions are used to handle input and focus events. #}
-            <label for="{{ form_field.vars.id ~ '_search_input' }}"></label>
             <input type="text" id="{{ form_field.vars.id ~ '_search_input' }}"
                    data-entity-selector-target="searchInput"
                    data-action="input->entity-selector#handleSearchInput focus->entity-selector#handleFocus"
                    placeholder="{{ search_placeholder_trans_key|trans }}"
-                   class="input input-bordered w-full mb-2" autocomplete="off">
-            {# Container where search results (fetched via API) will be displayed. #}
-            {# Initially hidden, styled as a dropdown menu. #}
+                   aria-label="{{ search_label_trans_key|trans }}"
+                   class="input input-bordered w-full mb-2"
+                   autocomplete="off">
             <div data-entity-selector-target="resultsContainer"
                  class="absolute top-full left-0 right-0 z-40 mt-1 menu bg-base-200 w-full rounded-box shadow-lg hidden max-h-60 overflow-y-auto">
-                {# Search results will be dynamically inserted here by the Stimulus controller. #}
             </div>
         </div>
-        {# Container where the currently selected items are displayed (e.g., as tags). #}
-        <ul class="list bg-base-100 rounded-box shadow-md">
+
+        {{ form_widget(form_field, {'attr': {'class': 'hidden'}}) }}
+
+        {{ form_errors(form_field) }}
+        {{ form_help(form_field) }}
+
+        <ul class="list bg-base-100 rounded-box shadow-md mt-2">
             <li data-entity-selector-target="selectedList">
-                {# Selected items will be dynamically inserted here by the Stimulus controller. #}
             </li>
         </ul>
     </div>

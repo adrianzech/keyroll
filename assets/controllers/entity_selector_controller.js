@@ -1,4 +1,4 @@
-import { Controller } from '@hotwired/stimulus';
+import {Controller} from '@hotwired/stimulus';
 
 export default class extends Controller {
     static targets = [
@@ -156,7 +156,7 @@ export default class extends Controller {
                 this.symfonyFieldTarget.appendChild(newOption);
             }
         });
-        this.symfonyFieldTarget.dispatchEvent(new Event('change', { bubbles: true }));
+        this.symfonyFieldTarget.dispatchEvent(new Event('change', {bubbles: true}));
     }
 
     addItemToSelectedListDOM(itemId, itemName, updateField = true) {

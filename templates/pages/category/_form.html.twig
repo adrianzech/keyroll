@@ -24,7 +24,7 @@
 
 {{ form_row(form.name) }}
 
-<div class="grid md:grid-cols-2 gap-x-6 gap-y-4 mt-4 mb-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
     {{ form_widgets.entity_selector(
         form.hosts,
@@ -54,6 +54,5 @@
     {{ button.outline(label_key='common.cancel', path=path('app_category_index')) }}
     {{ button.submit(label_key='common.save') }}
 </div>
-
 
 {{ form_end(form) }}
