@@ -16,7 +16,7 @@ host:
   port_invalid_range: 'The port must be between 1 and 65535.'
   username_required: 'Please enter a username.'
 
-key:
+ssh_key:
   name_required: 'Please enter a name for the SSH key.'
   public_key_required: 'Please enter the SSH public key.'
   public_key_invalid_format: 'The SSH public key format is invalid. It should start with ssh-rsa, ssh-ed25519, etc.'

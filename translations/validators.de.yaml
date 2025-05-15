@@ -16,7 +16,7 @@ host:
   port_invalid_range: 'Der Port muss zwischen 1 und 65535 liegen.'
   username_required: 'Bitte geben Sie einen Benutzernamen ein.'
 
-key:
+ssh_key:
   name_required: 'Bitte geben Sie einen Namen für den SSH-Schlüssel ein.'
   public_key_required: 'Bitte geben Sie den öffentlichen SSH-Schlüssel ein.'
   public_key_invalid_format: 'Das Format des öffentlichen SSH-Schlüssels ist ungültig. Es sollte mit ssh-rsa, ssh-ed25519, etc. beginnen.'
