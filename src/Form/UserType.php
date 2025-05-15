@@ -47,7 +47,10 @@ class UserType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'label' => 'label.password',
-                'attr' => ['autocomplete' => 'new-password'],
+                'attr' => [
+                    'autocomplete' => 'new-password',
+                    'placeholder' => 'auth.password_placeholder'
+                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'auth.enter_password',
