@@ -162,7 +162,7 @@ user:
     email: 'e.g., your@email.com'
   alert:
     no_users_found: 'No users found. Add your first user.'
-    delete_confirm: 'Are you sure you want to delete the user "%email%"? This action cannot be undone.'
+    delete_confirm: 'Are you sure you want to delete the user "%name%"? This action cannot be undone.'
   flash:
     created_successfully: 'User has been created successfully.'
     updated_successfully: 'User has been updated successfully.'
@@ -196,6 +196,8 @@ label:
   language_en: 'English'
   settings: 'Settings'
   account: 'Account'
+  role: 'Role'
+  roles: 'Roles'
 
 theme:
   toggle: 'Toggle Theme'

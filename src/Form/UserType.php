@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\User;
+use App\Form\DataTransformer\RoleToStringTransformer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,6 +20,11 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class UserType extends AbstractBaseType
 {
+    public function __construct(
+        private readonly RoleToStringTransformer $roleTransformer
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -53,7 +60,20 @@ class UserType extends AbstractBaseType
                         'groups' => ['Default', 'registration'],
                     ]),
                 ],
+            ])
+            ->add('roles', ChoiceType::class, [
+                'label' => 'label.role',
+                'choices' => [
+                    'User' => 'ROLE_USER',
+                    'Admin' => 'ROLE_ADMIN',
+                ],
+                'multiple' => false,
+                'expanded' => false,
+                'required' => true,
+                'placeholder' => false,
             ]);
+
+        $builder->get('roles')->addModelTransformer($this->roleTransformer);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

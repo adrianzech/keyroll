@@ -161,7 +161,7 @@ user:
     email: 'z.B. deine@email.com'
   alert:
     no_users_found: 'Keine Benutzer gefunden. Fügen Sie Ihren ersten Benutzer hinzu.'
-    delete_confirm: 'Sind Sie sicher, dass Sie den Benutzer "%email%" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
+    delete_confirm: 'Sind Sie sicher, dass Sie den Benutzer "%name%" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
   flash:
     created_successfully: 'Benutzer wurde erfolgreich erstellt.'
     updated_successfully: 'Benutzer wurde erfolgreich aktualisiert.'
@@ -195,6 +195,8 @@ label:
   language_en: 'Englisch'
   settings: 'Einstellungen'
   account: 'Konto'
+  role: 'Rolle'
+  roles: 'Rollen'
 
 theme:
   toggle: 'Theme wechseln'
