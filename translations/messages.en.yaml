@@ -157,6 +157,7 @@ user:
   label:
     name: 'Name'
     email: 'Email'
+    role: 'Role'
   placeholder:
     name: 'e.g., John Doe'
     email: 'e.g., your@email.com'

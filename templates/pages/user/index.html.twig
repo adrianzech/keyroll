@@ -20,11 +20,18 @@
         headers: [
             'user.label.name',
             'user.label.email',
+            'user.label.role',
         ],
         item_properties: [
             'name',
             'email',
+            'primaryRole',
         ],
+        column_configs: {
+            'primaryRole': {
+                'component': 'user_role_badge',
+            }
+        },
         show_actions_column: is_granted('ROLE_ADMIN'),
         delete_path_route: 'app_user_delete',
         edit_path_route: 'app_user_edit',

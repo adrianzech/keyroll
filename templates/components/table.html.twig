@@ -32,23 +32,20 @@
                     {% for data_key in item_properties %}
                         <td>
                             {% set config = column_configs[data_key] ?? {} %}
-                            {# Get the base value using the data_key, e.g., item.hosts (the collection) or item.createdAt (a DateTime object) #}
                             {% set cell_content = attribute(item, data_key) %}
 
-                            {# Step 1: If an 'accessor' is defined, apply it to the base value.
-                                   This is used for things like item.collection.count() or item.object.getSubProperty #}
                             {% if config.accessor is defined and config.accessor is not empty and cell_content is not null %}
                                 {% set cell_content = attribute(cell_content, config.accessor) %}
-                                {# cell_content is now the result of the accessor, e.g., the count #}
                             {% endif %}
 
-                            {# Step 2: Apply 'type'-based formatting to the (potentially accessor-modified) value #}
-                            {% if config.type is defined and config.type == 'date' and cell_content is not null %}
+                            {% if config.component is defined and config.component is not empty %}
+                                {{ component(config.component, { data: cell_content, item: item, config: config }) }}
+                            {% elseif config.type is defined and config.type == 'date' and cell_content is not null %}
                                 {{ cell_content|date(config.format_string | default('Y-m-d H:i:s')) }}
                             {% elseif config.type is defined and config.type == 'length_filter' and cell_content is not null %}
                                 {{ cell_content|length }}
                             {% else %}
-                                {{ cell_content }}
+                                {{ cell_content|default('') }}
                             {% endif %}
                         </td>
                     {% endfor %}

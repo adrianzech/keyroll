@@ -126,6 +126,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
+     * Gets the primary role for display purposes.
+     * Prioritizes ROLE_ADMIN, then falls back to the first role.
+     */
+    public function getPrimaryRole(): string
+    {
+        $roles = $this->getRoles();
+        if (in_array('ROLE_ADMIN', $roles, true)) {
+            return 'ROLE_ADMIN';
+        }
+
+        return $roles[0] ?? 'ROLE_USER';
+    }
+
+    /**
      * @see PasswordAuthenticatedUserInterface
      */
     public function getPassword(): ?string
