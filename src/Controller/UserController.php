@@ -44,7 +44,7 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
+            /** @var ?string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
             // encode the plain password
@@ -76,7 +76,7 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
+            /** @var ?string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
             // encode the plain password
