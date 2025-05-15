@@ -1,42 +1,30 @@
+{# templates/pages/security/register.html.twig #}
 {% extends 'base.html.twig' %}
+{% import "components/button.html.twig" as button %}
 
 {% block title %}{{ "auth.register"|trans }}{% endblock %}
 
 {% block body %}
-    <div class="card h-full w-full flex items-center justify-center py-12">
+    <div class="card h-full w-full flex items-center justify-center">
         <div class="card-body">
-            <h2 class="card-title text-center text-2xl font-bold mb-6">{{ "auth.register"|trans }}</h2>
+            <h2 class="card-title text-center text-2xl font-bold mb-4">{{ "auth.register"|trans }}</h2>
 
-            {{ form_start(registrationForm) }}
+            {{ form_start(form) }}
 
-            <div class="form-control w-full mb-4">
-                {{ form_label(registrationForm.name, 'label.name', {'label_attr': {'class': 'label-text'}}) }}
-                {{ form_widget(registrationForm.name, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'auth.name_placeholder', 'required': true, 'autofocus': true}}) }}
-                {{ form_errors(registrationForm.name) }}
-            </div>
+            {{ form_row(form.name) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.plainPassword) }}
 
-            <div class="form-control w-full mb-4">
-                {{ form_label(registrationForm.email, 'label.email', {'label_attr': {'class': 'label-text'}}) }}
-                {{ form_widget(registrationForm.email, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'auth.email_placeholder', 'required': true, 'autofocus': true}}) }}
-                {{ form_errors(registrationForm.email) }}
-            </div>
-
-            <div class="form-control w-full mb-6">
-                {{ form_label(registrationForm.plainPassword, 'label.password', {'label_attr': {'class': 'label-text'}}) }}
-                {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'auth.password_placeholder', 'required': true}}) }}
-                {{ form_errors(registrationForm.plainPassword) }}
-            </div>
-
-            <div class="form-control mb-6">
+            <div class="form-control mb-4">
                 <label class="cursor-pointer label justify-start">
-                    {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'checkbox checkbox-primary mr-2'}}) }}
+                    {{ form_widget(form.agreeTerms, {'attr': {'class': 'checkbox checkbox-primary mr-2'}}) }}
                     <span class="label-text">{{ "auth.register_terms"|trans }}</span>
                 </label>
-                {{ form_errors(registrationForm.agreeTerms) }}
+                {{ form_errors(form.agreeTerms) }}
             </div>
 
-            <div class="card-actions justify-end">
-                <button type="submit" class="btn btn-primary w-full">{{ "auth.register"|trans }}</button>
+            <div class="card-actions justify-center">
+                {{ button.submit(label_key='auth.register', additional_classes='btn-primary w-full') }}
             </div>
 
             <div class="text-center mt-4">
@@ -45,7 +33,7 @@
                 </p>
             </div>
 
-            {{ form_end(registrationForm) }}
+            {{ form_end(form) }}
         </div>
     </div>
 {% endblock %}

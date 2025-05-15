@@ -37,6 +37,13 @@
     <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
 {%- endblock textarea_widget -%}
 
+{%- block checkbox_widget -%}
+    {# This block will be used for CheckboxType fields. #}
+    {# The 'attr' (including 'class') will come from your FormType options. #}
+    {# It also correctly handles the 'checked' attribute. #}
+    <input type="checkbox" {{ block('widget_attributes') }}{% if value is not empty %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+{%- endblock checkbox_widget -%}
+
 {%- block choice_widget_collapsed -%}
     {% set attr = attr|merge({
         class: (attr.class|default('') ~ ' select select-bordered w-full')|trim

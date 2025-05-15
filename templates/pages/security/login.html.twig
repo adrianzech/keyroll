@@ -1,11 +1,13 @@
+{# templates/pages/security/login.html.twig #}
 {% extends 'base.html.twig' %}
+{% import "components/button.html.twig" as button %}
 
 {% block title %}{{ "auth.login"|trans }}{% endblock %}
 
 {% block body %}
-    <div class="card h-full w-full flex items-center justify-center py-12">
+    <div class="card h-full w-full flex items-center justify-center">
         <div class="card-body">
-            <h2 class="card-title text-center text-2xl font-bold mb-6">{{ 'auth.login'|trans }}</h2>
+            <h2 class="card-title text-center text-2xl font-bold mb-4">{{ 'auth.login'|trans }}</h2>
 
             {% if error %}
                 <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -14,34 +16,25 @@
             {% if app.user %}
                 <div class="mb-3 text-center">
                     <div class="mb-2">{{ "auth.login_already_logged_in"|trans }} {{ app.user.userIdentifier }}.</div>
-                    <a href="{{ path('app_logout') }}" class="btn btn-primary">{{ "auth.logout"|trans }}</a>
+                    {{ button.primary(label_key='auth.logout', path=path('app_logout')) }}
                 </div>
             {% else %}
 
-                {{ form_start(loginForm) }}
+                {{ form_start(form) }}
 
-                <div class="form-control w-full mb-4">
-                    {{ form_label(loginForm.email, 'label.email', {'label_attr': {'class': 'label-text'}}) }}
-                    {{ form_widget(loginForm.email, {'attr': {'class': 'input input-bordered w-full', 'value': last_username, 'required': true, 'autofocus': true}}) }}
-                    {{ form_errors(loginForm.email) }}
-                </div>
+                {{ form_row(form.email) }}
+                {{ form_row(form.password) }}
 
-                <div class="form-control w-full mb-6">
-                    {{ form_label(loginForm.password, 'label.password', {'label_attr': {'class': 'label-text'}}) }}
-                    {{ form_widget(loginForm.password, {'attr': {'class': 'input input-bordered w-full'}}) }}
-                    {{ form_errors(loginForm.password) }}
-                </div>
-
-                <div class="form-control mb-6">
+                <div class="form-control mb-4">
                     <label class="cursor-pointer label justify-start">
-                        {{ form_widget(loginForm.rememberMe, {'attr': {'class': 'checkbox checkbox-primary mr-2'}}) }}
+                        {{ form_widget(form.rememberMe, {'attr': {'class': 'checkbox checkbox-primary mr-2'}}) }}
                         <span class="label-text">{{ "auth.login_remember_me"|trans }}</span>
                     </label>
-                    {{ form_errors(loginForm.rememberMe) }}
+                    {{ form_errors(form.rememberMe) }}
                 </div>
 
-                <div class="card-actions justify-end">
-                    <button type="submit" class="btn btn-primary w-full">{{ "auth.login"|trans }}</button>
+                <div class="card-actions justify-center">
+                    {{ button.submit(label_key='auth.login', additional_classes='btn-primary w-full') }}
                 </div>
 
                 <div class="text-center mt-4">
@@ -50,7 +43,7 @@
                     </p>
                 </div>
 
-                {{ form_end(loginForm) }}
+                {{ form_end(form) }}
 
             {% endif %}
         </div>
