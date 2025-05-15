@@ -4,8 +4,6 @@
     themes: light --default, dark;
 }
 
-@source inline("alert-success", "alert-error", "alert-warning", "alert-info");
-
 html {
     transition: background-color 0.3s ease;
 }
