@@ -6,6 +6,7 @@ namespace App\Form;
 
 use App\Entity\User;
 use App\Form\DataTransformer\RoleToStringTransformer;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -16,9 +17,9 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
- * @extends AbstractBaseType<User>
+ * @extends AbstractType<User>
  */
-class UserType extends AbstractBaseType
+class UserType extends AbstractType
 {
     public function __construct(
         private readonly RoleToStringTransformer $roleTransformer

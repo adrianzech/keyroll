@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Host;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,9 +14,9 @@ use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Regex;
 
 /**
- * @extends AbstractBaseType<Host>
+ * @extends AbstractType<Host>
  */
-class HostType extends AbstractBaseType
+class HostType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
