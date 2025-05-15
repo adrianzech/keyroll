@@ -117,6 +117,7 @@ class UserController extends AbstractController
         $loggedInUser = $this->getUser();
         if ($loggedInUser instanceof User && $loggedInUser->getId() === $user->getId()) {
             $this->addFlash('error', 'user.flash.cannot_delete_self');
+
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
 

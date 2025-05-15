@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class UserType extends AbstractType
 {
     public function __construct(
-        private readonly RoleToStringTransformer $roleTransformer
+        private readonly RoleToStringTransformer $roleTransformer,
     ) {
     }
 
@@ -49,7 +49,7 @@ class UserType extends AbstractType
                 'label' => 'label.password',
                 'attr' => [
                     'autocomplete' => 'new-password',
-                    'placeholder' => 'auth.password_placeholder'
+                    'placeholder' => 'auth.password_placeholder',
                 ],
                 'constraints' => [
                     new NotBlank([

@@ -52,7 +52,7 @@ class RegistrationFormType extends AbstractType
                 'label' => 'label.password',
                 'attr' => [
                     'autocomplete' => 'new-password',
-                    'placeholder' => 'auth.password_placeholder'
+                    'placeholder' => 'auth.password_placeholder',
                 ],
                 'constraints' => [
                     new NotBlank([

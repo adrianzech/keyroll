@@ -12,8 +12,9 @@ class RoleToStringTransformer implements DataTransformerInterface
     /**
      * Transforms an array of roles (model data) into a single string for the form.
      *
-     * @param mixed $valueFromEntity Typically an array of roles from $user->getRoles().
-     * @return string|null The primary role string for the dropdown.
+     * @param mixed $valueFromEntity typically an array of roles from $user->getRoles()
+     *
+     * @return string|null the primary role string for the dropdown
      */
     public function transform(mixed $valueFromEntity): ?string
     {
@@ -25,12 +26,7 @@ class RoleToStringTransformer implements DataTransformerInterface
         if (!is_array($valueFromEntity)) {
             // This is where your current exception is likely thrown.
             // The detailed message will help confirm what type is actually received.
-            throw new TransformationFailedException(
-                sprintf(
-                    'The RoleToStringTransformer expected an array or null, but got "%s". Property path: roles. Check User::getRoles() or how the User entity is populated.',
-                    get_debug_type($valueFromEntity)
-                )
-            );
+            throw new TransformationFailedException(sprintf('The RoleToStringTransformer expected an array or null, but got "%s". Property path: roles. Check User::getRoles() or how the User entity is populated.', get_debug_type($valueFromEntity)));
         }
 
         // At this point, $valueFromEntity is confirmed to be an array.
@@ -58,8 +54,9 @@ class RoleToStringTransformer implements DataTransformerInterface
     /**
      * Transforms a single role string (form data) back into an array for the entity.
      *
-     * @param mixed $singleRoleString The role string from the dropdown.
-     * @return list<string> An array containing the primary role.
+     * @param mixed $singleRoleString the role string from the dropdown
+     *
+     * @return list<string> an array containing the primary role
      */
     public function reverseTransform(mixed $singleRoleString): array
     {
@@ -69,12 +66,7 @@ class RoleToStringTransformer implements DataTransformerInterface
         }
 
         if (!is_string($singleRoleString)) {
-            throw new TransformationFailedException(
-                sprintf(
-                    'The RoleToStringTransformer expected a string or null for reverse transformation, but got "%s".',
-                    get_debug_type($singleRoleString)
-                )
-            );
+            throw new TransformationFailedException(sprintf('The RoleToStringTransformer expected a string or null for reverse transformation, but got "%s".', get_debug_type($singleRoleString)));
         }
 
         // Return an array with the single selected role.
