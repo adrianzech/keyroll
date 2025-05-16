@@ -28,13 +28,30 @@ class SSHKeyController extends AbstractController
     #[Route('/index', name: 'app_ssh_key_index', methods: ['GET'])]
     public function index(): Response
     {
+        $keys = [];
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException('User not found or not authenticated.');
+        }
+
+        // Regular users see only their own keys
+        if ($this->isGranted('ROLE_USER')) {
+            $keys = $this->sshKeyRepository->findBy(['user' => $user]);
+        }
+
+        // Admins see all keys
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $keys = $this->sshKeyRepository->findAll();
+        }
+
         return $this->render('pages/ssh_key/index.html.twig', [
-            'keys' => $this->sshKeyRepository->findAll(),
+            'keys' => $keys,
         ]);
     }
 
     #[Route('/new', name: 'app_ssh_key_new', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_USER')]
     public function new(
         Request $request,
     ): Response {
@@ -68,7 +85,7 @@ class SSHKeyController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_ssh_key_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_USER')]
     public function edit(
         Request $request,
         SSHKey $key,

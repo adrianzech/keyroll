@@ -19,19 +19,22 @@
         items: keys,
         headers: [
             'ssh_key.label.name',
+            'ssh_key.label.user',
             'common.label.created_at',
-            'common.label.updated_at'
+            'common.label.updated_at',
         ],
         item_properties: [
             'name',
+            'user',
             'createdAt',
-            'updatedAt'
+            'updatedAt',
         ],
         column_configs: {
+            user: { accessor: 'name' },
             createdAt: { type: 'date', format_string: 'd.m.Y H:i' },
-            updatedAt: { type: 'date', format_string: 'd.m.Y H:i' }
+            updatedAt: { type: 'date', format_string: 'd.m.Y H:i' },
         },
-        show_actions_column: is_granted('ROLE_ADMIN'),
+        show_actions_column: is_granted('ROLE_USER'),
         delete_path_route: 'app_ssh_key_delete',
         edit_path_route: 'app_ssh_key_edit',
         delete_confirm_trans_key: 'ssh_key.alert.delete_confirm',

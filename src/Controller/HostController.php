@@ -33,7 +33,7 @@ class HostController extends AbstractController
     }
 
     #[Route('/new', name: 'app_host_new', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_USER')]
     public function new(
         Request $request,
     ): Response {
@@ -57,7 +57,7 @@ class HostController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_host_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_USER')]
     public function edit(
         Request $request,
         Host $host,
