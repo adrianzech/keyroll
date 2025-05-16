@@ -11,15 +11,42 @@
     delete_confirm_trans_key = 'common.delete_confirm_default',
     entity_name_property_for_confirm = 'name',
     csrf_token_prefix = 'delete',
-    entity_id_property = 'id' %}
+    entity_id_property = 'id',
+    current_sort_by = '',
+    current_sort_direction = 'ASC',
+    sort_route = null %}
 
 {% if items|length > 0 %}
     <div class="overflow-x-auto">
         <table class="table table-zebra w-full">
             <thead>
             <tr>
-                {% for header_key in headers %}
-                    <th>{{ header_key|trans }}</th>
+                {% for header_config in headers %}
+                    <th>
+                        {% if header_config.sortable and sort_route %}
+                            {% set sort_field = header_config.key %}
+                            {% set next_direction = (current_sort_by == sort_field and current_sort_direction == 'ASC') ? 'DESC' : 'ASC' %}
+                            {% set sort_url = path(sort_route, app.request.query.all|merge({ 'sort_by': sort_field, 'sort_direction': next_direction })) %}
+                            <a href="{{ sort_url }}" class="inline-flex items-center">
+                                {{ header_config.label|trans }}
+                                {% if current_sort_by == sort_field %}
+                                    <span class="ml-1">
+                                        {% if current_sort_direction == 'ASC' %}
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                                 viewBox="0 0 24 24"><path fill="currentColor"
+                                                                           d="M12 8l-6 6l1.41 1.41L12 10.83l4.59 4.58L18 14z"></path></svg>
+                                        {% else %}
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                                 viewBox="0 0 24 24"><path fill="currentColor"
+                                                                           d="M12 16l-6-6l1.41-1.41L12 13.17l4.59-4.58L18 10z"></path></svg>
+                                        {% endif %}
+                                    </span>
+                                {% endif %}
+                            </a>
+                        {% else %}
+                            {{ header_config.label|trans }}
+                        {% endif %}
+                    </th>
                 {% endfor %}
                 {% if show_actions_column and (delete_path_route or edit_path_route) %}
                     <th>{{ 'common.actions'|trans }}</th>
@@ -29,10 +56,15 @@
             <tbody>
             {% for item in items %}
                 <tr>
-                    {% for data_key in item_properties %}
+                    {% for header_config in headers %}
+                        {% set data_key = header_config.key %}
                         <td>
                             {% set config = column_configs[data_key] ?? {} %}
-                            {% set cell_content = attribute(item, data_key) %}
+                            {% set cell_content = null %}
+
+                            {% if attribute(item, data_key) is defined %}
+                                {% set cell_content = attribute(item, data_key) %}
+                            {% endif %}
 
                             {% if config.accessor is defined and config.accessor is not empty and cell_content is not null %}
                                 {% set cell_content = attribute(cell_content, config.accessor) %}
@@ -51,32 +83,33 @@
                     {% endfor %}
 
                     {% if show_actions_column and (delete_path_route or edit_path_route) %}
-                        <td class="flex space-x-1">
-                            {% if delete_path_route %}
-                                {% set _delete_confirm_message_js_escaped = (delete_confirm_trans_key|trans({'%name%': attribute(item, entity_name_property_for_confirm)}))|json_encode|raw %}
-
-                                {% set _onsubmit_js = (app.user and attribute(item, entity_id_property) is defined and attribute(item, entity_id_property) == app.user.id)
-                                    ? 'return true;'
-                                    : 'return confirm(' ~ _delete_confirm_message_js_escaped ~ ');' %}
-
-                                <form method="post"
-                                      action="{{ path(delete_path_route, { (entity_id_property): attribute(item, entity_id_property) }) }}"
-                                      onsubmit="{{ _onsubmit_js }}"
-                                      class="inline">
-                                    <input type="hidden" name="_method" value="POST">
-                                    <input type="hidden" name="_token"
-                                           value="{{ csrf_token(csrf_token_prefix ~ attribute(item, entity_id_property)) }}">
-                                    <button type="submit" class="btn btn-ghost btn-error btn-xs">
-                                        {{ 'common.delete'|trans }}
-                                    </button>
-                                </form>
-                            {% endif %}
-
+                        <td class="flex space-x-1 py-2">
                             {% if edit_path_route %}
                                 <a href="{{ path(edit_path_route, { (entity_id_property): attribute(item, entity_id_property) }) }}"
                                    class="btn btn-ghost btn-primary btn-xs">
                                     {{ 'common.edit'|trans }}
                                 </a>
+                            {% endif %}
+                            {% if delete_path_route %}
+                                {% set confirm_name = attribute(item, entity_name_property_for_confirm) is defined ? attribute(item, entity_name_property_for_confirm) : '' %}
+                                {% set _delete_confirm_message_js_escaped = (delete_confirm_trans_key|trans({'%name%': confirm_name}))|json_encode|raw %}
+
+                                {% set _onsubmit_js = 'return confirm(' ~ _delete_confirm_message_js_escaped ~ ');' %}
+
+                                {% if csrf_token_prefix == 'delete_user' and app.user and attribute(item, entity_id_property) is defined and attribute(item, entity_id_property) == app.user.id %}
+                                {% else %}
+                                    <form method="post"
+                                          action="{{ path(delete_path_route, { (entity_id_property): attribute(item, entity_id_property) }) }}"
+                                          onsubmit="{{ _onsubmit_js }}"
+                                          class="inline">
+                                        <input type="hidden" name="_method" value="POST">
+                                        <input type="hidden" name="_token"
+                                               value="{{ csrf_token(csrf_token_prefix ~ attribute(item, entity_id_property)) }}">
+                                        <button type="submit" class="btn btn-ghost btn-error btn-xs">
+                                            {{ 'common.delete'|trans }}
+                                        </button>
+                                    </form>
+                                {% endif %}
                             {% endif %}
                         </td>
                     {% endif %}

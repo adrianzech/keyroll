@@ -18,10 +18,10 @@
     {{ component('table', {
         items: keys,
         headers: [
-            'ssh_key.label.name',
-            'ssh_key.label.user',
-            'common.label.created_at',
-            'common.label.updated_at',
+            { key: 'name', label: 'ssh_key.label.name', sortable: true },
+            { key: 'user', label: 'ssh_key.label.user', sortable: true },
+            { key: 'createdAt', label: 'common.label.created_at', sortable: true },
+            { key: 'updatedAt', label: 'common.label.updated_at', sortable: true },
         ],
         item_properties: [
             'name',
@@ -34,7 +34,10 @@
             createdAt: { type: 'date', format_string: 'd.m.Y H:i' },
             updatedAt: { type: 'date', format_string: 'd.m.Y H:i' },
         },
-        show_actions_column: is_granted('ROLE_USER'),
+        current_sort_by: current_sort_by,
+        current_sort_direction: current_sort_direction,
+        sort_route: 'app_ssh_key_index',
+        show_actions_column: is_granted('ROLE_ADMIN') or (app.user and keys|filter(k => k.user == app.user)|length > 0),
         delete_path_route: 'app_ssh_key_delete',
         edit_path_route: 'app_ssh_key_edit',
         delete_confirm_trans_key: 'ssh_key.alert.delete_confirm',

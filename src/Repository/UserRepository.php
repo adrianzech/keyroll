@@ -21,9 +21,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         parent::__construct($registry, User::class);
     }
 
-    /**
-     * Used to upgrade (rehash) the user's password automatically over time.
-     */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof User) {
@@ -49,13 +46,35 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->where('LOWER(u.email) LIKE LOWER(:query)')
             ->setParameter('query', '%' . mb_strtolower($query) . '%')
             ->orderBy('u.email', 'ASC')
-            ->setMaxResults(10); // Limit search results
+            ->setMaxResults(10);
 
         if (!empty($excludedIds)) {
             $qb->andWhere('u.id NOT IN (:excludedIds)')
                 ->setParameter('excludedIds', $excludedIds);
         }
 
-        return $qb->getQuery()->getResult();
+        /** @var User[] $result */
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
+    }
+
+    /**
+     * Finds all User entities with sorting.
+     *
+     * @param string $sortBy        The property to sort by (e.g., 'name', 'email').
+     * @param string $sortDirection 'ASC' or 'DESC'
+     *
+     * @return User[] returns an array of User objects
+     */
+    public function findWithSorting(string $sortBy, string $sortDirection): array
+    {
+        $qb = $this->createQueryBuilder('u');
+        $qb->orderBy('u.' . $sortBy, $sortDirection);
+
+        /** @var User[] $result */
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
     }
 }

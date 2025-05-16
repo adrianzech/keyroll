@@ -18,9 +18,9 @@
     {{ component('table', {
         items: users,
         headers: [
-            'user.label.name',
-            'user.label.email',
-            'user.label.role',
+            { key: 'name', label: 'user.label.name', sortable: true },
+            { key: 'email', label: 'user.label.email', sortable: true },
+            { key: 'primaryRole', label: 'user.label.role', sortable: false },
         ],
         item_properties: [
             'name',
@@ -32,6 +32,9 @@
                 'component': 'user_role_badge',
             }
         },
+        current_sort_by: current_sort_by,
+        current_sort_direction: current_sort_direction,
+        sort_route: 'app_user_index',
         show_actions_column: is_granted('ROLE_ADMIN'),
         delete_path_route: 'app_user_delete',
         edit_path_route: 'app_user_edit',

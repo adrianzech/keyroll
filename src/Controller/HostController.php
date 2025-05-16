@@ -18,6 +18,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 class HostController extends AbstractController
 {
+    private const ALLOWED_SORT_FIELDS = [
+        'name' => 'name',
+        'hostname' => 'hostname',
+        'port' => 'port',
+        'username' => 'username',
+        'connectionStatus' => 'connectionStatus',
+        'createdAt' => 'createdAt',
+        'updatedAt' => 'updatedAt',
+    ];
+
     public function __construct(
         private readonly HostRepository $hostRepository,
         private readonly EntityManagerInterface $entityManager,
@@ -25,10 +35,21 @@ class HostController extends AbstractController
     }
 
     #[Route('', name: 'app_host_index', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $sortByInput = $request->query->get('sort_by', 'name');
+        $sortDirectionInput = $request->query->get('sort_direction', 'ASC');
+
+        $sortBy = self::ALLOWED_SORT_FIELDS[$sortByInput] ?? self::ALLOWED_SORT_FIELDS['name'];
+
+        $sortDirection = strtoupper($sortDirectionInput) === 'DESC' ? 'DESC' : 'ASC';
+
+        $hosts = $this->hostRepository->findWithSorting($sortBy, $sortDirection);
+
         return $this->render('pages/host/index.html.twig', [
-            'hosts' => $this->hostRepository->findAll(),
+            'hosts' => $hosts,
+            'current_sort_by' => $sortByInput,
+            'current_sort_direction' => $sortDirection,
         ]);
     }
 

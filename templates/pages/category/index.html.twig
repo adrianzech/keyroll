@@ -17,9 +17,9 @@
     {{ component('table', {
         items: categories,
         headers: [
-            'category.label.name',
-            'category.label.assigned_hosts',
-            'category.label.assigned_users'
+            { key: 'name', label: 'category.label.name', sortable: true },
+            { key: 'hosts', label: 'category.label.assigned_hosts', sortable: true },
+            { key: 'users', label: 'category.label.assigned_users', sortable: true },
         ],
         item_properties: [
             'name',
@@ -30,6 +30,9 @@
             hosts: { accessor: 'count' },
             users: { accessor: 'count' }
         },
+        current_sort_by: current_sort_by,
+        current_sort_direction: current_sort_direction,
+        sort_route: 'app_category_index',
         show_actions_column: is_granted('ROLE_ADMIN'),
         delete_path_route: 'app_category_delete',
         edit_path_route: 'app_category_edit',

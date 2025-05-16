@@ -18,6 +18,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')] // Require ADMIN for all category actions
 class CategoryController extends AbstractController
 {
+    private const ALLOWED_SORT_FIELDS = [
+        'name' => 'name',
+        'assigned_hosts' => 'hostsCount',
+        'assigned_users' => 'usersCount',
+        'createdAt' => 'createdAt',
+        'updatedAt' => 'updatedAt',
+    ];
+
     public function __construct(
         private readonly CategoryRepository $categoryRepository,
         private readonly EntityManagerInterface $entityManager,
@@ -25,10 +33,20 @@ class CategoryController extends AbstractController
     }
 
     #[Route('', name: 'app_category_index', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $sortByInput = $request->query->get('sort_by', 'name');
+        $sortDirectionInput = $request->query->get('sort_direction', 'ASC');
+
+        $sortBy = self::ALLOWED_SORT_FIELDS[$sortByInput] ?? self::ALLOWED_SORT_FIELDS['name'];
+        $sortDirection = strtoupper($sortDirectionInput) === 'DESC' ? 'DESC' : 'ASC';
+
+        $categories = $this->categoryRepository->findWithSorting($sortBy, $sortDirection);
+
         return $this->render('pages/category/index.html.twig', [
-            'categories' => $this->categoryRepository->findAll(),
+            'categories' => $categories,
+            'current_sort_by' => $sortByInput,
+            'current_sort_direction' => $sortDirection,
         ]);
     }
 

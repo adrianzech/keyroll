@@ -1,7 +1,6 @@
 {# templates/pages/host/index.html.twig #}
 {% extends 'layouts/crud_layout.html.twig' %}
 {% import 'components/page_header.html.twig' as page_header %}
-{% import 'components/table.html.twig' as table %}
 
 {% set page_title = 'host.title.index' %}
 {% block title %}{{ page_title|trans }} - {{ parent() }}{% endblock %}
@@ -18,12 +17,12 @@
     {{ component('table', {
         items: hosts,
         headers: [
-            'host.label.name',
-            'host.label.hostname',
-            'host.label.port',
-            'host.label.username',
-            'host.label.categories',
-            'host.label.connection_status',
+            { key: 'name', label: 'host.label.name', sortable: true },
+            { key: 'hostname', label: 'host.label.hostname', sortable: true },
+            { key: 'port', label: 'host.label.port', sortable: true },
+            { key: 'username', label: 'host.label.username', sortable: true },
+            { key: 'categories', label: 'host.label.categories', sortable: false },
+            { key: 'connectionStatus', label: 'host.label.connection_status', sortable: true },
         ],
         item_properties: [
             'name',
@@ -41,6 +40,9 @@
                 'component': 'connection_status_badge'
             }
         },
+        current_sort_by: current_sort_by,
+        current_sort_direction: current_sort_direction,
+        sort_route: 'app_host_index',
         show_actions_column: is_granted('ROLE_USER'),
         delete_path_route: 'app_host_delete',
         edit_path_route: 'app_host_edit',

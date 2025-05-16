@@ -19,6 +19,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 class SSHKeyController extends AbstractController
 {
+    private const ALLOWED_SORT_FIELDS = [
+        'name' => 'name',
+        'user' => 'user.email',
+        'createdAt' => 'createdAt',
+        'updatedAt' => 'updatedAt',
+    ];
+
     public function __construct(
         private readonly SSHKeyRepository $sshKeyRepository,
         private readonly EntityManagerInterface $entityManager,
@@ -26,27 +33,30 @@ class SSHKeyController extends AbstractController
     }
 
     #[Route('/index', name: 'app_ssh_key_index', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $keys = [];
-        $user = $this->getUser();
-
-        if (!$user instanceof User) {
+        $currentUser = $this->getUser();
+        if (!$currentUser instanceof User) {
             throw $this->createAccessDeniedException('User not found or not authenticated.');
         }
 
-        // Regular users see only their own keys
-        if ($this->isGranted('ROLE_USER')) {
-            $keys = $this->sshKeyRepository->findBy(['user' => $user]);
+        $sortByInput = $request->query->get('sort_by', 'createdAt');
+        $sortDirectionInput = $request->query->get('sort_direction', 'DESC');
+
+        $sortBy = self::ALLOWED_SORT_FIELDS[$sortByInput] ?? self::ALLOWED_SORT_FIELDS['createdAt'];
+        $sortDirection = strtoupper($sortDirectionInput) === 'ASC' ? 'ASC' : 'DESC';
+
+        $userToFilter = null;
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $userToFilter = $currentUser;
         }
 
-        // Admins see all keys
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $keys = $this->sshKeyRepository->findAll();
-        }
+        $keys = $this->sshKeyRepository->findWithSorting($userToFilter, $sortBy, $sortDirection);
 
         return $this->render('pages/ssh_key/index.html.twig', [
             'keys' => $keys,
+            'current_sort_by' => $sortByInput, // Pass the input key for link generation
+            'current_sort_direction' => $sortDirection,
         ]);
     }
 
