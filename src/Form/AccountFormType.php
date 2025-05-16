@@ -36,7 +36,7 @@ class AccountFormType extends AbstractType
             ->add('currentPassword', PasswordType::class, [
                 'mapped' => false,
                 'required' => false,
-                'label' => false,
+                'label' => 'settings.account.current_password',
                 'attr' => [
                     'autocomplete' => 'current-password',
                 ],
