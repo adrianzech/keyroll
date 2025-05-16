@@ -24,7 +24,7 @@
         item_properties: [
             'name',
             'hosts',
-            'users'
+            'users/'
         ],
         column_configs: {
             hosts: { accessor: 'count' },
@@ -37,6 +37,6 @@
         entity_name_property_for_confirm: 'name',
         csrf_token_prefix: 'delete',
         entity_id_property: 'id',
-        no_items_message_key: 'category.no_categories_found'
+        no_items_message_key: 'category.alert.no_categories_found'
     }) }}
 {% endblock %}
