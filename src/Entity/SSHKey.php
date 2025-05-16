@@ -26,15 +26,15 @@ class SSHKey
     #[Assert\NotBlank]
     private ?string $publicKey = null;
 
+    #[ORM\ManyToOne(inversedBy: 'sshKeys')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
-
-    #[ORM\ManyToOne(inversedBy: 'sshKeys')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]

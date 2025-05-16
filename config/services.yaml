@@ -28,3 +28,8 @@ services:
   App\Command\SSHKeyGenerateCommand:
     arguments:
       $projectDir: '%kernel.project_dir%'
+
+  App\Service\HostConnectionChecker:
+    arguments:
+      $keyRollPrivateKeyPath: '%keyroll.private_key_path%'
+      $connectionTimeout: '%keyroll.connection_timeout%'

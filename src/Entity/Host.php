@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\HostConnectionStatus;
 use App\Repository\HostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -40,12 +41,6 @@ class Host
     #[Assert\NotBlank]
     private string $username = '';
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column]
-    private ?\DateTimeImmutable $updatedAt = null;
-
     /**
      * @var Collection<int, Category>
      */
@@ -53,9 +48,19 @@ class Host
     #[ORM\JoinTable(name: 'host_category')]
     private Collection $categories;
 
+    #[ORM\Column(type: 'string', nullable: true, enumType: HostConnectionStatus::class)]
+    private ?HostConnectionStatus $connectionStatus = HostConnectionStatus::UNKNOWN;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $updatedAt = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
+        $this->connectionStatus = HostConnectionStatus::UNKNOWN;
     }
 
     #[ORM\PrePersist]
@@ -168,6 +173,18 @@ class Host
     public function removeCategory(Category $category): static
     {
         $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    public function getConnectionStatus(): ?HostConnectionStatus
+    {
+        return $this->connectionStatus;
+    }
+
+    public function setConnectionStatus(?HostConnectionStatus $connectionStatus): static
+    {
+        $this->connectionStatus = $connectionStatus;
 
         return $this;
     }

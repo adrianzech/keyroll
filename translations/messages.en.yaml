@@ -70,6 +70,12 @@ host:
     category: 'Category'
     categories: 'Categories'
     no_categories_assigned: 'No categories assigned'
+    connection_status: 'Connection Status'
+  status:
+    successful: 'Successful'
+    failed: 'Failed'
+    unknown: 'Unknown'
+    checking: 'Checking...'
   placeholder:
     name: 'e.g., Web Server 1'
     hostname: 'e.g., srv1.example.com or 192.168.1.10'

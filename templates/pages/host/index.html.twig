@@ -23,6 +23,7 @@
             'host.label.port',
             'host.label.username',
             'host.label.categories',
+            'host.label.connection_status',
         ],
         item_properties: [
             'name',
@@ -30,10 +31,14 @@
             'port',
             'username',
             'categories',
+            'connectionStatus',
         ],
         column_configs: {
             'categories': {
                 'component': 'category_badge'
+            },
+            'connectionStatus': {
+                'component': 'connection_status_badge'
             }
         },
         show_actions_column: is_granted('ROLE_ADMIN'),
