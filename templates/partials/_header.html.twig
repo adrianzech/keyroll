@@ -1,5 +1,23 @@
-<div class="navbar container mx-auto">
+{# templates/partials/_header.html.twig #}
+<div class="navbar bg-base-100 container mx-auto">
     <div class="navbar-start">
+        <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 6h16M4 12h8m-8 6h16"></path>
+                </svg>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                {% include 'partials/_nav_items.html.twig' %}
+                {% if not app.user %}
+                    <li><a href="{{ path('app_login') }}">{{ 'auth.login'|trans }}</a></li>
+                    <li><a href="{{ path('app_register') }}">{{ 'auth.register'|trans }}</a></li>
+                {% endif %}
+            </ul>
+        </div>
+
         <a href="{{ path('app_host_index') }}" class="btn btn-ghost normal-case text-xl">{{ 'app.title'|trans }}</a>
     </div>
 
@@ -26,16 +44,20 @@
                     </div>
                 </div>
                 <ul tabindex="0"
-                    class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                    class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                     <li>
                         <a href="{{ path('app_settings_index') }}">{{ "label.settings"|trans }}</a>
+                    </li>
+                    <li>
                         <a href="{{ path('app_logout') }}">{{ "auth.logout"|trans }}</a>
                     </li>
                 </ul>
             </div>
         {% else %}
-            <a href="{{ path('app_login') }}" class="btn btn-ghost">{{ 'auth.login'|trans }}</a>
-            <a href="{{ path('app_register') }}" class="btn btn-ghost">{{ 'auth.register'|trans }}</a>
+            <a href="{{ path('app_login') }}"
+               class="btn btn-ghost hidden lg:inline-flex">{{ 'auth.login'|trans }}</a>
+            <a href="{{ path('app_register') }}"
+               class="btn btn-ghost hidden lg:inline-flex">{{ 'auth.register'|trans }}</a>
         {% endif %}
     </div>
 </div>
