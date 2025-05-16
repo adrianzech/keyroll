@@ -2,6 +2,8 @@
 {% extends 'layouts/crud_layout.html.twig' %}
 {% import 'components/page_header.html.twig' as page_header %}
 
+{% set apply_content_padding = false %}
+
 {% set page_title = 'host.title.index' %}
 {% block title %}{{ page_title|trans }} - {{ parent() }}{% endblock %}
 

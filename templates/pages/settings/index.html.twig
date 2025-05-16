@@ -30,22 +30,6 @@
         {{ form_row(form.plainPassword.second) }}
     </div>
 
-    <div class="divider">{{ 'label.language'|trans }}</div>
-
-    {# TODO: Integrate into form type #}
-    <div class="flex items-center gap-4">
-        <div class="join">
-            <a href="{{ path('app_settings_change_locale', {'locale': 'en'}) }}"
-               class="btn join-item {{ app.request.locale == 'en' ? 'btn-active' : '' }}">
-                {{ "label.language_en"|trans }}
-            </a>
-            <a href="{{ path('app_settings_change_locale', {'locale': 'de'}) }}"
-               class="btn join-item {{ app.request.locale == 'de' ? 'btn-active' : '' }}">
-                {{ "label.language_de"|trans }}
-            </a>
-        </div>
-    </div>
-
     {{ form_rest(form) }}
 
     <div class="card-actions justify-end">

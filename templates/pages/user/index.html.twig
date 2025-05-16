@@ -1,7 +1,8 @@
 {# templates/pages/user/index.html.twig #}
 {% extends 'layouts/crud_layout.html.twig' %}
 {% import 'components/page_header.html.twig' as page_header %}
-{% import 'components/table.html.twig' as table %}
+
+{% set apply_content_padding = false %}
 
 {% set page_title = 'user.title.index' %}
 {% block title %}{{ page_title|trans }} - {{ parent() }}{% endblock %}
