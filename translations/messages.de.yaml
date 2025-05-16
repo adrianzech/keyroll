@@ -90,7 +90,7 @@ host:
     updated_successfully: 'Server wurde erfolgreich aktualisiert.'
     deleted_successfully: 'Server wurde erfolgreich gelöscht.'
 
-key:
+ssh_key:
   ssh_key_singular: 'SSH Schlüssel'
   ssh_keys: 'SSH Schlüssel'
   title:
