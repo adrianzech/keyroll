@@ -18,13 +18,11 @@ services:
       - '../src/Entity/'
       - '../src/Kernel.php'
 
-  # Configure SSHKeyDeployer service
   App\Service\SSHKeyDeployer:
     arguments:
       $keyRollPrivateKeyPath: '%keyroll.private_key_path%'
       $connectionTimeout: '%keyroll.connection_timeout%'
 
-  # Configure SSHKeyGenerateCommand with the project directory
   App\Command\SSHKeyGenerateCommand:
     arguments:
       $projectDir: '%kernel.project_dir%'
@@ -33,3 +31,7 @@ services:
     arguments:
       $keyRollPrivateKeyPath: '%keyroll.private_key_path%'
       $connectionTimeout: '%keyroll.connection_timeout%'
+
+  App\EventListener\LocaleListener:
+    arguments:
+      $defaultLocale: '%kernel.default_locale%'

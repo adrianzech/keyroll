@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\AccountFormType;
 use App\Service\UserSettingsUpdater;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -81,33 +82,32 @@ class SettingsController extends AbstractController
     }
 
     #[Route('/settings/change-locale/{locale}', name: 'app_settings_change_locale')]
-    public function changeLocale(string $locale, Request $request): Response
-    {
-        $supportedLocalesRaw = $this->getParameter('keyroll.supported_locales');
-        $supportedLocales = [];
+    public function changeLocale(
+        Request $request,
+        string $locale,
+        #[Autowire('%keyroll.supported_locales%')]
+        string $supportedLocalesString,
+    ): Response {
+        // Convert the string 'en|de' into an array ['en', 'de']
+        $supportedLocales = explode('|', $supportedLocalesString);
 
-        // PHPStan believes $supportedLocalesRaw is already string, making is_string redundant.
-        // However, getParameter() returns mixed. We keep the check for robustness against
-        // potential non-string values (e.g., null/false from config errors) which !== '' doesn't prevent.
-        // @phpstan-ignore-next-line function.alreadyNarrowedType
-        if (is_string($supportedLocalesRaw) && $supportedLocalesRaw !== '') {
-            $supportedLocales = explode('|', $supportedLocalesRaw);
+        $referer = $request->headers->get('referer');
+        $safeReferer = null;
+        if ($referer) {
+            $refererHost = parse_url($referer, PHP_URL_HOST);
+            $requestHost = $request->getHost();
+            if ($refererHost === $requestHost || empty($refererHost)) {
+                $safeReferer = $referer;
+            }
         }
+        $redirectTarget = $safeReferer ?? $this->generateUrl('app_host_index');
 
-        // Fall back to default locale if the requested one is not supported
         if (!in_array($locale, $supportedLocales, true)) {
-            $locale = $request->getDefaultLocale();
+            return $this->redirect($redirectTarget);
         }
 
         $request->getSession()->set('_locale', $locale);
 
-        // Redirect back to the previous page if possible and safe
-        $referer = $request->headers->get('referer');
-        if ($referer && str_starts_with($referer, $request->getSchemeAndHttpHost())) {
-            return $this->redirect($referer);
-        }
-
-        // Fallback redirect if referer is not available or external
-        return $this->redirectToRoute('app_settings_index');
+        return $this->redirect($redirectTarget);
     }
 }
