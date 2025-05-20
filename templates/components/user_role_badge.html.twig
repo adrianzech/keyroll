@@ -9,10 +9,10 @@
 
 {% if role_string == 'ROLE_ADMIN' %}
     {% set badge_class = 'badge badge-soft badge-secondary badge-sm' %}
-    {% set display_text = 'Admin' %}
+    {% set display_text = 'user.label.admin'|trans %}
 {% elseif role_string == 'ROLE_USER' %}
     {% set badge_class = 'badge badge-soft badge-primary badge-sm' %}
-    {% set display_text = 'User' %}
+    {% set display_text = 'user.label.user'|trans %}
 {% else %}
     {% set badge_class = 'badge badge-ghost badge-sm' %}
     {% set display_text = role_string|replace({'ROLE_': ''})|capitalize %}

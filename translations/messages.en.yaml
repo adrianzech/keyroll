@@ -165,6 +165,8 @@ user:
     name: 'Name'
     email: 'Email'
     role: 'Role'
+    user: 'User'
+    admin: 'Admin'
   placeholder:
     name: 'e.g., John Doe'
     email: 'e.g., your@email.com'

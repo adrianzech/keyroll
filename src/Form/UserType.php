@@ -68,8 +68,8 @@ class UserType extends AbstractType
             ->add('roles', ChoiceType::class, [
                 'label' => 'label.role',
                 'choices' => [
-                    'User' => 'ROLE_USER',
-                    'Admin' => 'ROLE_ADMIN',
+                    'user.label.user' => 'ROLE_USER',
+                    'user.label.admin' => 'ROLE_ADMIN',
                 ],
                 'multiple' => false,
                 'expanded' => false,
