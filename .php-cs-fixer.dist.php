@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-$finder = new PhpCsFixer\Finder()
+$finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
     ->exclude('var')
     ->exclude('vendor')
@@ -12,13 +12,14 @@ $finder = new PhpCsFixer\Finder()
     ->notPath('public/index.php')
     ->name('*.php');
 
-return new PhpCsFixer\Config()
+return (new PhpCsFixer\Config())
     ->setRules([
-        '@Symfony'             => true,
+        '@Symfony' => true,
         'declare_strict_types' => true,
-        'yoda_style'           => false,
-        'concat_space'         => ['spacing' => 'one'],
+        'yoda_style' => false,
+        'concat_space' => ['spacing' => 'one'],
     ])
     ->setFinder($finder)
     ->setRiskyAllowed(true)
-    ->setUsingCache(true);
+    ->setUsingCache(true)
+    ->setUnsupportedPhpVersionAllowed(true);

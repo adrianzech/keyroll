@@ -62,7 +62,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APP_ENV: test
-      PHP_CS_FIXER_IGNORE_ENV: 1
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
