@@ -24,7 +24,9 @@ services:
 
   keyroll:
     container_name: keyroll
-    image: ghcr.io/adrianzech/keyroll:0.0.1
+    build:
+      context: ..
+      dockerfile: docker/build/Dockerfile
     restart: unless-stopped
     ports:
       - "${KEYROLL_HOST_PORT:-9999}:443"
