@@ -25,7 +25,7 @@ class SSHKeyType extends AbstractType
                 'label' => 'ssh_key.label.name',
                 'attr' => ['placeholder' => 'ssh_key.placeholder.name'],
                 'constraints' => [
-                    new NotBlank(['message' => 'ssh_key.name_required']),
+                    new NotBlank(message: 'ssh_key.name_required'),
                 ],
             ])
             ->add('publicKey', TextareaType::class, [
@@ -35,11 +35,11 @@ class SSHKeyType extends AbstractType
                     'rows' => 5,
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'ssh_key.public_key_required']),
-                    new Regex([
-                        'pattern' => '/^ssh-rsa|ssh-ed25519|ecdsa-sha2-nistp256|ecdsa-sha2-nistp384|ecdsa-sha2-nistp521/',
-                        'message' => 'ssh_key.public_key_invalid_format',
-                    ]),
+                    new NotBlank(message: 'ssh_key.public_key_required'),
+                    new Regex(
+                        pattern: '/^ssh-rsa|ssh-ed25519|ecdsa-sha2-nistp256|ecdsa-sha2-nistp384|ecdsa-sha2-nistp521/',
+                        message: 'ssh_key.public_key_invalid_format',
+                    ),
                 ],
             ]);
     }

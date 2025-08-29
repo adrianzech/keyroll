@@ -40,9 +40,7 @@ class RegistrationFormType extends AbstractType
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [
-                    new IsTrue([
-                        'message' => 'auth.register_need_to_agree',
-                    ]),
+                    new IsTrue(message: 'auth.register_need_to_agree'),
                 ],
             ])
             ->add('plainPassword', PasswordType::class, [
@@ -55,15 +53,12 @@ class RegistrationFormType extends AbstractType
                     'placeholder' => 'auth.password_placeholder',
                 ],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'auth.enter_password',
-                    ]),
-                    new Length([
-                        'min' => 6,
-                        'minMessage' => 'auth.password_min_length',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 4096,
-                    ]),
+                    new NotBlank(message: 'auth.enter_password'),
+                    new Length(
+                        min: 6,
+                        max: 4096,
+                        minMessage: 'auth.password_min_length',
+                    ),
                 ],
             ]);
     }

@@ -52,17 +52,16 @@ class UserType extends AbstractType
                     'placeholder' => 'auth.password_placeholder',
                 ],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'auth.enter_password',
-                        'groups' => ['registration'],
-                    ]),
-                    new Length([
-                        'min' => 6,
-                        'minMessage' => 'auth.password_min_length',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 4096,
-                        'groups' => ['Default', 'registration'],
-                    ]),
+                    new NotBlank(
+                        message: 'auth.enter_password',
+                        groups: ['registration'],
+                    ),
+                    new Length(
+                        min: 6,
+                        max: 4096,
+                        minMessage: 'auth.password_min_length',
+                        groups: ['Default', 'registration'],
+                    ),
                 ],
             ])
             ->add('roles', ChoiceType::class, [

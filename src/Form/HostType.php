@@ -26,22 +26,16 @@ class HostType extends AbstractType
                 'label' => 'host.label.name',
                 'attr' => ['placeholder' => 'host.placeholder.name'],
                 'constraints' => [
-                    new NotBlank(['message' => 'host.name_required']),
-                    new Regex([
-                        'pattern' => '/^[a-zA-Z0-9.\-\s]+$/',
-                        'message' => 'host.name_invalid_format',
-                    ]),
+                    new NotBlank(message: 'host.name_required'),
+                    new Regex(pattern: '/^[a-zA-Z0-9.\-\s]+$/', message: 'host.name_invalid_format'),
                 ],
             ])
             ->add('hostname', TextType::class, [
                 'label' => 'host.label.hostname',
                 'attr' => ['placeholder' => 'host.placeholder.hostname'],
                 'constraints' => [
-                    new NotBlank(['message' => 'host.hostname_required']),
-                    new Regex([
-                        'pattern' => '/^[a-zA-Z0-9.-]+$/',
-                        'message' => 'host.hostname_invalid_format',
-                    ]),
+                    new NotBlank(message: 'host.hostname_required'),
+                    new Regex(pattern: '/^[a-zA-Z0-9.-]+$/', message: 'host.hostname_invalid_format'),
                 ],
             ])
             ->add('port', IntegerType::class, [
@@ -52,19 +46,15 @@ class HostType extends AbstractType
                     'max' => 65535,
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'host.port_required']),
-                    new Range([
-                        'min' => 1,
-                        'max' => 65535,
-                        'notInRangeMessage' => 'host.port_invalid_range',
-                    ]),
+                    new NotBlank(message: 'host.port_required'),
+                    new Range(notInRangeMessage: 'host.port_invalid_range', min: 1, max: 65535),
                 ],
             ])
             ->add('username', TextType::class, [
                 'label' => 'host.label.username',
                 'attr' => ['placeholder' => 'host.placeholder.username'],
                 'constraints' => [
-                    new NotBlank(['message' => 'host.username_required']),
+                    new NotBlank(message: 'host.username_required'),
                 ],
             ]);
     }

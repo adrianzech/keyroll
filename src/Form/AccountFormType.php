@@ -29,7 +29,7 @@ class AccountFormType extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new NotBlank(),
-                    new Email(['message' => 'auth.email_invalid']),
+                    new Email(message: 'auth.email_invalid'),
                 ],
                 'label' => false,
             ])
@@ -49,10 +49,7 @@ class AccountFormType extends AbstractType
                     'label' => 'settings.account.new_password',
                     'attr' => ['autocomplete' => 'new-password'],
                     'constraints' => [
-                        new Length([
-                            'min' => 8,
-                            'minMessage' => 'auth.password_min_length',
-                        ]),
+                        new Length(min: 8, minMessage: 'auth.password_min_length'),
                     ],
                 ],
                 'second_options' => [
