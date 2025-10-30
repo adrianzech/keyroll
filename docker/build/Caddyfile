@@ -1,0 +1,23 @@
+{
+    admin off
+
+    log {
+        output stderr
+        format json
+    }
+}
+
+:8000 {
+    root * /srv/app/public
+    encode zstd gzip
+
+    php_server
+    file_server
+
+    @healthz {
+        path /healthz
+    }
+    handle @healthz {
+        respond "OK" 200
+    }
+}

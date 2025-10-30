@@ -1,90 +1,143 @@
-# ==============================================================================
-# Stage 1: Build Environment
-# Purpose: Install dependencies and build a clean production code artifact.
-# ==============================================================================
-FROM composer:2.8 AS builder
+###############################################
+# Build Arguments
+###############################################
+ARG PHP_VERSION=8.4
+ARG COMPOSER_VERSION=2.8
+ARG NODE_VERSION=22
+ARG APP_ENV=prod
+ARG APP_DEBUG=0
 
-WORKDIR /app
+###############################################
+# Stage 1: Composer Dependencies
+###############################################
+FROM composer:${COMPOSER_VERSION} AS composer
+ARG APP_ENV
 
-# Install Node.js for frontend asset building
-RUN apk add --no-cache \
-    nodejs \
-    npm
+WORKDIR /srv/app
 
-# Copy dependency manifests
-COPY composer.json composer.lock symfony.lock ./
-COPY package.json package-lock.json ./
-COPY importmap.php ./
-
-# Install Composer and Node dependencies
-# We need the dev dependencies for the asset compilation
-RUN composer install --prefer-dist --no-progress --no-scripts
-RUN npm install
-
-# Copy the rest of the application source code
 COPY . .
 
-# Generate the autoloader with all dependencies (including dev)
-# This is necessary for the console commands to run
-RUN composer dump-autoload --optimize --classmap-authoritative
+RUN if [ "$APP_ENV" = "dev" ]; then \
+      composer install --no-interaction --prefer-dist; \
+    else \
+      composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader; \
+    fi
 
-# Compile frontend assets for production using AssetMapper & Tailwind
-RUN php bin/console importmap:install && \
-    php bin/console tailwind:build --minify && \
-    php bin/console asset-map:compile
+###############################################
+# Stage 2: Node Dependencies
+###############################################
+FROM node:${NODE_VERSION}-alpine AS node-deps
 
-# Now, remove development-only dependencies and create the final production autoloader
-RUN composer install --prefer-dist --no-dev --no-progress --no-scripts --optimize-autoloader \
-    && rm -rf node_modules tests
+WORKDIR /srv/app
 
-# ==============================================================================
-# Stage 2: Final Runtime Environment
-# Purpose: Create a minimal, secure image for production.
-# ==============================================================================
-FROM dunglas/frankenphp:php8.4-alpine AS final
+COPY --from=composer /srv/app /srv/app
 
-WORKDIR /app
+RUN if [ -f package.json ]; then \
+      npm ci --include=dev 2>/dev/null || npm install --include=dev; \
+    fi
 
-# Install system packages and PHP extensions in a single layer
-RUN --mount=type=cache,id=apk-cache,target=/var/cache/apk \
-    apk add --no-cache \
-        acl \
-        openssh-client \
-        icu-libs \
-        icu-dev \
-        zlib-dev \
-        libzip-dev \
-        postgresql-dev \
-        mariadb-dev \
-        sqlite-dev \
-    && apk add --no-cache --virtual .build-deps \
-        $PHPIZE_DEPS \
-        autoconf \
-    && docker-php-ext-install \
-        intl \
-        zip \
-        pdo_mysql \
-        pdo_pgsql \
-    && pecl install apcu \
-    && docker-php-ext-enable apcu opcache \
-    && rm -rf /tmp/pear \
-    && apk del .build-deps
+###############################################
+# Stage 3: Tailwind CSS Build
+###############################################
+FROM dunglas/frankenphp:php${PHP_VERSION}-alpine AS tailwind
+ARG APP_ENV
 
-# Copy the application artifact from the builder stage
-COPY --from=builder /app .
+WORKDIR /srv/app
 
-# Copy and prepare the entrypoint script
-COPY docker/build/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+COPY --from=node-deps /srv/app /srv/app
 
-# Create and set permissions for required directories
-RUN mkdir -p /data/caddy var/cache var/log \
-    && chown -R www-data:www-data /data var .
+RUN set -eux; \
+    mkdir -p var/tailwind public/build public/styles; \
+    echo "Checking for Tailwind bundle..."; \
+    if php bin/console list | grep -q "tailwind:build"; then \
+      echo "Building Tailwind CSS..."; \
+      php bin/console tailwind:build --minify; \
+      echo "Tailwind built successfully"; \
+      ls -la var/tailwind/; \
+      cp var/tailwind/app.built.css public/styles/app.css; \
+      echo "Copied CSS to public/styles/app.css"; \
+    else \
+      echo "ERROR: Tailwind bundle not found!"; \
+      exit 1; \
+    fi
 
-# Switch to the non-root user for security
-USER www-data
+###############################################
+# Stage 4: Asset Mapper Compilation
+###############################################
+FROM dunglas/frankenphp:php${PHP_VERSION}-alpine AS assets
+ARG APP_ENV
 
-# Set the entrypoint
-ENTRYPOINT ["docker-entrypoint.sh"]
+WORKDIR /srv/app
 
-CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
+COPY --from=tailwind /srv/app /srv/app
+
+# Compile Asset Mapper assets
+RUN set -eux; \
+    echo "Compiling Asset Mapper assets..."; \
+    php bin/console asset-map:compile; \
+    echo "Assets compiled successfully"; \
+    ls -la public/assets/ || echo "No assets directory found"
+
+###############################################
+# Stage 5: Frontend Assets
+###############################################
+FROM node:${NODE_VERSION}-alpine AS frontend
+
+WORKDIR /srv/app
+
+COPY --from=assets /srv/app /srv/app
+
+RUN set -eux; \
+    if [ -f package.json ] && grep -q '"build"' package.json; then \
+      npm run build || true; \
+    fi
+
+###############################################
+# Stage 6: Runtime Image
+###############################################
+FROM dunglas/frankenphp:php${PHP_VERSION}-alpine AS runtime
+ARG APP_ENV
+ARG APP_DEBUG
+
+WORKDIR /srv/app
+
+# PHP Extensions
+RUN install-php-extensions \
+    pdo_mysql \
+    mysqli \
+    intl \
+    opcache
+
+# Application Files
+COPY --from=composer --chown=www-data:www-data /srv/app /srv/app
+COPY --from=frontend --chown=www-data:www-data /srv/app/public/build /srv/app/public/build
+COPY --from=assets --chown=www-data:www-data /srv/app/public/assets /srv/app/public/assets
+COPY --from=tailwind --chown=www-data:www-data /srv/app/var/tailwind /srv/app/var/tailwind
+
+# Caddy Configuration
+COPY docker/build/Caddyfile /etc/caddy/Caddyfile
+
+# Environment Variables
+ENV APP_ENV=${APP_ENV} \
+    APP_DEBUG=${APP_DEBUG} \
+    SERVER_NAME=:8000 \
+    CADDY_CONFIG=/etc/caddy/Caddyfile \
+    APP_RUNTIME=Runtime\\FrankenPhpSymfony\\Runtime \
+    FRANKENPHP_CONFIG="worker ./public/index.php"
+
+# Writable Directories
+RUN mkdir -p var/cache var/log && \
+    chown -R www-data:www-data var && \
+    chmod -R 755 var
+
+# Health Check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8000/healthz || exit 1
+
+EXPOSE 8000
+
+# Entrypoint
+COPY docker/build/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+CMD ["/entrypoint.sh"]

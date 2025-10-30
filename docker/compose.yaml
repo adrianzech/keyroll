@@ -1,0 +1,57 @@
+services:
+  app:
+    container_name: keyroll-app
+    image: ghcr.io/adrianzech/keyroll:0.0.1
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/healthz" ]
+      interval: 30s
+      timeout: 3s
+      start_period: 40s
+      retries: 3
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      APP_SECRET: ${APP_SECRET}
+      DB_HOST: database
+      DB_PORT: 3306
+      DB_NAME: ${DATABASE_NAME}
+      DB_USER: ${DATABASE_USER}
+      DB_PASSWORD: ${DATABASE_PASSWORD}
+    networks:
+      - keyroll
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    container_name: keyroll-database
+    image: mariadb:11.4
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+    env_file:
+      - .env
+    environment:
+      MARIADB_DATABASE: ${DATABASE_NAME}
+      MARIADB_USER: ${DATABASE_USER}
+      MARIADB_PASSWORD: ${DATABASE_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+    volumes:
+      - database_data:/var/lib/mysql
+    networks:
+      - keyroll
+
+volumes:
+  database_data:
+    driver: local
+
+networks:
+  keyroll:
+    driver: bridge
