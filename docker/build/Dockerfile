@@ -17,6 +17,9 @@ WORKDIR /srv/app
 
 COPY . .
 
+# Set dummy DATABASE_URL for build process
+ENV DATABASE_URL="mysql://dummy:dummy@localhost:3306/dummy?serverVersion=8.0"
+
 RUN if [ "$APP_ENV" = "dev" ]; then \
       composer install --no-interaction --prefer-dist; \
     else \
@@ -46,6 +49,9 @@ WORKDIR /srv/app
 
 COPY --from=node-deps /srv/app /srv/app
 
+# Set dummy DATABASE_URL for build process
+ENV DATABASE_URL="mysql://dummy:dummy@localhost:3306/dummy?serverVersion=8.0"
+
 RUN set -eux; \
     mkdir -p var/tailwind public/build public/styles; \
     echo "Checking for Tailwind bundle..."; \
@@ -70,6 +76,9 @@ ARG APP_ENV
 WORKDIR /srv/app
 
 COPY --from=tailwind /srv/app /srv/app
+
+# Set dummy DATABASE_URL for build process
+ENV DATABASE_URL="mysql://dummy:dummy@localhost:3306/dummy?serverVersion=8.0"
 
 # Compile Asset Mapper assets
 RUN set -eux; \
