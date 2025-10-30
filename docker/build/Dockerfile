@@ -110,12 +110,18 @@ ARG APP_DEBUG
 
 WORKDIR /srv/app
 
+# Install system packages including OpenSSH
+RUN apk add --no-cache openssh-client
+
 # PHP Extensions
 RUN install-php-extensions \
     pdo_mysql \
     mysqli \
     intl \
     opcache
+
+# Generate SSH host keys for the container
+RUN ssh-keygen -A
 
 # Application Files
 COPY --from=composer --chown=www-data:www-data /srv/app /srv/app
