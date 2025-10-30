@@ -12,7 +12,7 @@ if [ -n "${DATABASE_USER}" ] && [ -n "${DATABASE_PASSWORD}" ] && [ -n "${DATABAS
   DB_HOST="${DB_HOST:-mariadb}"
   DB_PORT="${DB_PORT:-3306}"
 
-  DATABASE_URL="mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DB_HOST}:${DB_PORT}/${DATABASE_NAME}?charset=utf8mb4&serverVersion=mariadb-11.4.0"
+  DATABASE_URL="mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DB_HOST}:${DB_PORT}/${DATABASE_NAME}?charset=utf8mb4&serverVersion=11.4.8-MariaDB"
 
   echo "DATABASE_URL=${DATABASE_URL}" > .env.local
   log "Created .env.local with DATABASE_URL"
