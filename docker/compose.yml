@@ -20,6 +20,8 @@ services:
       DB_NAME: ${DATABASE_NAME}
       DB_USER: ${DATABASE_USER}
       DB_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - keyroll_var:/srv/app/var
     networks:
       - keyroll
     depends_on:
@@ -28,7 +30,7 @@ services:
 
   database:
     container_name: keyroll-database
-    image: mariadb:11.4
+    image: mariadb:11.4.8
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
@@ -49,6 +51,8 @@ services:
       - keyroll
 
 volumes:
+  keyroll_var:
+    driver: local
   database_data:
     driver: local
 
