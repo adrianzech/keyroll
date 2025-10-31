@@ -1,6 +1,48 @@
 {% extends '@KreyuDataTable/themes/base.html.twig' %}
 
-{# action bar with export/filter/personalize and search #}
+{# ============================================
+   Helper macros
+   ============================================ #}
+
+{# Get button variant class for a given variant name #}
+{% macro get_button_variant_class(variant) %}
+    {%- set variants = {
+        destructive: 'btn-error btn-xs',
+        danger: 'btn btn-ghost btn-error btn-xs',
+        primary: 'btn-primary btn-xs',
+        secondary: 'btn-secondary btn-xs',
+        success: 'btn-success btn-xs',
+        info: 'btn-info btn-xs',
+        warning: 'btn-warning btn-xs',
+        light: 'btn-ghost btn-xs',
+        dark: 'btn-neutral btn-xs',
+        link: 'link',
+        'outline-destructive': 'btn btn-outline btn-error btn-xs',
+        'outline-danger': 'btn btn-outline btn-error btn-xs',
+        'outline-primary': 'btn btn-outline btn-primary btn-xs',
+        'outline-secondary': 'btn btn-outline btn-secondary btn-xs',
+        'outline-success': 'btn btn-outline btn-success btn-xs',
+        'outline-info': 'btn btn-outline btn-info btn-xs',
+        'outline-warning': 'btn btn-outline btn-warning btn-xs',
+        'outline-light': 'btn btn-outline btn-xs',
+        'outline-dark': 'btn btn-outline btn-neutral btn-xs'
+    } -%}
+    {{- variants[variant] ?? variants.primary -}}
+{% endmacro %}
+
+{# Get modal status color for a given type #}
+{% macro get_modal_status_color(type) %}
+    {%- set colors = {
+        'info': 'btn-primary',
+        'warning': 'btn-warning',
+        'danger': 'btn-error'
+    } -%}
+    {{- colors[type] ?? 'btn-primary' -}}
+{% endmacro %}
+
+{# ============================================
+   Action bar
+   ============================================ #}
 {% block action_bar %}
     {% set display_filter_action = filtration_enabled and filters|length > 0 and filtration_form.children|length > 0 %}
     {% set display_export_action = exporting_enabled and exporters|length > 0 %}
@@ -71,32 +113,15 @@
     {% endif %}
 {% endblock %}
 
-{# action button (single) #}
-{% block action_button_control -%}
-    {%- set variants = {
-        destructive: 'btn-error btn-xs',
-        danger: 'btn btn-ghost btn-error btn-xs',
-        primary: 'btn-primary btn-xs',
-        secondary: 'btn-secondary btn-xs',
-        success: 'btn-success btn-xs',
-        info: 'btn-info btn-xs',
-        warning: 'btn-warning btn-xs',
-        light: 'btn-ghost btn-xs',
-        dark: 'btn-neutral btn-xs',
-        link: 'link',
-        'outline-destructive': 'btn btn-outline btn-error btn-xs',
-        'outline-danger': 'btn btn-outline btn-error btn-xs',
-        'outline-primary': 'btn btn-outline btn-primary btn-xs',
-        'outline-secondary': 'btn btn-outline btn-secondary btn-xs',
-        'outline-success': 'btn btn-outline btn-success btn-xs',
-        'outline-info': 'btn btn-outline btn-info btn-xs',
-        'outline-warning': 'btn btn-outline btn-warning btn-xs',
-        'outline-light': 'btn btn-outline btn-xs',
-        'outline-dark': 'btn btn-outline btn-neutral btn-xs'
-    }|merge(variants ?? {})|filter(e => e is not same as false) -%}
+{# ============================================
+   Action buttons
+   ============================================ #}
 
+{# Single action button #}
+{% block action_button_control -%}
+    {% import _self as helpers %}
     {% set base_classes = base_classes ?? 'btn btn-sm inline-flex items-center gap-2' %}
-    {% set variant_classes = variant_classes ?? variants[variant ?? default_variant ?? 'primary'] %}
+    {% set variant_classes = variant_classes ?? helpers.get_button_variant_class(variant ?? default_variant ?? 'primary') %}
     {% set attr = attr|merge({ class: (base_classes ~ ' ' ~ variant_classes ~ ' ' ~ attr.class|default(''))|trim }) %}
 
     {% if confirmation %}
@@ -119,13 +144,10 @@
     </{{ tag }}>
 {%- endblock %}
 
-{# confirmation modal for actions #}
+{# Confirmation modal for actions #}
 {% block action_confirmation_modal %}
-    {% set modal_status_color_class = {
-        'info': 'btn-primary',
-        'warning': 'btn-warning',
-        'danger': 'btn-error'
-    }[confirmation.type] %}
+    {% import _self as helpers %}
+    {% set modal_status_color_class = helpers.get_modal_status_color(confirmation.type) %}
 
     <dialog id="{{ confirmation.identifier }}" class="modal">
         <div class="modal-box">
@@ -151,7 +173,7 @@
     </dialog>
 {% endblock %}
 
-{# dropdown actions #}
+{# Dropdown actions #}
 {% block action_dropdown_control %}
     {% set base_classes = base_classes ?? 'btn btn-sm inline-flex items-center gap-2' %}
     {% set variant_classes = variant_classes ?? 'btn-primary' %}
@@ -181,14 +203,18 @@
     </div>
 {% endblock %}
 
-{# top action buttons #}
+{# ============================================
+   Top action buttons
+   ============================================ #}
+
+{# Export button #}
 {% block action_export %}
     {% set modal_id = export_form.vars.id ~ '__modal' %}
     {% set attr = { type: 'button', class: 'btn btn-sm btn-primary', onclick: "document.getElementById('" ~ modal_id ~ "').showModal()" }|merge(attr|default({})) %}
     <button {{ block('attributes') }}>{{ 'data_table.export.title'|trans }}</button>
 {% endblock %}
 
-{# filter button #}
+{# Filter button #}
 {% block action_filter %}
     {% set modal_id = filtration_form.vars.id ~ '__modal' %}
     {% set attr = {
@@ -207,7 +233,10 @@
     <button {{ block('attributes') }}>{{ 'data_table.personalization'|trans }}</button>
 {% endblock %}
 
-{# active filters #}
+{# ============================================
+   Active filters
+   ============================================ #}
+
 {% block active_filters %}
     <div class="flex flex-wrap gap-2">
         {% if has_active_filters %}
@@ -257,7 +286,10 @@
     </a>
 {% endblock %}
 
-{# search field #}
+{# ============================================
+   Search
+   ============================================ #}
+
 {% block action_search %}
     <div class="flex items-center gap-2">
         {% for child in filtration_form.vars.search_fields %}
@@ -279,7 +311,10 @@
     </div>
 {% endblock %}
 
-{# batch action bar #}
+{# ============================================
+   Batch actions
+   ============================================ #}
+
 {% block batch_action_bar %}
     <div class="card bg-base-100 border border-base-300" hidden
          data-kreyu--data-table-bundle--batch-target="batchActionBar">
@@ -309,7 +344,10 @@
     </div>
 {% endblock %}
 
-{# sort icons + header #}
+{# ============================================
+   Sorting
+   ============================================ #}
+
 {% block sort_arrow_asc %}
     {{ ux_icon('bi:chevron-up', { class: 'w-3.5 h-3.5 ml-1 inline-block opacity-70' }) }}
 {% endblock %}
@@ -372,7 +410,11 @@
     </a>
 {% endblock %}
 
-{# export modal + form #}
+{# ============================================
+   Modals
+   ============================================ #}
+
+{# Export modal #}
 {% block export_modal %}
     {% set modal_id = export_form.vars.name ~ '__modal' %}
     <dialog id="{{ modal_id }}" class="modal">
@@ -433,7 +475,11 @@
     {{ form_end(form) }}
 {% endblock %}
 
-{# filter form (rows + submit) #}
+{# ============================================
+   Forms
+   ============================================ #}
+
+{# Filtration form content #}
 {% block filtration_form_content %}
     {% with { attr: { class: 'grid grid-cols-1 gap-3' } } %}
         <div {{ block('attributes') }}>
@@ -486,14 +532,17 @@
     </div>
 {% endblock %}
 
-{# disable turbo for filters to avoid frame mismatch #}
+{# Filters form wrapper (disable turbo to avoid frame mismatch) #}
 {% block kreyu_data_table_filters_form %}
     {{ form_start(form, { attr: { 'data-turbo': 'false' } }) }}
     {{ block('filtration_form_content', theme) }}
     {{ form_end(form) }}
 {% endblock %}
 
-{# pagination #}
+{# ============================================
+   Pagination
+   ============================================ #}
+
 {% block pagination_counters %}
     <div class="flex justify-center items-center">
         <span {{- block('attributes') -}}>
@@ -616,7 +665,10 @@
        aria-label="Last" data-turbo-action="advance" data-turbo-frame="_self">»</a>
 {% endblock %}
 
-{# personalization modal #}
+{# ============================================
+   Personalization
+   ============================================ #}
+
 {% block personalization_form_submit %}
     <button class="btn btn-primary w-full">{{ 'data_table.apply'|trans }}</button>
 {% endblock %}
@@ -637,7 +689,10 @@
     </dialog>
 {% endblock %}
 
-{# table markup #}
+{# ============================================
+   Table structure
+   ============================================ #}
+
 {% block table %}
     <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 shadow-lg">
         {% with { table_attr: { class: 'table table-zebra table-sm w-full', style: '' }|merge(table_attr|default({})) } %}
@@ -662,8 +717,13 @@
     <tfoot></tfoot>
 {% endblock %}
 
-{# Override action_form_control to add CSRF token and confirmation support #}
+{# ============================================
+   Form actions
+   ============================================ #}
+
+{# Form action control with CSRF token and confirmation support #}
 {% block action_form_control %}
+    {% import _self as helpers %}
     {% set attr = { id: form_id, action, method: html_friendly_method, style: 'display: inline;' }|merge(attr) %}
 
     {% if batch %}
@@ -673,20 +733,9 @@
     {% set button_tag = button_tag ?? 'button' %}
     {% set button_attr = { type: 'submit' }|merge(button_attr) %}
 
-    {# Set button classes based on variant #}
-    {% set variants = {
-        destructive: 'btn-error btn-xs',
-        danger: 'btn btn-ghost btn-error btn-xs',
-        primary: 'btn-primary btn-xs',
-        secondary: 'btn-secondary btn-xs',
-        success: 'btn-success btn-xs',
-        info: 'btn-info btn-xs',
-        warning: 'btn-warning btn-xs',
-        light: 'btn-ghost btn-xs',
-        dark: 'btn-neutral btn-xs',
-    } %}
+    {# Apply button classes based on variant #}
     {% set base_classes = 'btn btn-sm inline-flex items-center gap-2' %}
-    {% set variant_classes = variants[variant ?? 'primary'] %}
+    {% set variant_classes = helpers.get_button_variant_class(variant ?? 'primary') %}
     {% set button_attr = button_attr|merge({ class: (base_classes ~ ' ' ~ variant_classes ~ ' ' ~ button_attr.class|default(''))|trim }) %}
 
     {# Handle confirmation modal for form actions #}
@@ -724,13 +773,10 @@
     {% endif %}
 {% endblock %}
 
-{# Confirmation modal specifically for form actions #}
+{# Confirmation modal for form actions #}
 {% block action_form_confirmation_modal %}
-    {% set modal_status_color_class = {
-        'info': 'btn-primary',
-        'warning': 'btn-warning',
-        'danger': 'btn-error'
-    }[confirmation.type] %}
+    {% import _self as helpers %}
+    {% set modal_status_color_class = helpers.get_modal_status_color(confirmation.type) %}
 
     {% set trans_domain = confirmation.translation_domain|default('messages') %}
 
@@ -777,7 +823,11 @@
     </dialog>
 {% endblock %}
 
-{# Custom column blocks for badges using Twig Component #}
+{# ============================================
+   Custom column types
+   ============================================ #}
+
+{# Badge columns using Twig Components #}
 {% block column_role_badge_value %}
     <twig:user_role_badge :data="value" />
 {% endblock %}
