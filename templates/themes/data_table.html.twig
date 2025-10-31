@@ -827,9 +827,9 @@
    Custom column types
    ============================================ #}
 
-{# Badge columns using Twig Components #}
+{# Badge columns using unified Badge component #}
 {% block column_role_badge_value %}
-    <twig:user_role_badge :data="value" />
+    <twig:badge type="user_role" :data="value" />
 {% endblock %}
 
 {% block column_category_badge_value %}
@@ -837,7 +837,7 @@
 {% endblock %}
 
 {% block column_connection_status_value %}
-    <twig:connection_status_badge :data="value" />
+    <twig:badge type="connection_status" :data="value" />
 {% endblock %}
 
 {% block column_time_ago_value %}
