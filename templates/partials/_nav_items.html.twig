@@ -2,24 +2,24 @@
 {% if is_granted('ROLE_USER') %}
     <li><a href="{{ path('app_host_index') }}"
            class="{{ app.request.attributes.get('_route') starts with 'app_host_' ? 'active' : '' }}">
-            {{ ux_icon('bi:pc-display', { class: 'w-4 h-4' }) }} {{ 'entity.host.plural_name'|trans }}
+            {{ ux_icon('bi:pc-display', { class: 'w-6 h-6' }) }} {{ 'entity.host.plural_name'|trans }}
         </a>
     </li>
     <li><a href="{{ path('app_ssh_key_index') }}"
            class="{{ app.request.attributes.get('_route') starts with 'app_ssh_key_' ? 'active' : '' }}">
-            {{ ux_icon('bi:key-fill', { class: 'w-4 h-4' }) }} {{ 'entity.ssh_key.plural_name'|trans }}
+            {{ ux_icon('bi:key-fill', { class: 'w-6 h-6' }) }} {{ 'entity.ssh_key.plural_name'|trans }}
         </a>
     </li>
 {% endif %}
 {% if is_granted('ROLE_ADMIN') %}
     <li><a href="{{ path('app_category_index') }}"
            class="{{ app.request.attributes.get('_route') starts with 'app_category_' ? 'active' : '' }}">
-            {{ ux_icon('bi:card-list', { class: 'w-4 h-4' }) }} {{ 'entity.category.plural_name'|trans }}
+            {{ ux_icon('bi:card-list', { class: 'w-6 h-6' }) }} {{ 'entity.category.plural_name'|trans }}
         </a>
     </li>
     <li><a href="{{ path('app_user_index') }}"
            class="{{ app.request.attributes.get('_route') starts with 'app_user_' ? 'active' : '' }}">
-            {{ ux_icon('bi:people-fill', { class: 'w-4 h-4' }) }} {{ 'entity.user.plural_name'|trans }}
+            {{ ux_icon('bi:people-fill', { class: 'w-6 h-6' }) }} {{ 'entity.user.plural_name'|trans }}
         </a>
     </li>
 {% endif %}
