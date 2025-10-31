@@ -3,6 +3,7 @@
 {% import "components/button.html.twig" as button %}
 
 {% set category_entity = form.vars.data %}
+{% set form_id = form.vars.id %}
 
 {% set initial_hosts_data = [] %}
 {% if category_entity and category_entity.id and category_entity.hosts is iterable and category_entity.hosts is not empty %}
@@ -20,7 +21,7 @@
     }) %}
 {% endif %}
 
-{{ form_start(form) }}
+{{ form_start(form, { attr: { id: form_id } }) }}
 
 {{ form_row(form.name) }}
 
@@ -50,9 +51,25 @@
 
 {{ form_rest(form) }}
 
-<div class="card-actions justify-end">
-    {{ button.outline(label_key='common.cancel', path=path('app_category_index')) }}
-    {{ button.submit(label_key='common.save') }}
-</div>
+{{ form_end(form, { render_rest: false }) }}
 
-{{ form_end(form) }}
+<div class="card-actions mt-6 flex flex-wrap items-center justify-between gap-4">
+    <div>
+        {% if category_entity and category_entity.id is not null and is_granted('ROLE_ADMIN') %}
+            {{ button.delete(
+                label_key='common.button.delete',
+                form_action_path=path('app_category_delete', { id: category_entity.id }),
+                csrf_token_value=csrf_token('delete'),
+                confirm_message_key='category.alert.delete_confirm',
+                confirm_params={'%name%': category_entity.name},
+                additional_classes='btn-outline btn-error'
+            ) }}
+        {% endif %}
+    </div>
+    <div class="flex flex-wrap gap-2 justify-end">
+        {{ button.outline(label_key='common.cancel', path=path('app_category_index')) }}
+        <button type="submit" form="{{ form_id }}" class="btn btn-primary">
+            {{ 'common.save'|trans }}
+        </button>
+    </div>
+</div>
