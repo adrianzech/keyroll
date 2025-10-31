@@ -28,7 +28,7 @@ class HostController extends AbstractController
     ) {
     }
 
-    #[Route('', name: 'app_host_index', methods: ['GET'])]
+    #[Route('', name: 'app_host_index', methods: ['GET', 'POST'])]
     public function index(Request $request): Response
     {
         $queryBuilder = $this->hostRepository->createQueryBuilder('user');

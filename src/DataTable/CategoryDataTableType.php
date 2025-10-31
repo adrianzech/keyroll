@@ -19,12 +19,14 @@ use Kreyu\Bundle\DataTableBundle\Type\AbstractDataTableType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CategoryDataTableType extends AbstractDataTableType
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -33,24 +35,32 @@ class CategoryDataTableType extends AbstractDataTableType
         $builder
             ->addColumn('name', TextColumnType::class, [
                 'label' => 'category.label.name',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('category.label.name', [], 'messages'),
+                ],
                 'sort' => true,
             ])
             ->addColumn('hostsCount', TextColumnType::class, [
                 'label' => 'category.label.assigned_hosts_count',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('category.label.assigned_hosts_count', [], 'messages'),
+                ],
                 'sort' => false,
                 'getter' => fn (Category $category) => $category->getHosts()->count(),
             ])
             ->addColumn('usersCount', TextColumnType::class, [
                 'label' => 'category.label.assigned_users_count',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('category.label.assigned_users_count', [], 'messages'),
+                ],
                 'sort' => false,
                 'getter' => fn (Category $category) => $category->getUsers()->count(),
             ])
             ->addColumn('createdAt', TextColumnType::class, [
                 'label' => 'common.label.created_at',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('common.label.created_at', [], 'messages'),
+                ],
                 'sort' => true,
                 'block_prefix' => 'time_ago',
             ])

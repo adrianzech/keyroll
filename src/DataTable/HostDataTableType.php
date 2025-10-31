@@ -6,6 +6,7 @@ namespace App\DataTable;
 
 use App\Entity\Category;
 use App\Entity\Host;
+use App\Enum\HostConnectionStatus;
 use Kreyu\Bundle\DataTableBundle\Action\Type\ButtonActionType;
 use Kreyu\Bundle\DataTableBundle\Action\Type\FormActionType;
 use Kreyu\Bundle\DataTableBundle\Bridge\Doctrine\Orm\Filter\Type\StringFilterType;
@@ -20,42 +21,60 @@ use Kreyu\Bundle\DataTableBundle\Type\AbstractDataTableType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class HostDataTableType extends AbstractDataTableType
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
+    /**
+     * @SuppressWarnings("ExcessiveMethodLength")
+     */
     public function buildDataTable(DataTableBuilderInterface $builder, array $options): void
     {
         $builder
             ->addColumn('name', TextColumnType::class, [
                 'label' => 'host.label.name',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('host.label.name', [], 'messages'),
+                ],
                 'sort' => true,
             ])
             ->addColumn('hostname', TextColumnType::class, [
                 'label' => 'host.label.hostname',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('host.label.hostname', [], 'messages'),
+                ],
                 'sort' => true,
             ])
             ->addColumn('port', TextColumnType::class, [
                 'label' => 'host.label.port',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('host.label.port', [], 'messages'),
+                ],
                 'sort' => true,
             ])
             ->addColumn('username', TextColumnType::class, [
                 'label' => 'host.label.username',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('host.label.username', [], 'messages'),
+                ],
                 'sort' => true,
             ])
             ->addColumn('categories', TextColumnType::class, [
                 'label' => 'host.label.categories',
                 'export' => [
-                    'formatter' => static function (array $categories): string {
+                    'label' => $this->translator->trans('host.label.categories', [], 'messages'),
+                    'formatter' => function (mixed $categories, mixed ...$context): string {
+                        if (!is_array($categories)) {
+                            return '';
+                        }
+
                         return implode(', ', array_map(
                             static fn (Category $category): string => $category->getName(),
                             $categories,
@@ -63,18 +82,28 @@ class HostDataTableType extends AbstractDataTableType
                     },
                 ],
                 'sort' => false,
-                'getter' => static fn (Host $host): array => $host->getCategories()->toArray(),
+                'getter' => static fn (Host $host, mixed ...$context): array => $host->getCategories()->toArray(),
                 'block_prefix' => 'category_badge',
             ])
             ->addColumn('connectionStatus', TextColumnType::class, [
                 'label' => 'host.label.connection_status',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('host.label.connection_status', [], 'messages'),
+                    'formatter' => function (?HostConnectionStatus $status, mixed ...$context): string {
+                        $translationKey = $status?->getLabelKey() ?? 'host.status.unknown';
+
+                        return $this->translator->trans($translationKey, [], 'messages');
+                    },
+                    'value_translation_domain' => false,
+                ],
                 'sort' => true,
                 'block_prefix' => 'connection_status',
             ])
             ->addColumn('createdAt', TextColumnType::class, [
                 'label' => 'common.label.created_at',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('common.label.created_at', [], 'messages'),
+                ],
                 'sort' => true,
                 'block_prefix' => 'time_ago',
             ])

@@ -30,7 +30,7 @@ class UserController extends AbstractController
     ) {
     }
 
-    #[Route('', name: 'app_user_index', methods: ['GET'])]
+    #[Route('', name: 'app_user_index', methods: ['GET', 'POST'])]
     public function index(Request $request): Response
     {
         $queryBuilder = $this->userRepository->createQueryBuilder('user');

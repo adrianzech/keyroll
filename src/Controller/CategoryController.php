@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/category')]
-#[IsGranted('ROLE_ADMIN')] // Require ADMIN for all category actions
+#[IsGranted('ROLE_ADMIN')]
 class CategoryController extends AbstractController
 {
     use DataTableFactoryAwareTrait;
@@ -28,7 +28,7 @@ class CategoryController extends AbstractController
     ) {
     }
 
-    #[Route('', name: 'app_category_index', methods: ['GET'])]
+    #[Route('', name: 'app_category_index', methods: ['GET', 'POST'])]
     public function index(Request $request): Response
     {
         $queryBuilder = $this->categoryRepository->createQueryBuilder('user');

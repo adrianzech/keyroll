@@ -19,12 +19,14 @@ use Kreyu\Bundle\DataTableBundle\Type\AbstractDataTableType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserDataTableType extends AbstractDataTableType
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -33,17 +35,32 @@ class UserDataTableType extends AbstractDataTableType
         $builder
             ->addColumn('name', TextColumnType::class, [
                 'label' => 'user.label.name',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('user.label.name', [], 'messages'),
+                ],
                 'sort' => true,
             ])
             ->addColumn('email', TextColumnType::class, [
                 'label' => 'user.label.email',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('user.label.email', [], 'messages'),
+                ],
                 'sort' => true,
             ])
             ->addColumn('primaryRole', TextColumnType::class, [
                 'label' => 'user.label.role',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('user.label.role', [], 'messages'),
+                    'formatter' => function (?string $role, mixed ...$context): string {
+                        return match ($role) {
+                            'ROLE_ADMIN' => $this->translator->trans('user.label.admin', [], 'messages'),
+                            'ROLE_USER' => $this->translator->trans('user.label.user', [], 'messages'),
+                            null => '',
+                            default => ucfirst(strtolower(str_replace('ROLE_', '', $role))),
+                        };
+                    },
+                    'value_translation_domain' => false,
+                ],
                 'sort' => false,
                 'block_prefix' => 'role_badge',
             ])

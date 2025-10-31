@@ -19,12 +19,14 @@ use Kreyu\Bundle\DataTableBundle\Type\AbstractDataTableType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SSHKeyDataTableType extends AbstractDataTableType
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -33,18 +35,24 @@ class SSHKeyDataTableType extends AbstractDataTableType
         $builder
             ->addColumn('name', TextColumnType::class, [
                 'label' => 'ssh_key.label.name',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('ssh_key.label.name', [], 'messages'),
+                ],
                 'sort' => true,
             ])
             ->addColumn('user', TextColumnType::class, [
                 'label' => 'ssh_key.label.user',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('ssh_key.label.user', [], 'messages'),
+                ],
                 'sort' => true,
                 'getter' => fn (SSHKey $sshKey) => $sshKey->getUser()?->getName() ?? '-',
             ])
             ->addColumn('createdAt', TextColumnType::class, [
                 'label' => 'common.label.created_at',
-                'export' => true,
+                'export' => [
+                    'label' => $this->translator->trans('common.label.created_at', [], 'messages'),
+                ],
                 'sort' => true,
                 'block_prefix' => 'time_ago',
             ])
