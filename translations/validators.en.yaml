@@ -1,34 +1,48 @@
 auth:
-  email_already_exists: 'This email address is already in use.'
-  email_invalid: 'Please enter a valid email address.'
-  password_min_length: 'Your password must be at least {{ limit }} characters long.'
-  password_mismatch: 'The passwords do not match.'
-  register_need_to_agree: 'You must agree to the terms and conditions.'
-  enter_password: 'Please enter a password.'
+  validation:
+    email:
+      already_exists: 'This email address is already in use.'
+      invalid: 'Please enter a valid email address.'
+    password:
+      min_length: 'Your password must be at least {{ limit }} characters long.'
+      mismatch: 'The passwords do not match.'
+      required: 'Please enter a password.'
+    consent:
+      agree_terms: 'You must agree to the terms and conditions.'
 
-host:
-  name_required: 'Please enter a name for the host.'
-  name_already_exists: 'A host with this name already exists.'
-  name_invalid_format: 'The host name contains invalid characters.'
-  hostname_required: 'Please enter a hostname or IP address.'
-  hostname_invalid_format: 'The hostname format is invalid.'
-  port_required: 'Please enter a port.'
-  port_invalid_range: 'The port must be between 1 and 65535.'
-  username_required: 'Please enter a username.'
-
-ssh_key:
-  name_required: 'Please enter a name for the SSH key.'
-  public_key_required: 'Please enter the SSH public key.'
-  public_key_invalid_format: 'The SSH public key format is invalid. It should start with ssh-rsa, ssh-ed25519, etc.'
-
-category:
-  name_required: 'Please enter a name for the category.'
-  name_already_exists: 'A category with this name already exists.'
+entity:
+  host:
+    validation:
+      name:
+        required: 'Please enter a name for the host.'
+        duplicate: 'A host with this name already exists.'
+        invalid_format: 'The host name contains invalid characters.'
+      hostname:
+        required: 'Please enter a hostname or IP address.'
+        invalid_format: 'The hostname format is invalid.'
+      port:
+        required: 'Please enter a port.'
+        invalid_range: 'The port must be between 1 and 65535.'
+      username:
+        required: 'Please enter a username.'
+  ssh_key:
+    validation:
+      name:
+        required: 'Please enter a name for the SSH key.'
+      public_key:
+        required: 'Please enter the SSH public key.'
+        invalid_format: 'The SSH public key format is invalid. It should start with ssh-rsa, ssh-ed25519, etc.'
+      user:
+        required: 'Please select a user for this SSH key.'
+  category:
+    validation:
+      name:
+        required: 'Please enter a name for the category.'
+        duplicate: 'A category with this name already exists.'
 
 settings:
-  flash:
-    error:
-      current_password_required: 'Please enter your current password to make changes.'
-      current_password_incorrect: 'The current password entered is incorrect.'
-      new_password_required: 'Please enter a new password if you intend to change it.'
-      new_password_blank: 'The new password cannot be blank.'
+  validation:
+    current_password_required: 'Please enter your current password to make changes.'
+    current_password_incorrect: 'The current password entered is incorrect.'
+    new_password_required: 'Please enter a new password if you intend to change it.'
+    new_password_blank: 'The new password cannot be blank.'

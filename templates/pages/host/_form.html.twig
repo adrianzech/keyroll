@@ -25,16 +25,16 @@
                 label_key='common.button.delete',
                 form_action_path=path('app_host_delete', { id: host.id }),
                 csrf_token_value=csrf_token('delete'),
-                confirm_message_key='host.alert.delete_confirm',
+                confirm_message_key='entity.host.dialog.delete_confirm',
                 confirm_params={'%name%': host.name},
                 additional_classes='btn-outline btn-error'
             ) }}
         {% endif %}
     </div>
     <div class="flex flex-wrap gap-2 justify-end">
-        {{ button.outline(label_key='common.cancel', path=path('app_host_index')) }}
+        {{ button.outline(label_key='common.button.cancel', path=path('app_host_index')) }}
         <button type="submit" form="{{ form_id }}" class="btn btn-primary">
-            {{ 'common.save'|trans }}
+            {{ 'common.button.save'|trans }}
         </button>
     </div>
 </div>

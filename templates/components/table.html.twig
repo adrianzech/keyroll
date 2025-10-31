@@ -4,11 +4,11 @@
     headers = [],
     item_properties = [],
     column_configs = {},
-    no_items_message_key = 'common.no_items_found',
+    no_items_message_key = 'common.feedback.no_items_found',
     show_actions_column = false,
     delete_path_route = null,
     edit_path_route = null,
-    delete_confirm_trans_key = 'common.delete_confirm_default',
+    delete_confirm_trans_key = 'common.dialog.delete_generic',
     entity_name_property_for_confirm = 'name',
     csrf_token_prefix = 'delete',
     entity_id_property = 'id',
@@ -49,7 +49,7 @@
                     </th>
                 {% endfor %}
                 {% if show_actions_column and (delete_path_route or edit_path_route) %}
-                    <th>{{ 'common.actions'|trans }}</th>
+                    <th>{{ 'common.table.actions'|trans }}</th>
                 {% endif %}
             </tr>
             </thead>
@@ -87,7 +87,7 @@
                             {% if edit_path_route %}
                                 <a href="{{ path(edit_path_route, { (entity_id_property): attribute(item, entity_id_property) }) }}"
                                    class="btn btn-ghost btn-primary btn-xs">
-                                    {{ 'common.edit'|trans }}
+                                    {{ 'common.button.edit'|trans }}
                                 </a>
                             {% endif %}
                             {% if delete_path_route %}
@@ -106,7 +106,7 @@
                                         <input type="hidden" name="_token"
                                                value="{{ csrf_token(csrf_token_prefix ~ attribute(item, entity_id_property)) }}">
                                         <button type="submit" class="btn btn-ghost btn-error btn-xs">
-                                            {{ 'common.delete'|trans }}
+                                            {{ 'common.button.delete'|trans }}
                                         </button>
                                     </form>
                                 {% endif %}

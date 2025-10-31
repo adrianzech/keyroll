@@ -7,7 +7,7 @@
 
 {% if status_enum is null %}
     {# Fallback if the connectionStatus on the Host entity was explicitly null #}
-    {% set status_text = 'host.status.unknown'|trans %}
+    {% set status_text = 'entity.host.status.unknown'|trans %}
     {% set badge_class = 'badge-neutral badge-soft' %}
 {% else %}
 

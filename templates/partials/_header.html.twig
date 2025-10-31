@@ -12,15 +12,15 @@
             <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                 {% include 'partials/_nav_items.html.twig' %}
                 {% if not app.user %}
-                    <li><a href="{{ path('app_login') }}">{{ 'auth.login'|trans }}</a></li>
-                    <li><a href="{{ path('app_register') }}">{{ 'auth.register'|trans }}</a></li>
+                    <li><a href="{{ path('app_login') }}">{{ 'auth.action.login'|trans }}</a></li>
+                    <li><a href="{{ path('app_register') }}">{{ 'auth.action.register'|trans }}</a></li>
                 {% endif %}
             </ul>
         </div>
 
         <a href="{{ path('app_host_index') }}" class="btn btn-ghost normal-case text-xl flex items-center gap-2">
             {{ ux_icon('solar:key-outline', { class: 'w-6 h-6' }) }}
-            <span>{{ 'app.title'|trans }}</span>
+            <span>{{ 'app.name'|trans }}</span>
         </a>
     </div>
 
@@ -49,18 +49,18 @@
                 <ul tabindex="0"
                     class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                     <li>
-                        <a href="{{ path('app_settings_index') }}">{{ "label.settings"|trans }}</a>
+                        <a href="{{ path('app_settings_index') }}">{{ 'common.label.settings'|trans }}</a>
                     </li>
                     <li>
-                        <a href="{{ path('app_logout') }}">{{ "auth.logout"|trans }}</a>
+                        <a href="{{ path('app_logout') }}">{{ 'auth.action.logout'|trans }}</a>
                     </li>
                 </ul>
             </div>
         {% else %}
             <a href="{{ path('app_login') }}"
-               class="btn btn-ghost hidden lg:inline-flex">{{ 'auth.login'|trans }}</a>
+               class="btn btn-ghost hidden lg:inline-flex">{{ 'auth.action.login'|trans }}</a>
             <a href="{{ path('app_register') }}"
-               class="btn btn-ghost hidden lg:inline-flex">{{ 'auth.register'|trans }}</a>
+               class="btn btn-ghost hidden lg:inline-flex">{{ 'auth.action.register'|trans }}</a>
         {% endif %}
     </div>
 </div>

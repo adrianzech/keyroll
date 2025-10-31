@@ -3,7 +3,7 @@
 {% import 'components/page_header.html.twig' as page_header %}
 {% import 'components/button.html.twig' as button %}
 
-{% set page_title = 'settings.title' %}
+{% set page_title = 'settings.page_title' %}
 {% block title %}{{ page_title|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header %}
@@ -13,15 +13,15 @@
 {% endblock %}
 
 {% block content %}
-    <h2 class="text-xl font-semibold mb-4">{{ 'settings.account.title'|trans }}</h2>
+    <h2 class="text-xl font-semibold mb-4">{{ 'settings.section.account'|trans }}</h2>
 
     {{ form_start(form) }}
 
-    <div class="divider">{{ 'label.email'|trans }}</div>
+    <div class="divider">{{ 'common.label.email'|trans }}</div>
 
     {{ form_row(form.email) }}
 
-    <div class="divider">{{ 'label.password'|trans }}</div>
+    <div class="divider">{{ 'common.label.password'|trans }}</div>
 
     {{ form_row(form.currentPassword) }}
 
@@ -33,8 +33,8 @@
     {{ form_rest(form) }}
 
     <div class="card-actions justify-end">
-        {{ button.outline(label_key='common.cancel', path=path('app_host_index')) }}
-        {{ button.submit(label_key='common.save') }}
+        {{ button.outline(label_key='common.button.cancel', path=path('app_host_index')) }}
+        {{ button.submit(label_key='common.button.save') }}
     </div>
 
     {{ form_end(form) }}

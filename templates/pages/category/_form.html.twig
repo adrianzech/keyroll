@@ -31,9 +31,9 @@
         'api_hosts_search',
         'host',
         initial_hosts_data,
-        'category.form.search_hosts',
-        'category.form.search_hosts_placeholder',
-        'category.form.no_hosts_added'
+        'entity.category.form.search_hosts',
+        'entity.category.form.search_hosts_placeholder',
+        'entity.category.form.no_hosts_added'
     ) }}
 
     {{ form_widgets.entity_selector(
@@ -41,9 +41,9 @@
         'api_users_search',
         'user',
         initial_users_data,
-        'category.form.search_users',
-        'category.form.search_users_placeholder',
-        'category.form.no_users_added'
+        'entity.category.form.search_users',
+        'entity.category.form.search_users_placeholder',
+        'entity.category.form.no_users_added'
     ) }}
 </div>
 
@@ -58,16 +58,16 @@
                 label_key='common.button.delete',
                 form_action_path=path('app_category_delete', { id: category_entity.id }),
                 csrf_token_value=csrf_token('delete'),
-                confirm_message_key='category.alert.delete_confirm',
+                confirm_message_key='entity.category.dialog.delete_confirm',
                 confirm_params={'%name%': category_entity.name},
                 additional_classes='btn-outline btn-error'
             ) }}
         {% endif %}
     </div>
     <div class="flex flex-wrap gap-2 justify-end">
-        {{ button.outline(label_key='common.cancel', path=path('app_category_index')) }}
+        {{ button.outline(label_key='common.button.cancel', path=path('app_category_index')) }}
         <button type="submit" form="{{ form_id }}" class="btn btn-primary">
-            {{ 'common.save'|trans }}
+            {{ 'common.button.save'|trans }}
         </button>
     </div>
 </div>

@@ -2,12 +2,12 @@
 {% extends 'base.html.twig' %}
 {% import "components/button.html.twig" as button %}
 
-{% block title %}{{ "auth.login"|trans }}{% endblock %}
+{% block title %}{{ 'auth.action.login'|trans }}{% endblock %}
 
 {% block body %}
     <div class="card h-full w-full flex items-center justify-center">
         <div class="card-body">
-            <h2 class="card-title text-center text-2xl font-bold mb-4">{{ 'auth.login'|trans }}</h2>
+            <h2 class="card-title text-center text-2xl font-bold mb-4">{{ 'auth.action.login'|trans }}</h2>
 
             {% if error %}
                 <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -15,8 +15,8 @@
 
             {% if app.user %}
                 <div class="mb-3 text-center">
-                    <div class="mb-2">{{ "auth.login_already_logged_in"|trans }} {{ app.user.userIdentifier }}.</div>
-                    {{ button.primary(label_key='auth.logout', path=path('app_logout')) }}
+                    <div class="mb-2">{{ 'auth.feedback.already_logged_in'|trans({'%username%': app.user.userIdentifier}) }}</div>
+                    {{ button.primary(label_key='auth.action.logout', path=path('app_logout')) }}
                 </div>
             {% else %}
 
@@ -28,18 +28,18 @@
                 <div class="form-control mb-4">
                     <label class="cursor-pointer label justify-start">
                         {{ form_widget(form.rememberMe, {'attr': {'class': 'checkbox checkbox-primary mr-2'}}) }}
-                        <span class="label-text">{{ "auth.login_remember_me"|trans }}</span>
+                        <span class="label-text">{{ 'auth.option.remember_me'|trans }}</span>
                     </label>
                     {{ form_errors(form.rememberMe) }}
                 </div>
 
                 <div class="card-actions justify-center">
-                    {{ button.submit(label_key='auth.login', additional_classes='btn-primary w-full') }}
+                    {{ button.submit(label_key='auth.action.login', additional_classes='btn-primary w-full') }}
                 </div>
 
                 <div class="text-center mt-4">
-                    <p>{{ "auth.login_no_account"|trans }}
-                        <a href="{{ path('app_register') }}" class="link link-primary">{{ "auth.register"|trans }}</a>
+                    <p>{{ 'auth.prompt.no_account'|trans }}
+                        <a href="{{ path('app_register') }}" class="link link-primary">{{ 'auth.action.register'|trans }}</a>
                     </p>
                 </div>
 

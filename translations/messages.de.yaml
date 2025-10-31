@@ -1,40 +1,48 @@
 app:
-  title: 'KeyRoll'
-  subtitle: 'SSH Schlüssel Verwaltungssystem'
+  name: 'Keyroll'
+  tagline: 'SSH-Schlüssel-Verwaltungssystem'
+
+navigation:
+  hosts: 'Server'
+  ssh_keys: 'SSH-Schlüssel'
+  categories: 'Kategorien'
+  users: 'Benutzer'
+  settings: 'Einstellungen'
 
 auth:
-  login: 'Anmelden'
-  logout: 'Abmelden'
-  register: 'Registrieren'
-  email_placeholder: 'deine@email.com'
-  password_placeholder: '••••••••'
-  login_remember_me: 'Angemeldet bleiben'
-  login_no_account: 'Noch kein Konto?'
-  register_account_exists: 'Bereits ein Konto?'
-  register_terms: 'Ich stimme den Nutzungsbedingungen zu'
-  invalid_credentials: 'Ungültige Anmeldedaten.'
-  account_disabled: 'Ihr Konto ist deaktiviert.'
-  login_already_logged_in: 'Sie sind bereits angemeldet als '
+  action:
+    login: 'Anmelden'
+    logout: 'Abmelden'
+    register: 'Registrieren'
+  field:
+    name_placeholder: 'Max Mustermann'
+    email_placeholder: 'deine@email.com'
+    password_placeholder: '••••••••'
+  option:
+    remember_me: 'Angemeldet bleiben'
+  prompt:
+    no_account: 'Noch kein Konto?'
+    account_exists: 'Bereits ein Konto?'
+    agree_terms: 'Ich stimme den Nutzungsbedingungen zu'
+  feedback:
+    invalid_credentials: 'Ungültige Anmeldedaten.'
+    account_disabled: 'Ihr Konto ist deaktiviert.'
+    already_logged_in: 'Sie sind bereits als %username% angemeldet.'
 
 common:
-  actions: 'Aktionen'
-  back: 'Zurück'
-  cancel: 'Abbrechen'
-  confirm: 'Bestätigen'
-  delete: 'Löschen'
-  edit: 'Bearbeiten'
-  save: 'Speichern'
-  update: 'Aktualisieren'
-  view: 'Anzeigen'
-  close: 'Schließen'
-  search: 'Suche'
-  selected: 'Ausgewählt'
-  save_changes: 'Änderungen speichern'
-  no_items_found: 'Keine Einträge gefunden.'
-  confirm_delete_generic: 'Sind Sie sicher, dass Sie diesen Eintrag löschen möchten?'
-  invalid_csrf_token: 'Ungültiges Sicherheitstoken. Bitte versuchen Sie es erneut.'
+  action:
+    back: 'Zurück'
+    cancel: 'Abbrechen'
+    confirm: 'Bestätigen'
+    delete: 'Löschen'
+    edit: 'Bearbeiten'
+    save: 'Speichern'
+    update: 'Aktualisieren'
+    view: 'Anzeigen'
+    close: 'Schließen'
+    search: 'Suche'
   button:
-    create_new: 'Neu erstellen'
+    add: 'Neu erstellen'
     edit: 'Bearbeiten'
     delete: 'Löschen'
     save: 'Speichern'
@@ -44,160 +52,175 @@ common:
     back_to_dashboard: 'Zurück zum Dashboard'
   label:
     name: 'Name'
+    email: 'E-Mail'
+    password: 'Passwort'
+    language: 'Sprache'
+    language_de: 'Deutsch'
+    language_en: 'Englisch'
+    settings: 'Einstellungen'
+    account: 'Konto'
+    role: 'Rolle'
+    roles: 'Rollen'
     created_at: 'Erstellt am'
     updated_at: 'Aktualisiert am'
     status: 'Status'
     active: 'Aktiv'
     inactive: 'Inaktiv'
+  table:
+    actions: 'Aktionen'
+  feedback:
+    selected: 'Ausgewählt'
+    no_items_found: 'Keine Einträge gefunden.'
+    invalid_csrf_token: 'Ungültiges Sicherheitstoken. Bitte versuchen Sie es erneut.'
+  dialog:
+    delete_title: 'Löschen bestätigen'
+    delete_generic: 'Sind Sie sicher, dass Sie dieses Element löschen möchten?'
   flash:
     error:
       login_required: 'Bitte melden Sie sich an, um auf diese Seite zuzugreifen.'
       invalid_form: 'Das Formular enthält Fehler. Bitte überprüfen Sie die untenstehenden Felder.'
       unexpected_error: 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.'
 
-host:
-  host_singular: 'Server'
-  hosts: 'Server'
-  title:
-    index: 'Serverübersicht'
-    create_new: 'Neuen Server erstellen'
-    edit: 'Server bearbeiten'
-  button:
-    create_new: 'Neuen Server hinzufügen'
-  label:
-    name: 'Servername'
-    hostname: 'Hostname/IP'
-    port: 'Port'
-    username: 'Benutzername'
-    category: 'Kategorie'
-    categories: 'Kategorien'
-    no_categories_assigned: 'Keine Kategorien zugewiesen'
-    connection_status: 'Verbindungsstatus'
-  status:
-    successful: 'Erfolgreich'
-    failed: 'Fehlgeschlagen'
-    unknown: 'Unbekannt'
-    checking: 'Prüfe...'
-  placeholder:
-    name: 'z.B. Webserver 1'
-    hostname: 'z.B. srv1.beispiel.com oder 192.168.1.10'
-    port: 'Standard: 22'
-    username: 'z.B. root, admin'
-  help:
-    hostname: 'Hostname oder IP-Adresse des Servers.'
-  alert:
-    no_hosts_found: 'Keine Server gefunden. Fügen Sie Ihren ersten Server hinzu.'
-    delete_confirm: 'Sind Sie sicher, dass Sie den Server "%name%" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
-  flash:
-    created_successfully: 'Server wurde erfolgreich erstellt.'
-    updated_successfully: 'Server wurde erfolgreich aktualisiert.'
-    deleted_successfully: 'Server wurde erfolgreich gelöscht.'
-
-ssh_key:
-  ssh_key_singular: 'SSH Schlüssel'
-  ssh_keys: 'SSH Schlüssel'
-  title:
-    index: 'SSH Schlüsselübersicht'
-    create_new: 'Neuen SSH Schlüssel hinzufügen'
-    edit: 'SSH Schlüssel bearbeiten'
-  button:
-    create_new: 'Neuen SSH Schlüssel hinzufügen'
-  label:
-    name: 'Schlüsselname'
-    public_key: 'Öffentlicher Schlüssel'
-    user: 'Benutzer'
-  placeholder:
-    name: 'z.B. Mein Laptop, Server Key'
-    public_key: 'Beginnt mit ssh-rsa, ssh-ed25519, etc.'
-    select_user: 'Benutzer auswählen'
-  help:
-    public_key: 'Fügen Sie hier den Inhalt Ihrer öffentlichen Schlüsseldatei ein (z.B. id_rsa.pub).'
-  alert:
-    no_keys_found: 'Keine SSH Schlüssel gefunden. Fügen Sie Ihren ersten Schlüssel hinzu.'
-    delete_confirm: 'Sind Sie sicher, dass Sie den SSH Schlüssel "%name%" löschen möchten?'
-  flash:
-    created_successfully: 'SSH Schlüssel wurde erfolgreich erstellt.'
-    updated_successfully: 'SSH Schlüssel wurde erfolgreich aktualisiert.'
-    deleted_successfully: 'SSH Schlüssel wurde erfolgreich gelöscht.'
-  name_required: 'Bitte geben Sie einen Namen für den SSH Schlüssel ein.'
-  public_key_required: 'Bitte geben Sie einen öffentlichen Schlüssel an.'
-  public_key_invalid_format: 'Das Format des öffentlichen Schlüssels ist ungültig. Er muss mit ssh-rsa, ssh-ed25519 oder ecdsa-sha2 beginnen.'
-  user_required: 'Bitte wählen Sie einen Benutzer für diesen SSH Schlüssel aus.'
-
-category:
-  category_singular: 'Kategorie'
-  categories: 'Kategorien'
-  title:
-    index: 'Kategorienübersicht'
-    create_new: 'Neue Kategorie erstellen'
-    edit: 'Kategorie bearbeiten'
-  button:
-    create_new: 'Neue Kategorie hinzufügen'
-  label:
-    name: 'Kategoriename'
-    assigned_hosts: 'Zugeordnete Server'
-    assigned_users: 'Zugeordnete Benutzer'
-    assigned_hosts_count: 'Server'
-    assigned_users_count: 'Benutzer'
-  placeholder:
-    name: 'z.B. Produktion, Entwicklung'
-  alert:
-    no_categories_found: 'Keine Kategorien gefunden. Erstellen Sie Ihre erste Kategorie.'
-    delete_confirm: 'Sind Sie sicher, dass Sie die Kategorie "%name%" löschen möchten?'
-    cannot_delete_in_use: 'Diese Kategorie kann nicht gelöscht werden, da sie derzeit von einem oder mehreren Elementen verwendet wird.'
-  flash:
-    created_successfully: 'Kategorie wurde erfolgreich erstellt.'
-    updated_successfully: 'Kategorie wurde erfolgreich aktualisiert.'
-    deleted_successfully: 'Kategorie wurde erfolgreich gelöscht.'
-  form:
-    name: 'Name'
-    associated_hosts: 'Zugeordnete Server'
-    associated_users: 'Zugeordnete Benutzer'
-    search_hosts: 'Server suchen...'
-    search_hosts_placeholder: 'Tippen, um Server zu suchen...'
-    no_hosts_added: 'Keine Server hinzugefügt.'
-    search_users: 'Benutzer suchen...'
-    search_users_placeholder: 'Tippen, um Benutzer zu suchen...'
-    no_users_added: 'Keine Benutzer hinzugefügt.'
-
-user:
-  user_singular: 'Benutzer'
-  users: 'Benutzer'
-  title:
-    index: 'Benutzerübersicht'
-    create_new: 'Neuen Benutzer erstellen'
-    edit: 'Benutzer bearbeiten'
-  button:
-    create_new: 'Neuen Benutzer hinzufügen'
-  label:
-    name: 'Name'
-    email: 'E-Mail'
-    role: 'Rolle'
-    user: 'Benutzer'
-    admin: 'Admin'
-  placeholder:
-    name: 'z.B. Max Mustermann'
-    email: 'z.B. deine@email.com'
-  alert:
-    no_users_found: 'Keine Benutzer gefunden. Fügen Sie Ihren ersten Benutzer hinzu.'
-    delete_confirm: 'Sind Sie sicher, dass Sie den Benutzer "%name%" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
-  flash:
-    created_successfully: 'Benutzer wurde erfolgreich erstellt.'
-    updated_successfully: 'Benutzer wurde erfolgreich aktualisiert.'
-    deleted_successfully: 'Benutzer wurde erfolgreich gelöscht.'
-    cannot_delete_self: 'Sie können Ihr eigenes Konto nicht löschen.'
+entity:
+  host:
+    name: 'Server'
+    plural_name: 'Server'
+    page_title:
+      index: 'Serverübersicht'
+      create: 'Neuen Server erstellen'
+      edit: 'Server bearbeiten'
+    action:
+      add: 'Neuen Server hinzufügen'
+    label:
+      name: 'Servername'
+      hostname: 'Hostname/IP'
+      port: 'Port'
+      username: 'Benutzername'
+      category: 'Kategorie'
+      categories: 'Kategorien'
+      no_categories_assigned: 'Keine Kategorien zugewiesen'
+      connection_status: 'Verbindungsstatus'
+    placeholder:
+      name: 'z.B. Webserver 1'
+      hostname: 'z.B. srv1.beispiel.com oder 192.168.1.10'
+      port: 'Standard: 22'
+      username: 'z.B. root, admin'
+    helper:
+      hostname: 'Hostname oder IP-Adresse des Servers.'
+    status:
+      successful: 'Erfolgreich'
+      failed: 'Fehlgeschlagen'
+      unknown: 'Unbekannt'
+      checking: 'Prüfe...'
+    alert:
+      none_found: 'Keine Server gefunden. Fügen Sie Ihren ersten Server hinzu.'
+    dialog:
+      delete_confirm: 'Sind Sie sicher, dass Sie den Server "%name%" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
+    flash:
+      created: 'Server wurde erfolgreich erstellt.'
+      updated: 'Server wurde erfolgreich aktualisiert.'
+      deleted: 'Server wurde erfolgreich gelöscht.'
+  ssh_key:
+    name: 'SSH-Schlüssel'
+    plural_name: 'SSH-Schlüssel'
+    page_title:
+      index: 'SSH-Schlüssel-Übersicht'
+      create: 'Neuen SSH-Schlüssel hinzufügen'
+      edit: 'SSH-Schlüssel bearbeiten'
+    action:
+      add: 'Neuen SSH-Schlüssel hinzufügen'
+    label:
+      name: 'Schlüsselname'
+      public_key: 'Öffentlicher Schlüssel'
+      user: 'Benutzer'
+    placeholder:
+      name: 'z.B. Mein Laptop, Server-Schlüssel'
+      public_key: 'Beginnt mit ssh-rsa, ssh-ed25519, etc.'
+      select_user: 'Benutzer auswählen'
+    helper:
+      public_key: 'Fügen Sie hier den Inhalt Ihrer öffentlichen Schlüsseldatei ein (z.B. id_rsa.pub).'
+    alert:
+      none_found: 'Keine SSH-Schlüssel gefunden. Fügen Sie Ihren ersten Schlüssel hinzu.'
+    dialog:
+      delete_confirm: 'Sind Sie sicher, dass Sie den SSH-Schlüssel "%name%" löschen möchten?'
+    flash:
+      created: 'SSH-Schlüssel wurde erfolgreich erstellt.'
+      updated: 'SSH-Schlüssel wurde erfolgreich aktualisiert.'
+      deleted: 'SSH-Schlüssel wurde erfolgreich gelöscht.'
+  category:
+    name: 'Kategorie'
+    plural_name: 'Kategorien'
+    page_title:
+      index: 'Kategorienübersicht'
+      create: 'Neue Kategorie erstellen'
+      edit: 'Kategorie bearbeiten'
+    action:
+      add: 'Neue Kategorie hinzufügen'
+    label:
+      name: 'Kategoriename'
+      assigned_hosts: 'Zugeordnete Server'
+      assigned_users: 'Zugeordnete Benutzer'
+      assigned_hosts_count: 'Server'
+      assigned_users_count: 'Benutzer'
+    placeholder:
+      name: 'z.B. Produktion, Entwicklung'
+    alert:
+      none_found: 'Keine Kategorien gefunden. Erstellen Sie Ihre erste Kategorie.'
+      cannot_delete_in_use: 'Diese Kategorie kann nicht gelöscht werden, da sie derzeit verwendet wird.'
+    dialog:
+      delete_confirm: 'Sind Sie sicher, dass Sie die Kategorie "%name%" löschen möchten?'
+    flash:
+      created: 'Kategorie wurde erfolgreich erstellt.'
+      updated: 'Kategorie wurde erfolgreich aktualisiert.'
+      deleted: 'Kategorie wurde erfolgreich gelöscht.'
+    form:
+      associated_hosts: 'Zugeordnete Server'
+      associated_users: 'Zugeordnete Benutzer'
+      search_hosts: 'Server suchen...'
+      search_hosts_placeholder: 'Tippen, um Server zu suchen...'
+      no_hosts_added: 'Keine Server hinzugefügt.'
+      search_users: 'Benutzer suchen...'
+      search_users_placeholder: 'Tippen, um Benutzer zu suchen...'
+      no_users_added: 'Keine Benutzer hinzugefügt.'
+  user:
+    name: 'Benutzer'
+    plural_name: 'Benutzer'
+    page_title:
+      index: 'Benutzerübersicht'
+      create: 'Neuen Benutzer erstellen'
+      edit: 'Benutzer bearbeiten'
+    action:
+      add: 'Neuen Benutzer hinzufügen'
+    label:
+      name: 'Name'
+      email: 'E-Mail'
+      role: 'Rolle'
+      user: 'Benutzer'
+      admin: 'Admin'
+    placeholder:
+      name: 'z.B. Max Mustermann'
+      email: 'z.B. deine@email.com'
+    alert:
+      none_found: 'Keine Benutzer gefunden. Fügen Sie Ihren ersten Benutzer hinzu.'
+    dialog:
+      delete_confirm: 'Sind Sie sicher, dass Sie den Benutzer "%name%" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
+    flash:
+      created: 'Benutzer wurde erfolgreich erstellt.'
+      updated: 'Benutzer wurde erfolgreich aktualisiert.'
+      deleted: 'Benutzer wurde erfolgreich gelöscht.'
+      cannot_delete_self: 'Sie können Ihr eigenes Konto nicht löschen.'
 
 settings:
-  title: 'Einstellungen'
-  account:
-    title: 'Kontoeinstellungen'
+  page_title: 'Einstellungen'
+  section:
+    account: 'Kontoeinstellungen'
+    general: 'Allgemeine Einstellungen'
+  label:
     update_email: 'E-Mail aktualisieren'
     update_password: 'Passwort aktualisieren'
     current_password: 'Aktuelles Passwort'
     new_password: 'Neues Passwort'
     confirm_new_password: 'Neues Passwort bestätigen'
-  general:
-    title: 'Allgemeine Einstellungen'
     language: 'Sprache'
   flash:
     info:
@@ -206,19 +229,7 @@ settings:
       email_updated: 'Ihre E-Mail-Adresse wurde erfolgreich aktualisiert.'
       password_updated: 'Ihr Passwort wurde erfolgreich aktualisiert.'
 
-label:
-  name: 'Name'
-  email: 'E-Mail'
-  password: 'Passwort'
-  language: 'Sprache'
-  language_de: 'Deutsch'
-  language_en: 'Englisch'
-  settings: 'Einstellungen'
-  account: 'Konto'
-  role: 'Rolle'
-  roles: 'Rollen'
-
-tables:
+data_table:
   export:
     title: 'Exportieren'
     csv: 'CSV'
@@ -233,9 +244,10 @@ tables:
 
 theme:
   toggle: 'Theme wechseln'
-  light: 'Heller Modus'
-  dark: 'Dunkler Modus'
+  mode:
+    light: 'Heller Modus'
+    dark: 'Dunkler Modus'
 
-# Hardcoded von KreyuDataTable
+# Kompatibilitätsschlüssel für KreyuDataTable (nicht snake_case möglich)
 Search: 'Suche'
 Actions: 'Aktionen'

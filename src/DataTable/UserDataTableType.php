@@ -34,27 +34,27 @@ class UserDataTableType extends AbstractDataTableType
     {
         $builder
             ->addColumn('name', TextColumnType::class, [
-                'label' => 'user.label.name',
+                'label' => 'entity.user.label.name',
                 'export' => [
-                    'label' => $this->translator->trans('user.label.name', [], 'messages'),
+                    'label' => $this->translator->trans('entity.user.label.name', [], 'messages'),
                 ],
                 'sort' => true,
             ])
             ->addColumn('email', TextColumnType::class, [
-                'label' => 'user.label.email',
+                'label' => 'entity.user.label.email',
                 'export' => [
-                    'label' => $this->translator->trans('user.label.email', [], 'messages'),
+                    'label' => $this->translator->trans('entity.user.label.email', [], 'messages'),
                 ],
                 'sort' => true,
             ])
             ->addColumn('primaryRole', TextColumnType::class, [
-                'label' => 'user.label.role',
+                'label' => 'entity.user.label.role',
                 'export' => [
-                    'label' => $this->translator->trans('user.label.role', [], 'messages'),
+                    'label' => $this->translator->trans('entity.user.label.role', [], 'messages'),
                     'formatter' => function (?string $role, mixed ...$context): string {
                         return match ($role) {
-                            'ROLE_ADMIN' => $this->translator->trans('user.label.admin', [], 'messages'),
-                            'ROLE_USER' => $this->translator->trans('user.label.user', [], 'messages'),
+                            'ROLE_ADMIN' => $this->translator->trans('entity.user.label.admin', [], 'messages'),
+                            'ROLE_USER' => $this->translator->trans('entity.user.label.user', [], 'messages'),
                             null => '',
                             default => ucfirst(strtolower(str_replace('ROLE_', '', $role))),
                         };
@@ -65,10 +65,10 @@ class UserDataTableType extends AbstractDataTableType
                 'block_prefix' => 'role_badge',
             ])
             ->addFilter('name', StringFilterType::class, [
-                'label' => 'user.label.name',
+                'label' => 'entity.user.label.name',
             ])
             ->addFilter('email', StringFilterType::class, [
-                'label' => 'user.label.email',
+                'label' => 'entity.user.label.email',
             ])
             ->setSearchHandler(function (ProxyQueryInterface $query, string $search): void {
                 $query
@@ -76,13 +76,13 @@ class UserDataTableType extends AbstractDataTableType
                     ->setParameter('search', '%' . $search . '%');
             })
             ->addExporter('csv', CsvExporterType::class, [
-                'label' => 'tables.export.csv',
+                'label' => 'data_table.export.csv',
             ])
             ->addExporter('ods', OdsExporterType::class, [
-                'label' => 'tables.export.ods',
+                'label' => 'data_table.export.ods',
             ])
             ->addExporter('xlsx', XlsxExporterType::class, [
-                'label' => 'tables.export.xlsx',
+                'label' => 'data_table.export.xlsx',
             ])
             ->setDefaultPaginationData(
                 new PaginationData(
@@ -108,7 +108,11 @@ class UserDataTableType extends AbstractDataTableType
                     'label' => 'common.button.delete',
                     'variant' => 'danger',
                     'confirmation' => [
-                        'label_description' => 'user.confirm_delete',
+                        'translation_domain' => 'messages',
+                        'label_title' => 'common.dialog.delete_title',
+                        'label_description' => 'entity.user.dialog.delete_confirm',
+                        'label_confirm' => 'common.button.delete',
+                        'label_cancel' => 'common.button.cancel',
                     ],
                 ]);
         }

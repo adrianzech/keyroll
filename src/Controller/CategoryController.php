@@ -56,7 +56,7 @@ class CategoryController extends AbstractController
             $this->entityManager->persist($category);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'category.flash.created_successfully');
+            $this->addFlash('success', 'entity.category.flash.created');
 
             return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -76,7 +76,7 @@ class CategoryController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'category.flash.updated_successfully');
+            $this->addFlash('success', 'entity.category.flash.updated');
 
             return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -92,21 +92,21 @@ class CategoryController extends AbstractController
     {
         $submittedToken = $request->request->get('_token');
         if (!$this->isCsrfTokenValid('delete', $submittedToken)) {
-            $this->addFlash('error', 'common.invalid_csrf_token');
+            $this->addFlash('error', 'common.feedback.invalid_csrf_token');
 
             return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
         }
 
         // Check if category is in use before deleting
         if (!$category->getHosts()->isEmpty() || !$category->getUsers()->isEmpty()) {
-            $this->addFlash('warning', 'category.alert.cannot_delete_in_use');
+            $this->addFlash('warning', 'entity.category.alert.cannot_delete_in_use');
             return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
         }
 
         $this->entityManager->remove($category);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'category.flash.deleted_successfully');
+        $this->addFlash('success', 'entity.category.flash.deleted');
 
         return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
     }

@@ -34,24 +34,24 @@ class CategoryDataTableType extends AbstractDataTableType
     {
         $builder
             ->addColumn('name', TextColumnType::class, [
-                'label' => 'category.label.name',
+                'label' => 'entity.category.label.name',
                 'export' => [
-                    'label' => $this->translator->trans('category.label.name', [], 'messages'),
+                    'label' => $this->translator->trans('entity.category.label.name', [], 'messages'),
                 ],
                 'sort' => true,
             ])
             ->addColumn('hostsCount', TextColumnType::class, [
-                'label' => 'category.label.assigned_hosts_count',
+                'label' => 'entity.category.label.assigned_hosts_count',
                 'export' => [
-                    'label' => $this->translator->trans('category.label.assigned_hosts_count', [], 'messages'),
+                    'label' => $this->translator->trans('entity.category.label.assigned_hosts_count', [], 'messages'),
                 ],
                 'sort' => false,
                 'getter' => fn (Category $category) => $category->getHosts()->count(),
             ])
             ->addColumn('usersCount', TextColumnType::class, [
-                'label' => 'category.label.assigned_users_count',
+                'label' => 'entity.category.label.assigned_users_count',
                 'export' => [
-                    'label' => $this->translator->trans('category.label.assigned_users_count', [], 'messages'),
+                    'label' => $this->translator->trans('entity.category.label.assigned_users_count', [], 'messages'),
                 ],
                 'sort' => false,
                 'getter' => fn (Category $category) => $category->getUsers()->count(),
@@ -65,7 +65,7 @@ class CategoryDataTableType extends AbstractDataTableType
                 'block_prefix' => 'time_ago',
             ])
             ->addFilter('name', StringFilterType::class, [
-                'label' => 'category.label.name',
+                'label' => 'entity.category.label.name',
             ])
             ->setSearchHandler(function (ProxyQueryInterface $query, string $search): void {
                 /* @noinspection PhpUndefinedMethodInspection */
@@ -74,13 +74,13 @@ class CategoryDataTableType extends AbstractDataTableType
                     ->setParameter('search', '%' . $search . '%');
             })
             ->addExporter('csv', CsvExporterType::class, [
-                'label' => 'tables.export.csv',
+                'label' => 'data_table.export.csv',
             ])
             ->addExporter('ods', OdsExporterType::class, [
-                'label' => 'tables.export.ods',
+                'label' => 'data_table.export.ods',
             ])
             ->addExporter('xlsx', XlsxExporterType::class, [
-                'label' => 'tables.export.xlsx',
+                'label' => 'data_table.export.xlsx',
             ])
             ->setDefaultPaginationData(
                 new PaginationData(
@@ -106,7 +106,11 @@ class CategoryDataTableType extends AbstractDataTableType
                     'label' => 'common.button.delete',
                     'variant' => 'danger',
                     'confirmation' => [
-                        'label_description' => 'category.alert.delete_confirm',
+                        'translation_domain' => 'messages',
+                        'label_title' => 'common.dialog.delete_title',
+                        'label_description' => 'entity.category.dialog.delete_confirm',
+                        'label_confirm' => 'common.button.delete',
+                        'label_cancel' => 'common.button.cancel',
                     ],
                 ]);
         }

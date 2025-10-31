@@ -23,38 +23,38 @@ class HostType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'host.label.name',
-                'attr' => ['placeholder' => 'host.placeholder.name'],
+                'label' => 'entity.host.label.name',
+                'attr' => ['placeholder' => 'entity.host.placeholder.name'],
                 'constraints' => [
-                    new NotBlank(message: 'host.name_required'),
-                    new Regex(pattern: '/^[a-zA-Z0-9.\-\s]+$/', message: 'host.name_invalid_format'),
+                    new NotBlank(message: 'entity.host.validation.name.required'),
+                    new Regex(pattern: '/^[a-zA-Z0-9.\-\s]+$/', message: 'entity.host.validation.name.invalid_format'),
                 ],
             ])
             ->add('hostname', TextType::class, [
-                'label' => 'host.label.hostname',
-                'attr' => ['placeholder' => 'host.placeholder.hostname'],
+                'label' => 'entity.host.label.hostname',
+                'attr' => ['placeholder' => 'entity.host.placeholder.hostname'],
                 'constraints' => [
-                    new NotBlank(message: 'host.hostname_required'),
-                    new Regex(pattern: '/^[a-zA-Z0-9.-]+$/', message: 'host.hostname_invalid_format'),
+                    new NotBlank(message: 'entity.host.validation.hostname.required'),
+                    new Regex(pattern: '/^[a-zA-Z0-9.-]+$/', message: 'entity.host.validation.hostname.invalid_format'),
                 ],
             ])
             ->add('port', IntegerType::class, [
-                'label' => 'host.label.port',
+                'label' => 'entity.host.label.port',
                 'attr' => [
-                    'placeholder' => 'host.placeholder.port',
+                    'placeholder' => 'entity.host.placeholder.port',
                     'min' => 1,
                     'max' => 65535,
                 ],
                 'constraints' => [
-                    new NotBlank(message: 'host.port_required'),
-                    new Range(notInRangeMessage: 'host.port_invalid_range', min: 1, max: 65535),
+                    new NotBlank(message: 'entity.host.validation.port.required'),
+                    new Range(notInRangeMessage: 'entity.host.validation.port.invalid_range', min: 1, max: 65535),
                 ],
             ])
             ->add('username', TextType::class, [
-                'label' => 'host.label.username',
-                'attr' => ['placeholder' => 'host.placeholder.username'],
+                'label' => 'entity.host.label.username',
+                'attr' => ['placeholder' => 'entity.host.placeholder.username'],
                 'constraints' => [
-                    new NotBlank(message: 'host.username_required'),
+                    new NotBlank(message: 'entity.host.validation.username.required'),
                 ],
             ]);
     }

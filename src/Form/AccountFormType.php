@@ -29,14 +29,14 @@ class AccountFormType extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new NotBlank(),
-                    new Email(message: 'auth.email_invalid'),
+                    new Email(message: 'auth.validation.email.invalid'),
                 ],
                 'label' => false,
             ])
             ->add('currentPassword', PasswordType::class, [
                 'mapped' => false,
                 'required' => false,
-                'label' => 'settings.account.current_password',
+                'label' => 'settings.label.current_password',
                 'attr' => [
                     'autocomplete' => 'current-password',
                 ],
@@ -46,17 +46,17 @@ class AccountFormType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'first_options' => [
-                    'label' => 'settings.account.new_password',
+                    'label' => 'settings.label.new_password',
                     'attr' => ['autocomplete' => 'new-password'],
                     'constraints' => [
-                        new Length(min: 8, minMessage: 'auth.password_min_length'),
+                        new Length(min: 8, minMessage: 'auth.validation.password.min_length'),
                     ],
                 ],
                 'second_options' => [
-                    'label' => 'settings.account.confirm_new_password',
+                    'label' => 'settings.label.confirm_new_password',
                     'attr' => ['autocomplete' => 'new-password'],
                 ],
-                'invalid_message' => 'auth.password_mismatch',
+                'invalid_message' => 'auth.validation.password.mismatch',
             ]);
     }
 

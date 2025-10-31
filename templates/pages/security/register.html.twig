@@ -2,12 +2,12 @@
 {% extends 'base.html.twig' %}
 {% import "components/button.html.twig" as button %}
 
-{% block title %}{{ "auth.register"|trans }}{% endblock %}
+{% block title %}{{ 'auth.action.register'|trans }}{% endblock %}
 
 {% block body %}
     <div class="card h-full w-full flex items-center justify-center">
         <div class="card-body">
-            <h2 class="card-title text-center text-2xl font-bold mb-4">{{ "auth.register"|trans }}</h2>
+            <h2 class="card-title text-center text-2xl font-bold mb-4">{{ 'auth.action.register'|trans }}</h2>
 
             {{ form_start(form) }}
 
@@ -18,18 +18,18 @@
             <div class="form-control mb-4">
                 <label class="cursor-pointer label justify-start">
                     {{ form_widget(form.agreeTerms, {'attr': {'class': 'checkbox checkbox-primary mr-2'}}) }}
-                    <span class="label-text">{{ "auth.register_terms"|trans }}</span>
+                    <span class="label-text">{{ 'auth.prompt.agree_terms'|trans }}</span>
                 </label>
                 {{ form_errors(form.agreeTerms) }}
             </div>
 
             <div class="card-actions justify-center">
-                {{ button.submit(label_key='auth.register', additional_classes='btn-primary w-full') }}
+                {{ button.submit(label_key='auth.action.register', additional_classes='btn-primary w-full') }}
             </div>
 
             <div class="text-center mt-4">
-                <p>{{ "auth.register_account_exists"|trans }}
-                    <a href="{{ path('app_login') }}" class="link link-primary">{{ "auth.login"|trans }}</a>
+                <p>{{ 'auth.prompt.account_exists'|trans }}
+                    <a href="{{ path('app_login') }}" class="link link-primary">{{ 'auth.action.login'|trans }}</a>
                 </p>
             </div>
 

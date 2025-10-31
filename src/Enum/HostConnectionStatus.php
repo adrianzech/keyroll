@@ -17,10 +17,10 @@ enum HostConnectionStatus: string
     public function getLabelKey(): string
     {
         return match ($this) {
-            self::SUCCESSFUL => 'host.status.successful',
-            self::FAILED => 'host.status.failed',
-            self::UNKNOWN => 'host.status.unknown',
-            self::CHECKING => 'host.status.checking',
+            self::SUCCESSFUL => 'entity.host.status.successful',
+            self::FAILED => 'entity.host.status.failed',
+            self::UNKNOWN => 'entity.host.status.unknown',
+            self::CHECKING => 'entity.host.status.checking',
         };
     }
 

@@ -58,7 +58,7 @@ class HostController extends AbstractController
             $this->entityManager->persist($host);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'host.flash.created_successfully');
+            $this->addFlash('success', 'entity.host.flash.created');
 
             return $this->redirectToRoute('app_host_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -81,7 +81,7 @@ class HostController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'host.flash.updated_successfully');
+            $this->addFlash('success', 'entity.host.flash.updated');
 
             return $this->redirectToRoute('app_host_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -102,7 +102,7 @@ class HostController extends AbstractController
 
         // CSRF token check
         if (!$this->isCsrfTokenValid('delete', $submittedToken)) {
-            $this->addFlash('error', 'common.invalid_csrf_token');
+            $this->addFlash('error', 'common.feedback.invalid_csrf_token');
 
             // Return early if the token is invalid
             return $this->redirectToRoute('app_host_index', [], Response::HTTP_SEE_OTHER);
@@ -111,7 +111,7 @@ class HostController extends AbstractController
         $this->entityManager->remove($host);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'host.flash.deleted_successfully');
+        $this->addFlash('success', 'entity.host.flash.deleted');
 
         // Redirect after successful deletion
         return $this->redirectToRoute('app_host_index', [], Response::HTTP_SEE_OTHER);

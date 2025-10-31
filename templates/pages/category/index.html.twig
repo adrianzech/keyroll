@@ -5,13 +5,13 @@
 {% set apply_background = false %}
 {% set apply_content_padding = false %}
 
-{% set page_title = 'category.title.index' %}
+{% set page_title = 'entity.category.page_title.index' %}
 {% block title %}{{ page_title|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header %}
     {{ page_header.default(
         title=page_title,
-        button_label='category.button.create_new',
+        button_label='entity.category.action.add',
         button_path=path('app_category_new')
     ) }}
 {% endblock %}

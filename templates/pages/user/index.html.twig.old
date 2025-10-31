@@ -4,13 +4,13 @@
 
 {% set apply_content_padding = false %}
 
-{% set page_title = 'user.title.index' %}
+{% set page_title = 'entity.user.page_title.index' %}
 {% block title %}{{ page_title|trans }} - {{ parent() }}{% endblock %}
 
 {% block page_header %}
     {{ page_header.default(
         title=page_title,
-        button_label='user.button.create_new',
+        button_label='entity.user.action.add',
         button_path=path('app_user_new')
     ) }}
 {% endblock %}
@@ -19,9 +19,9 @@
     {{ component('table', {
         items: users,
         headers: [
-            { key: 'name', label: 'user.label.name', sortable: true },
-            { key: 'email', label: 'user.label.email', sortable: true },
-            { key: 'primaryRole', label: 'user.label.role', sortable: false },
+            { key: 'name', label: 'entity.user.label.name', sortable: true },
+            { key: 'email', label: 'entity.user.label.email', sortable: true },
+            { key: 'primaryRole', label: 'entity.user.label.role', sortable: false },
         ],
         item_properties: [
             'name',
@@ -39,10 +39,10 @@
         show_actions_column: is_granted('ROLE_ADMIN'),
         delete_path_route: 'app_user_delete',
         edit_path_route: 'app_user_edit',
-        delete_confirm_trans_key: 'user.alert.delete_confirm',
+        delete_confirm_trans_key: 'entity.user.dialog.delete_confirm',
         entity_name_property_for_confirm: 'email',
         csrf_token_prefix: 'delete',
         entity_id_property: 'id',
-        no_items_message_key: 'user.alert.no_users_found'
+        no_items_message_key: 'entity.user.alert.none_found'
     }) }}
 {% endblock %}

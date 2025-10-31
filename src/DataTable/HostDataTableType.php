@@ -39,37 +39,37 @@ class HostDataTableType extends AbstractDataTableType
     {
         $builder
             ->addColumn('name', TextColumnType::class, [
-                'label' => 'host.label.name',
+                'label' => 'entity.host.label.name',
                 'export' => [
-                    'label' => $this->translator->trans('host.label.name', [], 'messages'),
+                    'label' => $this->translator->trans('entity.host.label.name', [], 'messages'),
                 ],
                 'sort' => true,
             ])
             ->addColumn('hostname', TextColumnType::class, [
-                'label' => 'host.label.hostname',
+                'label' => 'entity.host.label.hostname',
                 'export' => [
-                    'label' => $this->translator->trans('host.label.hostname', [], 'messages'),
+                    'label' => $this->translator->trans('entity.host.label.hostname', [], 'messages'),
                 ],
                 'sort' => true,
             ])
             ->addColumn('port', TextColumnType::class, [
-                'label' => 'host.label.port',
+                'label' => 'entity.host.label.port',
                 'export' => [
-                    'label' => $this->translator->trans('host.label.port', [], 'messages'),
+                    'label' => $this->translator->trans('entity.host.label.port', [], 'messages'),
                 ],
                 'sort' => true,
             ])
             ->addColumn('username', TextColumnType::class, [
-                'label' => 'host.label.username',
+                'label' => 'entity.host.label.username',
                 'export' => [
-                    'label' => $this->translator->trans('host.label.username', [], 'messages'),
+                    'label' => $this->translator->trans('entity.host.label.username', [], 'messages'),
                 ],
                 'sort' => true,
             ])
             ->addColumn('categories', TextColumnType::class, [
-                'label' => 'host.label.categories',
+                'label' => 'entity.host.label.categories',
                 'export' => [
-                    'label' => $this->translator->trans('host.label.categories', [], 'messages'),
+                    'label' => $this->translator->trans('entity.host.label.categories', [], 'messages'),
                     'formatter' => function (mixed $categories, mixed ...$context): string {
                         if (!is_array($categories)) {
                             return '';
@@ -86,11 +86,11 @@ class HostDataTableType extends AbstractDataTableType
                 'block_prefix' => 'category_badge',
             ])
             ->addColumn('connectionStatus', TextColumnType::class, [
-                'label' => 'host.label.connection_status',
+                'label' => 'entity.host.label.connection_status',
                 'export' => [
-                    'label' => $this->translator->trans('host.label.connection_status', [], 'messages'),
+                    'label' => $this->translator->trans('entity.host.label.connection_status', [], 'messages'),
                     'formatter' => function (?HostConnectionStatus $status, mixed ...$context): string {
-                        $translationKey = $status?->getLabelKey() ?? 'host.status.unknown';
+                        $translationKey = $status?->getLabelKey() ?? 'entity.host.status.unknown';
 
                         return $this->translator->trans($translationKey, [], 'messages');
                     },
@@ -108,13 +108,13 @@ class HostDataTableType extends AbstractDataTableType
                 'block_prefix' => 'time_ago',
             ])
             ->addFilter('name', StringFilterType::class, [
-                'label' => 'host.label.name',
+                'label' => 'entity.host.label.name',
             ])
             ->addFilter('hostname', StringFilterType::class, [
-                'label' => 'host.label.hostname',
+                'label' => 'entity.host.label.hostname',
             ])
             ->addFilter('username', StringFilterType::class, [
-                'label' => 'host.label.username',
+                'label' => 'entity.host.label.username',
             ])
             ->setSearchHandler(function (ProxyQueryInterface $query, string $search): void {
                 /* @noinspection PhpUndefinedMethodInspection */
@@ -123,13 +123,13 @@ class HostDataTableType extends AbstractDataTableType
                     ->setParameter('search', '%' . $search . '%');
             })
             ->addExporter('csv', CsvExporterType::class, [
-                'label' => 'tables.export.csv',
+                'label' => 'data_table.export.csv',
             ])
             ->addExporter('ods', OdsExporterType::class, [
-                'label' => 'tables.export.ods',
+                'label' => 'data_table.export.ods',
             ])
             ->addExporter('xlsx', XlsxExporterType::class, [
-                'label' => 'tables.export.xlsx',
+                'label' => 'data_table.export.xlsx',
             ])
             ->setDefaultPaginationData(
                 new PaginationData(
@@ -157,8 +157,8 @@ class HostDataTableType extends AbstractDataTableType
                     'confirmation' => fn (Host $host) => [
                         'type' => 'danger',
                         'translation_domain' => 'messages',
-                        'label_title' => 'common.confirm_delete_title',
-                        'label_description' => $this->translator->trans('host.alert.delete_confirm', [
+                        'label_title' => 'common.dialog.delete_title',
+                        'label_description' => $this->translator->trans('entity.host.dialog.delete_confirm', [
                             '%name%' => $host->getName(),
                         ], 'messages'),
                         'label_confirm' => 'common.button.delete',

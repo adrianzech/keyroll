@@ -16,10 +16,10 @@ use Symfony\Component\Validator\Constraint;
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE)]
 class ValidAccountUpdate extends Constraint
 {
-    public string $currentPasswordRequiredMessage = 'settings.flash.error.current_password_required';
-    public string $currentPasswordIncorrectMessage = 'settings.flash.error.current_password_incorrect';
-    public string $newPasswordRequiredMessage = 'settings.flash.error.new_password_required';
-    public string $newPasswordBlankMessage = 'settings.flash.error.new_password_blank';
+    public string $currentPasswordRequiredMessage = 'settings.validation.current_password_required';
+    public string $currentPasswordIncorrectMessage = 'settings.validation.current_password_incorrect';
+    public string $newPasswordRequiredMessage = 'settings.validation.new_password_required';
+    public string $newPasswordBlankMessage = 'settings.validation.new_password_blank';
 
     public function getTargets(): string|array
     {

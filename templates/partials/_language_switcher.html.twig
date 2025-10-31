@@ -16,7 +16,7 @@
                 <li>
                     <a href="{{ path('app_settings_change_locale', {'locale': locale_code}) }}"
                        class="{{ app.request.locale == locale_code ? 'active' : '' }}">
-                        {{ ('label.language_' ~ locale_code)|trans }}
+                        {{ ('common.label.language_' ~ locale_code)|trans }}
                     </a>
                 </li>
             {% endfor %}

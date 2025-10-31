@@ -34,16 +34,16 @@ class SSHKeyDataTableType extends AbstractDataTableType
     {
         $builder
             ->addColumn('name', TextColumnType::class, [
-                'label' => 'ssh_key.label.name',
+                'label' => 'entity.ssh_key.label.name',
                 'export' => [
-                    'label' => $this->translator->trans('ssh_key.label.name', [], 'messages'),
+                    'label' => $this->translator->trans('entity.ssh_key.label.name', [], 'messages'),
                 ],
                 'sort' => true,
             ])
             ->addColumn('user', TextColumnType::class, [
-                'label' => 'ssh_key.label.user',
+                'label' => 'entity.ssh_key.label.user',
                 'export' => [
-                    'label' => $this->translator->trans('ssh_key.label.user', [], 'messages'),
+                    'label' => $this->translator->trans('entity.ssh_key.label.user', [], 'messages'),
                 ],
                 'sort' => true,
                 'getter' => fn (SSHKey $sshKey) => $sshKey->getUser()?->getName() ?? '-',
@@ -57,7 +57,7 @@ class SSHKeyDataTableType extends AbstractDataTableType
                 'block_prefix' => 'time_ago',
             ])
             ->addFilter('name', StringFilterType::class, [
-                'label' => 'ssh_key.label.name',
+                'label' => 'entity.ssh_key.label.name',
             ])
             ->setSearchHandler(function (ProxyQueryInterface $query, string $search): void {
                 /* @noinspection PhpUndefinedMethodInspection */
@@ -67,13 +67,13 @@ class SSHKeyDataTableType extends AbstractDataTableType
                     ->setParameter('search', '%' . $search . '%');
             })
             ->addExporter('csv', CsvExporterType::class, [
-                'label' => 'tables.export.csv',
+                'label' => 'data_table.export.csv',
             ])
             ->addExporter('ods', OdsExporterType::class, [
-                'label' => 'tables.export.ods',
+                'label' => 'data_table.export.ods',
             ])
             ->addExporter('xlsx', XlsxExporterType::class, [
-                'label' => 'tables.export.xlsx',
+                'label' => 'data_table.export.xlsx',
             ])
             ->setDefaultPaginationData(
                 new PaginationData(
@@ -99,7 +99,11 @@ class SSHKeyDataTableType extends AbstractDataTableType
                     'label' => 'common.button.delete',
                     'variant' => 'danger',
                     'confirmation' => [
-                        'label_description' => 'ssh_key.alert.delete_confirm',
+                        'translation_domain' => 'messages',
+                        'label_title' => 'common.dialog.delete_title',
+                        'label_description' => 'entity.ssh_key.dialog.delete_confirm',
+                        'label_confirm' => 'common.button.delete',
+                        'label_cancel' => 'common.button.cancel',
                     ],
                 ]);
         }

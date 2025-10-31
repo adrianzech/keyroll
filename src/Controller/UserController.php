@@ -68,7 +68,7 @@ class UserController extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'user.flash.created_successfully');
+            $this->addFlash('success', 'entity.user.flash.created');
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -99,7 +99,7 @@ class UserController extends AbstractController
 
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'user.flash.updated_successfully');
+            $this->addFlash('success', 'entity.user.flash.updated');
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -120,7 +120,7 @@ class UserController extends AbstractController
 
         // CSRF token check
         if (!$this->isCsrfTokenValid('delete', $submittedToken)) {
-            $this->addFlash('error', 'common.invalid_csrf_token');
+            $this->addFlash('error', 'common.feedback.invalid_csrf_token');
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -128,7 +128,7 @@ class UserController extends AbstractController
         // Prevent logged-in user from deleting themselves
         $loggedInUser = $this->getUser();
         if ($loggedInUser instanceof User && $loggedInUser->getId() === $user->getId()) {
-            $this->addFlash('error', 'user.flash.cannot_delete_self');
+            $this->addFlash('error', 'entity.user.flash.cannot_delete_self');
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -136,7 +136,7 @@ class UserController extends AbstractController
         $this->entityManager->remove($user);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'user.flash.deleted_successfully');
+        $this->addFlash('success', 'entity.user.flash.deleted');
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }

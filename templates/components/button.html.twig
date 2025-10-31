@@ -31,7 +31,7 @@
     </a>
 {% endmacro %}
 
-{% macro delete(label_key, form_action_path, csrf_token_value, csrf_token_name = '_token', confirm_message_key = 'common.confirm_delete_generic', confirm_params = {}, icon_class = null, additional_classes = 'btn-error') %}
+{% macro delete(label_key, form_action_path, csrf_token_value, csrf_token_name = '_token', confirm_message_key = 'common.dialog.delete_generic', confirm_params = {}, icon_class = null, additional_classes = 'btn-error') %}
     <form method="post" action="{{ form_action_path }}" onsubmit="return confirm('{{ confirm_message_key|trans(confirm_params) }}');"
           class="inline-block">
         <input type="hidden" name="{{ csrf_token_name }}" value="{{ csrf_token_value }}">

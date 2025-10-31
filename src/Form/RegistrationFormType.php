@@ -25,39 +25,39 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'label.name',
+                'label' => 'common.label.name',
                 'attr' => [
-                    'placeholder' => 'auth.name_placeholder',
+                    'placeholder' => 'auth.field.name_placeholder',
                     'autofocus' => true,
                 ],
             ])
             ->add('email', EmailType::class, [
-                'label' => 'label.email',
+                'label' => 'common.label.email',
                 'attr' => [
-                    'placeholder' => 'auth.email_placeholder',
+                    'placeholder' => 'auth.field.email_placeholder',
                 ],
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [
-                    new IsTrue(message: 'auth.register_need_to_agree'),
+                    new IsTrue(message: 'auth.validation.consent.agree_terms'),
                 ],
             ])
             ->add('plainPassword', PasswordType::class, [
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,
-                'label' => 'label.password',
+                'label' => 'common.label.password',
                 'attr' => [
                     'autocomplete' => 'new-password',
-                    'placeholder' => 'auth.password_placeholder',
+                    'placeholder' => 'auth.field.password_placeholder',
                 ],
                 'constraints' => [
-                    new NotBlank(message: 'auth.enter_password'),
+                    new NotBlank(message: 'auth.validation.password.required'),
                     new Length(
                         min: 6,
                         max: 4096,
-                        minMessage: 'auth.password_min_length',
+                        minMessage: 'auth.validation.password.min_length',
                     ),
                 ],
             ]);

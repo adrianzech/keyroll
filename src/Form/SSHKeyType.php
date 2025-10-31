@@ -24,23 +24,23 @@ class SSHKeyType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'ssh_key.label.name',
-                'attr' => ['placeholder' => 'ssh_key.placeholder.name'],
+                'label' => 'entity.ssh_key.label.name',
+                'attr' => ['placeholder' => 'entity.ssh_key.placeholder.name'],
                 'constraints' => [
-                    new NotBlank(message: 'ssh_key.name_required'),
+                    new NotBlank(message: 'entity.ssh_key.validation.name.required'),
                 ],
             ])
             ->add('publicKey', TextareaType::class, [
-                'label' => 'ssh_key.label.public_key',
+                'label' => 'entity.ssh_key.label.public_key',
                 'attr' => [
-                    'placeholder' => 'ssh_key.placeholder.public_key',
+                    'placeholder' => 'entity.ssh_key.placeholder.public_key',
                     'rows' => 5,
                 ],
                 'constraints' => [
-                    new NotBlank(message: 'ssh_key.public_key_required'),
+                    new NotBlank(message: 'entity.ssh_key.validation.public_key.required'),
                     new Regex(
                         pattern: '/^ssh-rsa|ssh-ed25519|ecdsa-sha2-nistp256|ecdsa-sha2-nistp384|ecdsa-sha2-nistp521/',
-                        message: 'ssh_key.public_key_invalid_format',
+                        message: 'entity.ssh_key.validation.public_key.invalid_format',
                     ),
                 ],
             ]);
@@ -50,10 +50,10 @@ class SSHKeyType extends AbstractType
             $builder->add('user', EntityType::class, [
                 'class' => User::class,
                 'choice_label' => 'name',
-                'label' => 'ssh_key.label.user',
-                'placeholder' => 'ssh_key.placeholder.select_user',
+                'label' => 'entity.ssh_key.label.user',
+                'placeholder' => 'entity.ssh_key.placeholder.select_user',
                 'constraints' => [
-                    new NotBlank(message: 'ssh_key.user_required'),
+                    new NotBlank(message: 'entity.ssh_key.validation.user.required'),
                 ],
             ]);
         }

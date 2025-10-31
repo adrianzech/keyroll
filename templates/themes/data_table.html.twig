@@ -48,10 +48,10 @@
             <dialog id="{{ modal_id }}" class="modal">
                 <div class="modal-box w-11/12 max-w-lg">
                     <div class="flex items-center justify-between mb-2">
-                        <h3 class="font-bold text-lg">{{ 'tables.filter'|trans }}</h3>
+                        <h3 class="font-bold text-lg">{{ 'data_table.filter'|trans }}</h3>
                         <button type="button"
                                 class="btn btn-ghost btn-xs"
-                                aria-label="{{ 'common.close'|trans }}"
+                                aria-label="{{ 'common.action.close'|trans }}"
                                 onclick="document.getElementById('{{ modal_id }}').close()">
                             {{ ux_icon('bi:x-lg', { class: 'w-4 h-4' }) }}
                         </button>
@@ -61,7 +61,7 @@
                         {{ data_table_filters_form(filtration_form) }}
                     </div>
                 </div>
-                <form method="dialog" class="modal-backdrop"><button>{{ 'common.close'|trans }}</button></form>
+                <form method="dialog" class="modal-backdrop"><button>{{ 'common.action.close'|trans }}</button></form>
             </dialog>
         {% endif %}
     {% endif %}
@@ -147,7 +147,7 @@
                 {{ confirmation.label_confirm|trans({}, confirmation.translation_domain) }}
             </{{ confirm_button_tag }}>
         </div>
-        <form method="dialog" class="modal-backdrop"><button>{{ 'common.close'|trans }}</button></form>
+        <form method="dialog" class="modal-backdrop"><button>{{ 'common.action.close'|trans }}</button></form>
     </dialog>
 {% endblock %}
 
@@ -185,7 +185,7 @@
 {% block action_export %}
     {% set modal_id = export_form.vars.id ~ '__modal' %}
     {% set attr = { type: 'button', class: 'btn btn-sm btn-primary', onclick: "document.getElementById('" ~ modal_id ~ "').showModal()" }|merge(attr|default({})) %}
-    <button {{ block('attributes') }}>{{ 'tables.export.title'|trans }}</button>
+    <button {{ block('attributes') }}>{{ 'data_table.export.title'|trans }}</button>
 {% endblock %}
 
 {# filter button #}
@@ -197,14 +197,14 @@
         onclick: "document.getElementById('" ~ modal_id ~ "').showModal()"
     }|merge(attr|default({})) %}
     <button {{ block('attributes') }}
-            aria-label="{{ 'tables.filter'|trans }}">
+            aria-label="{{ 'data_table.filter'|trans }}">
         {{ ux_icon('bi:filter', { class: 'w-4 h-4' }) }}
     </button>
 {% endblock %}
 {% block action_personalize %}
     {% set modal_id = personalization_form.vars.id ~ '__modal' %}
     {% set attr = { type: 'button', class: 'btn btn-sm btn-primary', onclick: "document.getElementById('" ~ modal_id ~ "').showModal()" }|merge(attr|default({})) %}
-    <button {{ block('attributes') }}>{{ 'tables.personalization'|trans }}</button>
+    <button {{ block('attributes') }}>{{ 'data_table.personalization'|trans }}</button>
 {% endblock %}
 
 {# active filters #}
@@ -228,7 +228,7 @@
         'data-turbo-action': 'advance'
     }|merge(attr|default({})) %}
     <a {{ block('attributes') }}>
-        {{ 'tables.clear_all_filters'|trans }}
+        {{ 'data_table.clear_all_filters'|trans }}
     </a>
 {% endblock %}
 
@@ -238,7 +238,7 @@
         href: data_table_filter_clear_url(data_table, filter),
         'data-turbo-action': 'advance',
         'data-turbo-frame': '_self',
-        title: 'tables.clear_this_filter'|trans
+        title: 'data_table.clear_this_filter'|trans
     }|merge(attr|default({})) %}
     <a {{ block('attributes') }}>
         <span class="font-semibold">{{ filter.vars.label|trans({}, filter.vars.translation_domain) }}</span>
@@ -265,7 +265,7 @@
                 attr: {
                     form: filtration_form.vars.id,
                     class: 'input input-bordered input-sm w-48 focus:z-10',
-                    placeholder: 'common.search'|trans
+                    placeholder: 'common.action.search'|trans
                 }
             }) }}
         {% endfor %}
@@ -273,7 +273,7 @@
         <button type="submit"
                 form="{{ filtration_form.vars.id }}"
                 class="btn btn-sm btn-primary flex items-center gap-1"
-                aria-label="{{ 'common.search'|trans }}">
+                aria-label="{{ 'common.action.search'|trans }}">
             {{ ux_icon('bi:search', { class: 'w-4 h-4' }) }}
         </button>
     </div>
@@ -294,7 +294,7 @@
 
 {% block batch_action_bar_title %}
     <div class="text-sm text-base-content/70">
-        {{ 'common.selected'|trans }}:
+        {{ 'common.feedback.selected'|trans }}:
         <span data-kreyu--data-table-bundle--batch-target="selectedCounter">0</span>
     </div>
 {% endblock %}
@@ -378,10 +378,10 @@
     <dialog id="{{ modal_id }}" class="modal">
         <div class="modal-box w-11/12 max-w-md">
             <div class="flex items-center justify-between mb-2">
-                <h3 class="font-bold text-lg">{{ 'tables.export.title'|trans }}</h3>
+                <h3 class="font-bold text-lg">{{ 'data_table.export.title'|trans }}</h3>
                 <button type="button"
                         class="btn btn-ghost btn-xs"
-                        aria-label="{{ 'common.close'|trans }}"
+                        aria-label="{{ 'common.action.close'|trans }}"
                         onclick="document.getElementById('{{ modal_id }}').close()">
                     {{ ux_icon('bi:x-lg', { class: 'w-4 h-4' }) }}
                 </button>
@@ -391,7 +391,7 @@
                 {{ data_table_export_form(export_form) }}
             </div>
         </div>
-        <form method="dialog" class="modal-backdrop"><button>{{ 'common.close'|trans }}</button></form>
+        <form method="dialog" class="modal-backdrop"><button>{{ 'common.action.close'|trans }}</button></form>
     </dialog>
 {% endblock %}
 
@@ -418,7 +418,7 @@
 
         {# explicit label for the checkbox so the default "Value" never shows #}
         {% set includeLabel = form.includePersonalization.vars.label is same as(false)
-            ? 'tables.include_personalization'|trans
+            ? 'data_table.include_personalization'|trans
             : form.includePersonalization.vars.label|trans({}, form.includePersonalization.vars.translation_domain) %}
         <div class="form-control">
             <div class="flex items-center gap-2">
@@ -428,7 +428,7 @@
             {{ form_errors(form.includePersonalization) }}
         </div>
 
-        <button class="btn btn-primary w-full">{{ 'tables.export.title'|trans }}</button>
+        <button class="btn btn-primary w-full">{{ 'data_table.export.title'|trans }}</button>
     </div>
     {{ form_end(form) }}
 {% endblock %}
@@ -481,7 +481,7 @@
 {% block filtration_form_submit %}
     <div>
         <button type="submit" class="btn btn-primary w-full">
-            {{ 'tables.filter'|trans }}
+            {{ 'data_table.filter'|trans }}
         </button>
     </div>
 {% endblock %}
@@ -618,7 +618,7 @@
 
 {# personalization modal #}
 {% block personalization_form_submit %}
-    <button class="btn btn-primary w-full">{{ 'tables.apply'|trans }}</button>
+    <button class="btn btn-primary w-full">{{ 'data_table.apply'|trans }}</button>
 {% endblock %}
 
 {% block personalization_modal %}
@@ -626,14 +626,14 @@
     <dialog id="{{ modal_id }}" class="modal">
         <div class="modal-box w-11/12 max-w-4xl">
             <div>
-                <h3 class="font-bold text-lg">{{ 'tables.personalization'|trans }}</h3>
+                <h3 class="font-bold text-lg">{{ 'data_table.personalization'|trans }}</h3>
                 <div class="py-2">{{ data_table_personalization_form(personalization_form) }}</div>
             </div>
             <div class="modal-action">
-                <button class="btn" onclick="document.getElementById('{{ modal_id }}').close()">{{ 'common.close'|trans }}</button>
+                <button class="btn" onclick="document.getElementById('{{ modal_id }}').close()">{{ 'common.action.close'|trans }}</button>
             </div>
         </div>
-        <form method="dialog" class="modal-backdrop"><button>{{ 'common.close'|trans }}</button></form>
+        <form method="dialog" class="modal-backdrop"><button>{{ 'common.action.close'|trans }}</button></form>
     </dialog>
 {% endblock %}
 
@@ -741,7 +741,7 @@
             </h3>
             <div class="py-2">
                 {# label_description is already translated in PHP, so display it raw #}
-                {% if confirmation.label_description starts with 'host.' or confirmation.label_description starts with 'common.' or confirmation.label_description starts with 'ssh_key.' or confirmation.label_description starts with 'category.' or confirmation.label_description starts with 'user.' %}
+                {% if confirmation.label_description starts with 'entity.host.' or confirmation.label_description starts with 'entity.ssh_key.' or confirmation.label_description starts with 'entity.category.' or confirmation.label_description starts with 'entity.user.' or confirmation.label_description starts with 'common.' %}
                     {# If it's a translation key, translate it #}
                     {{ confirmation.label_description|trans({}, trans_domain) }}
                 {% else %}
@@ -773,7 +773,7 @@
                 </form>
             </div>
         </div>
-        <form method="dialog" class="modal-backdrop"><button>{{ 'common.close'|trans }}</button></form>
+        <form method="dialog" class="modal-backdrop"><button>{{ 'common.action.close'|trans }}</button></form>
     </dialog>
 {% endblock %}
 

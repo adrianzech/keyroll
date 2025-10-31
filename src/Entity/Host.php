@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: HostRepository::class)]
 #[ORM\Table(name: '`host`')]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields: ['name'], message: 'host.name_already_exists')]
+#[UniqueEntity(fields: ['name'], message: 'entity.host.validation.name.duplicate')]
 class Host
 {
     #[ORM\Id]
@@ -24,21 +24,21 @@ class Host
     private ?int $id = null;
 
     #[ORM\Column(unique: true)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'entity.host.validation.name.required')]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Assert\NotBlank]
-    #[Assert\Regex(pattern: '/^[a-zA-Z0-9.-]+$/', message: 'host.hostname_invalid_format')]
+    #[Assert\NotBlank(message: 'entity.host.validation.hostname.required')]
+    #[Assert\Regex(pattern: '/^[a-zA-Z0-9.-]+$/', message: 'entity.host.validation.hostname.invalid_format')]
     private ?string $hostname = null;
 
     #[ORM\Column]
-    #[Assert\NotBlank]
-    #[Assert\Range(min: 1, max: 65535)]
+    #[Assert\NotBlank(message: 'entity.host.validation.port.required')]
+    #[Assert\Range(min: 1, max: 65535, notInRangeMessage: 'entity.host.validation.port.invalid_range')]
     private int $port = 22;
 
     #[ORM\Column]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'entity.host.validation.username.required')]
     private string $username = '';
 
     /**

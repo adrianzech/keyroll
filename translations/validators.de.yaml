@@ -1,34 +1,48 @@
 auth:
-  email_already_exists: 'Diese E-Mail-Adresse wird bereits verwendet.'
-  email_invalid: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'
-  password_min_length: 'Ihr Passwort muss mindestens {{ limit }} Zeichen lang sein.'
-  password_mismatch: 'Die Passwörter stimmen nicht überein.'
-  register_need_to_agree: 'Sie müssen den Nutzungsbedingungen zustimmen.'
-  enter_password: 'Bitte geben Sie ein Passwort ein.'
+  validation:
+    email:
+      already_exists: 'Diese E-Mail-Adresse wird bereits verwendet.'
+      invalid: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'
+    password:
+      min_length: 'Ihr Passwort muss mindestens {{ limit }} Zeichen lang sein.'
+      mismatch: 'Die Passwörter stimmen nicht überein.'
+      required: 'Bitte geben Sie ein Passwort ein.'
+    consent:
+      agree_terms: 'Sie müssen den Nutzungsbedingungen zustimmen.'
 
-host:
-  name_required: 'Bitte geben Sie einen Namen für den Server ein.'
-  name_already_exists: 'Ein Server mit diesem Namen existiert bereits.'
-  name_invalid_format: 'Der Servername enthält ungültige Zeichen.'
-  hostname_required: 'Bitte geben Sie einen Hostnamen oder eine IP-Adresse ein.'
-  hostname_invalid_format: 'Das Format des Hostnamens ist ungültig.'
-  port_required: 'Bitte geben Sie einen Port an.'
-  port_invalid_range: 'Der Port muss zwischen 1 und 65535 liegen.'
-  username_required: 'Bitte geben Sie einen Benutzernamen ein.'
-
-ssh_key:
-  name_required: 'Bitte geben Sie einen Namen für den SSH-Schlüssel ein.'
-  public_key_required: 'Bitte geben Sie den öffentlichen SSH-Schlüssel ein.'
-  public_key_invalid_format: 'Das Format des öffentlichen SSH-Schlüssels ist ungültig. Es sollte mit ssh-rsa, ssh-ed25519, etc. beginnen.'
-
-category:
-  name_required: 'Bitte geben Sie einen Namen für die Kategorie ein.'
-  name_already_exists: 'Eine Kategorie mit diesem Namen existiert bereits.'
+entity:
+  host:
+    validation:
+      name:
+        required: 'Bitte geben Sie einen Namen für den Server ein.'
+        duplicate: 'Ein Server mit diesem Namen existiert bereits.'
+        invalid_format: 'Der Servername enthält ungültige Zeichen.'
+      hostname:
+        required: 'Bitte geben Sie einen Hostnamen oder eine IP-Adresse ein.'
+        invalid_format: 'Das Format des Hostnamens ist ungültig.'
+      port:
+        required: 'Bitte geben Sie einen Port an.'
+        invalid_range: 'Der Port muss zwischen 1 und 65535 liegen.'
+      username:
+        required: 'Bitte geben Sie einen Benutzernamen ein.'
+  ssh_key:
+    validation:
+      name:
+        required: 'Bitte geben Sie einen Namen für den SSH-Schlüssel ein.'
+      public_key:
+        required: 'Bitte geben Sie den öffentlichen SSH-Schlüssel ein.'
+        invalid_format: 'Das Format des öffentlichen SSH-Schlüssels ist ungültig. Er sollte mit ssh-rsa, ssh-ed25519 usw. beginnen.'
+      user:
+        required: 'Bitte wählen Sie einen Benutzer für diesen SSH-Schlüssel aus.'
+  category:
+    validation:
+      name:
+        required: 'Bitte geben Sie einen Namen für die Kategorie ein.'
+        duplicate: 'Eine Kategorie mit diesem Namen existiert bereits.'
 
 settings:
-  flash:
-    error:
-      current_password_required: 'Bitte geben Sie Ihr aktuelles Passwort ein, um Änderungen vorzunehmen.'
-      current_password_incorrect: 'Das eingegebene aktuelle Passwort ist falsch.'
-      new_password_required: 'Bitte geben Sie ein neues Passwort ein, wenn Sie das Passwort ändern möchten.'
-      new_password_blank: 'Das neue Passwort darf nicht leer sein.'
+  validation:
+    current_password_required: 'Bitte geben Sie Ihr aktuelles Passwort ein, um Änderungen vorzunehmen.'
+    current_password_incorrect: 'Das eingegebene aktuelle Passwort ist falsch.'
+    new_password_required: 'Bitte geben Sie ein neues Passwort ein, wenn Sie das Passwort ändern möchten.'
+    new_password_blank: 'Das neue Passwort darf nicht leer sein.'

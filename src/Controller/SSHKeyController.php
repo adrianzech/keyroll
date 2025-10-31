@@ -77,7 +77,7 @@ class SSHKeyController extends AbstractController
             $this->entityManager->persist($key);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'ssh_key.flash.created_successfully');
+            $this->addFlash('success', 'entity.ssh_key.flash.created');
 
             return $this->redirectToRoute('app_ssh_key_index');
         }
@@ -103,7 +103,7 @@ class SSHKeyController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'ssh_key.flash.updated_successfully');
+            $this->addFlash('success', 'entity.ssh_key.flash.updated');
 
             return $this->redirectToRoute('app_ssh_key_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -124,7 +124,7 @@ class SSHKeyController extends AbstractController
 
         // CSRF token check
         if (!$this->isCsrfTokenValid('delete', $submittedToken)) {
-            $this->addFlash('error', 'common.invalid_csrf_token');
+            $this->addFlash('error', 'common.feedback.invalid_csrf_token');
 
             // Return early if the token is invalid
             return $this->redirectToRoute('app_ssh_key_index', [], Response::HTTP_SEE_OTHER);
@@ -133,7 +133,7 @@ class SSHKeyController extends AbstractController
         $this->entityManager->remove($key);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'ssh_key.flash.deleted_successfully');
+        $this->addFlash('success', 'entity.ssh_key.flash.deleted');
 
         // Redirect after successful deletion
         return $this->redirectToRoute('app_ssh_key_index', [], Response::HTTP_SEE_OTHER);

@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ORM\Table(name: '`category`')]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields: ['name'], message: 'category.name_already_exists')]
+#[UniqueEntity(fields: ['name'], message: 'entity.category.validation.name.duplicate')]
 class Category
 {
     #[ORM\Id]
@@ -23,7 +23,7 @@ class Category
     private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Assert\NotBlank(message: 'category.name_required')]
+    #[Assert\NotBlank(message: 'entity.category.validation.name.required')]
     #[Assert\Length(max: 255)]
     private ?string $name = null;
 
