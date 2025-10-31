@@ -145,6 +145,7 @@ category:
   alert:
     no_categories_found: 'No categories found. Create your first category.'
     delete_confirm: 'Are you sure you want to delete the category "%name%"?'
+    cannot_delete_in_use: 'This category cannot be deleted because it is currently in use by one or more items.'
   flash:
     created_successfully: 'Category has been created successfully.'
     updated_successfully: 'Category has been updated successfully.'

@@ -97,11 +97,11 @@ class CategoryController extends AbstractController
             return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        // Optional: Check if category is in use before deleting?
-        // if (!$category->getHosts()->isEmpty() || !$category->getUsers()->isEmpty()) {
-        //     $this->addFlash('warning', 'category.cannot_delete_in_use');
-        //     return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
-        // }
+        // Check if category is in use before deleting
+        if (!$category->getHosts()->isEmpty() || !$category->getUsers()->isEmpty()) {
+            $this->addFlash('warning', 'category.alert.cannot_delete_in_use');
+            return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+        }
 
         $this->entityManager->remove($category);
         $this->entityManager->flush();

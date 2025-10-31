@@ -144,6 +144,7 @@ category:
   alert:
     no_categories_found: 'Keine Kategorien gefunden. Erstellen Sie Ihre erste Kategorie.'
     delete_confirm: 'Sind Sie sicher, dass Sie die Kategorie "%name%" löschen möchten?'
+    cannot_delete_in_use: 'Diese Kategorie kann nicht gelöscht werden, da sie derzeit von einem oder mehreren Elementen verwendet wird.'
   flash:
     created_successfully: 'Kategorie wurde erfolgreich erstellt.'
     updated_successfully: 'Kategorie wurde erfolgreich aktualisiert.'
