@@ -18,7 +18,10 @@
             </ul>
         </div>
 
-        <a href="{{ path('app_host_index') }}" class="btn btn-ghost normal-case text-xl">{{ 'app.title'|trans }}</a>
+        <a href="{{ path('app_host_index') }}" class="btn btn-ghost normal-case text-xl flex items-center gap-2">
+            {{ ux_icon('solar:key-outline', { class: 'w-6 h-6' }) }}
+            <span>{{ 'app.title'|trans }}</span>
+        </a>
     </div>
 
     <div class="navbar-center hidden lg:flex">
