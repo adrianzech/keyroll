@@ -117,6 +117,28 @@
    Action buttons
    ============================================ #}
 
+{# Action control content (icon only) #}
+{% block action_control %}
+    {%- set action_icons = {
+        'edit': 'bi:pencil-square',
+        'delete': 'bi:trash',
+        'show': 'bi:eye',
+        'view': 'bi:eye'
+    } -%}
+
+    {%- if icon is defined and icon -%}
+        {{ ux_icon(icon, { class: 'w-4 h-4' }) }}
+    {%- elseif action_icons[name] is defined -%}
+        {{ ux_icon(action_icons[name], { class: 'w-4 h-4' }) }}
+    {%- endif -%}
+
+    {# Action label
+    {%- if label is defined -%}
+        136 -          {{- label|trans({}, translation_domain) -}}
+        137 -      {%- endif -%}
+    #}
+{% endblock %}
+
 {# Single action button #}
 {% block action_button_control -%}
     {% import _self as helpers %}
