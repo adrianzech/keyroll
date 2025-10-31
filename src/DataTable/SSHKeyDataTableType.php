@@ -52,6 +52,7 @@ class SSHKeyDataTableType extends AbstractDataTableType
                 'label' => 'ssh_key.label.name',
             ])
             ->setSearchHandler(function (ProxyQueryInterface $query, string $search): void {
+                /* @noinspection PhpUndefinedMethodInspection */
                 $query
                     ->leftJoin('ssh_key.user', 'user')
                     ->andWhere('ssh_key.name LIKE :search OR user.name LIKE :search')

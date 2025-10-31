@@ -58,6 +58,7 @@ class CategoryDataTableType extends AbstractDataTableType
                 'label' => 'category.label.name',
             ])
             ->setSearchHandler(function (ProxyQueryInterface $query, string $search): void {
+                /* @noinspection PhpUndefinedMethodInspection */
                 $query
                     ->andWhere('category.name LIKE :search')
                     ->setParameter('search', '%' . $search . '%');

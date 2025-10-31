@@ -73,6 +73,7 @@ class HostDataTableType extends AbstractDataTableType
                 'label' => 'host.label.username',
             ])
             ->setSearchHandler(function (ProxyQueryInterface $query, string $search): void {
+                /* @noinspection PhpUndefinedMethodInspection */
                 $query
                     ->andWhere('host.name LIKE :search OR host.hostname LIKE :search OR host.username LIKE :search')
                     ->setParameter('search', '%' . $search . '%');
@@ -96,14 +97,14 @@ class HostDataTableType extends AbstractDataTableType
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
                 ->addRowAction('edit', ButtonActionType::class, [
-                    'href' => fn (Host $host) => $this->urlGenerator->generate('app_host_edit', [
+                    'href' => fn(Host $host) => $this->urlGenerator->generate('app_host_edit', [
                         'id' => $host->getId(),
                     ]),
                     'label' => 'common.button.edit',
                     'variant' => 'light',
                 ])
                 ->addRowAction('delete', FormActionType::class, [
-                    'action' => fn (Host $host) => $this->urlGenerator->generate('app_host_delete', [
+                    'action' => fn(Host $host) => $this->urlGenerator->generate('app_host_delete', [
                         'id' => $host->getId(),
                     ]),
                     'method' => 'POST',

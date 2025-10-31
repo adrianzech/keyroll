@@ -530,11 +530,13 @@
                 autocomplete: 'off'
             }|merge(select_attr|default({})) %}
 
-            <select {% with { attr: select_attr } %}{{ block('attributes') }}{% endwith %}>
-                {% for choice in choices %}
-                    <option value="{{ choice }}"{{ item_number_per_page == choice ? ' selected' }}>{{ choice }}</option>
-                {% endfor %}
-            </select>
+            <label>
+                <select {% with { attr: select_attr } %}{{ block('attributes') }}{% endwith %}>
+                    {% for choice in choices %}
+                        <option value="{{ choice }}"{{ item_number_per_page == choice ? ' selected' }}>{{ choice }}</option>
+                    {% endfor %}
+                </select>
+            </label>
         </form>
     {% endwith %}
 {% endblock %}
