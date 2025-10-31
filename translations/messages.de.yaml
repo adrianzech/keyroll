@@ -48,6 +48,7 @@ common:
     save: 'Speichern'
     update: 'Aktualisieren'
     cancel: 'Abbrechen'
+    confirm: 'Bestätigen'
     back_to_list: 'Zurück zur Übersicht'
     back_to_dashboard: 'Zurück zum Dashboard'
   label:

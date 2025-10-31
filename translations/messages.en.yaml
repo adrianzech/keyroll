@@ -48,6 +48,7 @@ common:
     save: 'Save'
     update: 'Update'
     cancel: 'Cancel'
+    confirm: 'Confirm'
     back_to_list: 'Back to List'
     back_to_dashboard: 'Back to Dashboard'
   label:
