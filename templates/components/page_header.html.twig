@@ -3,8 +3,13 @@
     <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
         <h1 class="text-3xl font-semibold mb-4 md:mb-0">{{ title|trans }}</h1>
         {% if button_label and button_path %}
-            {% import "components/button.html.twig" as button %}
-            {{ button.primary(button_label, button_path, button_icon) }}
+            <twig:button
+                tag="a"
+                :href="button_path"
+                :label="button_label"
+                :icon="button_icon"
+                variant="primary"
+            />
         {% endif %}
     </div>
 {% endmacro %}

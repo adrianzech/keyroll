@@ -1,6 +1,5 @@
 {# templates/pages/security/login.html.twig #}
 {% extends 'base.html.twig' %}
-{% import "components/button.html.twig" as button %}
 
 {% block title %}{{ 'auth.action.login'|trans }}{% endblock %}
 
@@ -16,7 +15,12 @@
             {% if app.user %}
                 <div class="mb-3 text-center">
                     <div class="mb-2">{{ 'auth.feedback.already_logged_in'|trans({'%username%': app.user.userIdentifier}) }}</div>
-                    {{ button.primary(label_key='auth.action.logout', path=path('app_logout')) }}
+                    <twig:button
+                        tag="a"
+                        :href="path('app_logout')"
+                        variant="primary"
+                        label="auth.action.logout"
+                    />
                 </div>
             {% else %}
 
@@ -34,7 +38,12 @@
                 </div>
 
                 <div class="card-actions justify-center">
-                    {{ button.submit(label_key='auth.action.login', additional_classes='btn-primary w-full') }}
+                    <twig:button
+                        type="submit"
+                        variant="primary"
+                        label="auth.action.login"
+                        block
+                    />
                 </div>
 
                 <div class="text-center mt-4">

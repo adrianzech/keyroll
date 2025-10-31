@@ -1,6 +1,5 @@
 {# templates/pages/security/register.html.twig #}
 {% extends 'base.html.twig' %}
-{% import "components/button.html.twig" as button %}
 
 {% block title %}{{ 'auth.action.register'|trans }}{% endblock %}
 
@@ -24,7 +23,12 @@
             </div>
 
             <div class="card-actions justify-center">
-                {{ button.submit(label_key='auth.action.register', additional_classes='btn-primary w-full') }}
+                <twig:button
+                    type="submit"
+                    variant="primary"
+                    label="auth.action.register"
+                    block
+                />
             </div>
 
             <div class="text-center mt-4">

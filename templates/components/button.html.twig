@@ -1,77 +1,45 @@
 {# templates/components/button.html.twig #}
-{% macro primary(label_key, path, icon_class = null, additional_classes = '', attributes = {}) %}
-    <a href="{{ path }}" class="btn btn-primary {{ additional_classes }}"
-    {% for attr, value in attributes %} {{ attr }}="{{ value }}"{% endfor %}>
-    {% if icon_class %}<i class="{{ icon_class }} mr-2"></i>{% endif %}
-    {{ label_key|trans }}
-    </a>
-{% endmacro %}
+<{{ this.tag }} class="{{ this.computedClasses }}" {{ this.computedAttributesString|raw }}>
+    {# Icon on left #}
+    {% if this.icon and this.iconPosition == 'left' %}
+        {{ ux_icon(this.icon, { class: 'w-4 h-4' }) }}
+    {% endif %}
 
-{% macro secondary(label_key, path, icon_class = null, additional_classes = '', attributes = {}) %}
-    <a href="{{ path }}" class="btn btn-secondary {{ additional_classes }}"
-    {% for attr, value in attributes %} {{ attr }}="{{ value }}"{% endfor %}>
-    {% if icon_class %}<i class="{{ icon_class }} mr-2"></i>{% endif %}
-    {{ label_key|trans }}
-    </a>
-{% endmacro %}
+    {# Label or content block #}
+    {% if this.label %}
+        {{ this.label|trans }}
+    {% else %}
+        {{ block('content') }}
+    {% endif %}
 
-{% macro ghost(label_key, path, icon_class = null, additional_classes = '', attributes = {}) %}
-    <a href="{{ path }}" class="btn btn-ghost {{ additional_classes }}"
-    {% for attr, value in attributes %} {{ attr }}="{{ value }}"{% endfor %}>
-    {% if icon_class %}<i class="{{ icon_class }} mr-2"></i>{% endif %}
-    {{ label_key|trans }}
-    </a>
-{% endmacro %}
+    {# Icon on right #}
+    {% if this.icon and this.iconPosition == 'right' %}
+        {{ ux_icon(this.icon, { class: 'w-4 h-4' }) }}
+    {% endif %}
+</{{ this.tag }}>
 
-{% macro outline(label_key, path, icon_class = null, additional_classes = '', attributes = {}) %}
-    <a href="{{ path }}" class="btn btn-outline {{ additional_classes }}"
-    {% for attr, value in attributes %} {{ attr }}="{{ value }}"{% endfor %}>
-    {% if icon_class %}<i class="{{ icon_class }} mr-2"></i>{% endif %}
-    {{ label_key|trans }}
-    </a>
-{% endmacro %}
-
-{% macro delete(label_key, form_action_path, csrf_token_value, csrf_token_name = '_token', confirm_message_key = 'common.dialog.delete_generic', confirm_params = {}, icon_class = null, additional_classes = 'btn-error') %}
-    {% set modal_id = 'delete-modal-' ~ random() %}
-    {% set confirm_message = confirm_message_key|trans(confirm_params) %}
-    {% set delete_label = label_key|trans %}
-    {% set cancel_label = 'common.button.cancel'|trans %}
-    {% set title_label = 'common.dialog.delete_title'|trans %}
-    {% set close_label = 'common.action.close'|trans %}
-
-    <button type="button" class="btn {{ additional_classes }}"
-            onclick="document.getElementById('{{ modal_id }}').showModal()">
-        {% if icon_class %}<i class="{{ icon_class }} mr-2" aria-hidden="true"></i>{% endif %}
-        {{ delete_label }}
-    </button>
-
+{# Confirmation modal (if configured) #}
+{% if this.confirmMessage %}
+    {% set modal_id = this.modalId %}
     <dialog id="{{ modal_id }}" class="modal">
         <div class="modal-box">
-            <h3 class="font-bold text-lg">{{ title_label }}</h3>
-            <p class="py-4">{{ confirm_message }}</p>
+            <h3 class="font-bold text-lg">{{ this.computedConfirmTitle|trans }}</h3>
+            <p class="py-4">{{ this.confirmMessage|trans|raw }}</p>
             <div class="modal-action">
                 <button type="button" class="btn"
                         onclick="document.getElementById('{{ modal_id }}').close()">
-                    {{ cancel_label }}
+                    {{ this.computedCancelLabel|trans }}
                 </button>
-                <form method="post" action="{{ form_action_path }}">
-                    <input type="hidden" name="{{ csrf_token_name }}" value="{{ csrf_token_value }}">
-                    <button type="submit" class="btn {{ additional_classes }}">
-                        {% if icon_class %}<i class="{{ icon_class }} mr-2" aria-hidden="true"></i>{% endif %}
-                        {{ delete_label }}
+                <form method="post" action="{{ this.actionPath }}">
+                    <input type="hidden" name="{{ this.csrfTokenName }}" value="{{ this.csrfToken }}">
+                    <button type="submit" class="btn btn-{{ this.variant }}">
+                        {{ this.computedConfirmLabel|trans }}
                     </button>
                 </form>
             </div>
         </div>
         <form method="dialog" class="modal-backdrop">
-            <button>{{ close_label }}</button>
+            <button>{{ this.computedCloseLabel|trans }}</button>
         </form>
     </dialog>
-{% endmacro %}
-
-{% macro submit(label_key, icon_class = null, additional_classes = 'btn-primary') %}
-    <button type="submit" class="btn {{ additional_classes }}">
-        {% if icon_class %}<i class="{{ icon_class }} mr-2"></i>{% endif %}
-        {{ label_key|trans }}
-    </button>
-{% endmacro %}
+{% endif %}

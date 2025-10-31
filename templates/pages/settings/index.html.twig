@@ -1,7 +1,6 @@
 {# templates/pages/settings/index.html.twig #}
 {% extends 'layouts/crud_layout.html.twig' %}
 {% import 'components/page_header.html.twig' as page_header %}
-{% import 'components/button.html.twig' as button %}
 
 {% set page_title = 'settings.page_title' %}
 {% block title %}{{ page_title|trans }} - {{ parent() }}{% endblock %}
@@ -33,8 +32,18 @@
     {{ form_rest(form) }}
 
     <div class="card-actions justify-end">
-        {{ button.outline(label_key='common.button.cancel', path=path('app_host_index')) }}
-        {{ button.submit(label_key='common.button.save') }}
+        <twig:button
+            tag="a"
+            :href="path('app_host_index')"
+            variant="primary"
+            outline
+            label="common.button.cancel"
+        />
+        <twig:button
+            type="submit"
+            variant="primary"
+            label="common.button.save"
+        />
     </div>
 
     {{ form_end(form) }}
