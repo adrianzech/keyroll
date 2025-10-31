@@ -13,11 +13,20 @@ final class Badge
     public mixed $data;
     public string $size = 'sm';
 
+    public function shouldTranslate(): bool
+    {
+        return match ($this->type) {
+            'category' => false,
+            default => true,
+        };
+    }
+
     public function getVariant(): string
     {
         return match ($this->type) {
             'user_role' => $this->getUserRoleVariant(),
             'connection_status' => $this->getConnectionStatusVariant(),
+            'category' => 'primary',
             default => 'neutral',
         };
     }
@@ -27,6 +36,7 @@ final class Badge
         return match ($this->type) {
             'user_role' => $this->getUserRoleLabel(),
             'connection_status' => $this->getConnectionStatusLabel(),
+            'category' => $this->getCategoryLabel(),
             default => (string) $this->data,
         };
     }
@@ -74,6 +84,20 @@ final class Badge
 
         // Assuming ConnectionStatus enum has getLabelKey() method
         return $this->data->getLabelKey();
+    }
+
+    private function getCategoryLabel(): string
+    {
+        if ($this->data === null) {
+            return '';
+        }
+
+        // If data has a getName() method, use it (prioritize methods over property access)
+        if (is_object($this->data) && method_exists($this->data, 'getName')) {
+            return $this->data->getName();
+        }
+
+        return (string) $this->data;
     }
 
     public function getClasses(): string

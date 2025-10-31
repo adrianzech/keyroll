@@ -1,2 +1,2 @@
 {# templates/components/badge.html.twig #}
-<span class="{{ this.classes }}">{{ this.label|trans }}</span>
+<span class="{{ this.classes }}">{{ this.shouldTranslate ? this.label|trans : this.label }}</span>

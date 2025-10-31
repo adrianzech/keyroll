@@ -855,7 +855,15 @@
 {% endblock %}
 
 {% block column_category_badge_value %}
-    <twig:category_badge :data="value" />
+    {% if value is not empty and value is iterable %}
+        <div class="flex flex-wrap gap-1">
+            {% for category in value %}
+                <twig:badge type="category" :data="category" />
+            {% endfor %}
+        </div>
+    {% else %}
+        <span class="text-xs italic text-base-content/70">{{ 'entity.host.label.no_categories_assigned'|trans }}</span>
+    {% endif %}
 {% endblock %}
 
 {% block column_connection_status_value %}
