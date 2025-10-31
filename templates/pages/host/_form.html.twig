@@ -8,10 +8,11 @@
 {{ form_row(form.name) }}
 {{ form_row(form.hostname) }}
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 [&>div]:mb-0 [&>div>div]:mb-0">
     {{ form_row(form.port) }}
     {{ form_row(form.username) }}
 </div>
+
 
 {{ form_rest(form) }}
 

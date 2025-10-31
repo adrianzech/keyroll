@@ -25,8 +25,7 @@
 
 {{ form_row(form.name) }}
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 [&_*]:!mb-0">
     {{ form_widgets.entity_selector(
         form.hosts,
         'api_hosts_search',
@@ -46,7 +45,6 @@
         'category.form.search_users_placeholder',
         'category.form.no_users_added'
     ) }}
-
 </div>
 
 {{ form_rest(form) }}
