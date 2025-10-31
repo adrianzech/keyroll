@@ -662,7 +662,7 @@
     <tfoot></tfoot>
 {% endblock %}
 
-{# Override action_form_control to add CSRF token support #}
+{# Override action_form_control to add CSRF token and confirmation support #}
 {% block action_form_control %}
     {% set attr = { id: form_id, action, method: html_friendly_method, style: 'display: inline;' }|merge(attr) %}
 
@@ -689,6 +689,19 @@
     {% set variant_classes = variants[variant ?? 'primary'] %}
     {% set button_attr = button_attr|merge({ class: (base_classes ~ ' ' ~ variant_classes ~ ' ' ~ button_attr.class|default(''))|trim }) %}
 
+    {# Handle confirmation modal for form actions #}
+    {% if confirmation %}
+        {% set modal_id = confirmation.identifier %}
+        {% set button_attr = button_attr|merge({
+            type: 'button',
+            onclick: "document.getElementById('" ~ modal_id ~ "').showModal()"
+        }) %}
+
+        {# Render confirmation modal with form inside #}
+        {{ block('action_form_confirmation_modal') }}
+    {% endif %}
+
+    {% if not confirmation %}
     <form{{ _self.attributes(attr) }}>
         {% if method != html_friendly_method -%}
             <input type="hidden" name="_method" value="{{ method }}" />
@@ -700,9 +713,68 @@
         {% endif %}
 
         <{{ button_tag }}{{ _self.attributes(button_attr) }}>
-            {{- data_table_theme_block(data_table, 'action_control', resetAttr = true) -}}
+        {{- data_table_theme_block(data_table, 'action_control', resetAttr = true) -}}
         </{{ button_tag }}>
-    </form>
+        </form>
+    {% else %}
+        {# If there's a confirmation, just render the button to open modal #}
+        <{{ button_tag }}{{ _self.attributes(button_attr) }}>
+        {{- data_table_theme_block(data_table, 'action_control', resetAttr = true) -}}
+        </{{ button_tag }}>
+    {% endif %}
+{% endblock %}
+
+{# Confirmation modal specifically for form actions #}
+{% block action_form_confirmation_modal %}
+    {% set modal_status_color_class = {
+        'info': 'btn-primary',
+        'warning': 'btn-warning',
+        'danger': 'btn-error'
+    }[confirmation.type] %}
+
+    {% set trans_domain = confirmation.translation_domain|default('messages') %}
+
+    <dialog id="{{ confirmation.identifier }}" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">
+                {{ confirmation.label_title|trans({}, trans_domain) }}
+            </h3>
+            <div class="py-2">
+                {# label_description is already translated in PHP, so display it raw #}
+                {% if confirmation.label_description starts with 'host.' or confirmation.label_description starts with 'common.' or confirmation.label_description starts with 'ssh_key.' or confirmation.label_description starts with 'category.' or confirmation.label_description starts with 'user.' %}
+                    {# If it's a translation key, translate it #}
+                    {{ confirmation.label_description|trans({}, trans_domain) }}
+                {% else %}
+                    {# If it's already translated text, display it raw #}
+                    {{ confirmation.label_description|raw }}
+                {% endif %}
+            </div>
+            <div class="modal-action">
+                <button type="button"
+                        class="btn btn-ghost"
+                        onclick="document.getElementById('{{ confirmation.identifier }}').close()">
+                    {{ confirmation.label_cancel|trans({}, trans_domain) }}
+                </button>
+
+                {# Form with actual delete action #}
+                <form{{ _self.attributes({ action, method: html_friendly_method, style: 'display: inline;' }) }}>
+                    {% if method != html_friendly_method -%}
+                        <input type="hidden" name="_method" value="{{ method }}" />
+                    {%- endif -%}
+
+                    {# Add CSRF token for POST requests #}
+                    {% if html_friendly_method == 'POST' %}
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete') }}">
+                    {% endif %}
+
+                    <button type="submit" class="btn {{ modal_status_color_class }}">
+                        {{ confirmation.label_confirm|trans({}, trans_domain) }}
+                    </button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>{{ 'common.close'|trans }}</button></form>
+    </dialog>
 {% endblock %}
 
 {# Custom column blocks for badges using Twig Component #}

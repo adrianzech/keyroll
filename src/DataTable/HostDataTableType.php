@@ -154,8 +154,15 @@ class HostDataTableType extends AbstractDataTableType
                     'method' => 'POST',
                     'label' => 'common.button.delete',
                     'variant' => 'danger',
-                    'confirmation' => [
-                        'label_description' => 'host.alert.delete_confirm',
+                    'confirmation' => fn (Host $host) => [
+                        'type' => 'danger',
+                        'translation_domain' => 'messages',
+                        'label_title' => 'common.confirm_delete_title',
+                        'label_description' => $this->translator->trans('host.alert.delete_confirm', [
+                            '%name%' => $host->getName(),
+                        ], 'messages'),
+                        'label_confirm' => 'common.button.delete',
+                        'label_cancel' => 'common.button.cancel',
                     ],
                 ]);
         }
