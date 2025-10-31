@@ -710,6 +710,10 @@
     <twig:user_role_badge :data="value" />
 {% endblock %}
 
+{% block column_category_badge_value %}
+    <twig:category_badge :data="value" />
+{% endblock %}
+
 {% block column_connection_status_value %}
     <twig:connection_status_badge :data="value" />
 {% endblock %}

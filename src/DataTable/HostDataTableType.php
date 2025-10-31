@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DataTable;
 
+use App\Entity\Category;
 use App\Entity\Host;
 use Kreyu\Bundle\DataTableBundle\Action\Type\ButtonActionType;
 use Kreyu\Bundle\DataTableBundle\Action\Type\FormActionType;
@@ -51,6 +52,20 @@ class HostDataTableType extends AbstractDataTableType
                 'export' => true,
                 'sort' => true,
             ])
+            ->addColumn('categories', TextColumnType::class, [
+                'label' => 'host.label.categories',
+                'export' => [
+                    'formatter' => static function (array $categories): string {
+                        return implode(', ', array_map(
+                            static fn (Category $category): string => $category->getName(),
+                            $categories,
+                        ));
+                    },
+                ],
+                'sort' => false,
+                'getter' => static fn (Host $host): array => $host->getCategories()->toArray(),
+                'block_prefix' => 'category_badge',
+            ])
             ->addColumn('connectionStatus', TextColumnType::class, [
                 'label' => 'host.label.connection_status',
                 'export' => true,
@@ -97,14 +112,14 @@ class HostDataTableType extends AbstractDataTableType
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
                 ->addRowAction('edit', ButtonActionType::class, [
-                    'href' => fn(Host $host) => $this->urlGenerator->generate('app_host_edit', [
+                    'href' => fn (Host $host) => $this->urlGenerator->generate('app_host_edit', [
                         'id' => $host->getId(),
                     ]),
                     'label' => 'common.button.edit',
                     'variant' => 'light',
                 ])
                 ->addRowAction('delete', FormActionType::class, [
-                    'action' => fn(Host $host) => $this->urlGenerator->generate('app_host_delete', [
+                    'action' => fn (Host $host) => $this->urlGenerator->generate('app_host_delete', [
                         'id' => $host->getId(),
                     ]),
                     'method' => 'POST',
