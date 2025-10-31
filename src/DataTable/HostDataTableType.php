@@ -57,6 +57,12 @@ class HostDataTableType extends AbstractDataTableType
                 'sort' => true,
                 'block_prefix' => 'connection_status',
             ])
+            ->addColumn('createdAt', TextColumnType::class, [
+                'label' => 'common.label.created_at',
+                'export' => true,
+                'sort' => true,
+                'block_prefix' => 'time_ago',
+            ])
             ->addFilter('name', StringFilterType::class, [
                 'label' => 'host.label.name',
             ])

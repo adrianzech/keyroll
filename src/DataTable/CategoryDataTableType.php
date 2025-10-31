@@ -52,7 +52,7 @@ class CategoryDataTableType extends AbstractDataTableType
                 'label' => 'common.label.created_at',
                 'export' => true,
                 'sort' => true,
-                'getter' => fn (Category $category) => $category->getCreatedAt()?->format('Y-m-d H:i:s') ?? '-',
+                'block_prefix' => 'time_ago',
             ])
             ->addFilter('name', StringFilterType::class, [
                 'label' => 'category.label.name',

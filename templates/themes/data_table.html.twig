@@ -711,3 +711,7 @@
 {% block column_connection_status_value %}
     <twig:connection_status_badge :data="value" />
 {% endblock %}
+
+{% block column_time_ago_value %}
+    <span class="text-sm">{{ value|ago }}</span>
+{% endblock %}

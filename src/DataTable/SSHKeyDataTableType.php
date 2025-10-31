@@ -46,7 +46,7 @@ class SSHKeyDataTableType extends AbstractDataTableType
                 'label' => 'common.label.created_at',
                 'export' => true,
                 'sort' => true,
-                'getter' => fn (SSHKey $sshKey) => $sshKey->getCreatedAt()?->format('Y-m-d H:i:s') ?? '-',
+                'block_prefix' => 'time_ago',
             ])
             ->addFilter('name', StringFilterType::class, [
                 'label' => 'ssh_key.label.name',
