@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\DataTable\CategoryDataTableType;
 use App\Entity\Category;
 use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Kreyu\Bundle\DataTableBundle\DataTableFactoryAwareTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,13 +20,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')] // Require ADMIN for all category actions
 class CategoryController extends AbstractController
 {
-    private const ALLOWED_SORT_FIELDS = [
-        'name' => 'name',
-        'assigned_hosts' => 'hostsCount',
-        'assigned_users' => 'usersCount',
-        'createdAt' => 'createdAt',
-        'updatedAt' => 'updatedAt',
-    ];
+    use DataTableFactoryAwareTrait;
 
     public function __construct(
         private readonly CategoryRepository $categoryRepository,
@@ -35,18 +31,17 @@ class CategoryController extends AbstractController
     #[Route('', name: 'app_category_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $sortByInput = $request->query->get('sort_by', 'name');
-        $sortDirectionInput = $request->query->get('sort_direction', 'ASC');
+        $queryBuilder = $this->categoryRepository->createQueryBuilder('user');
 
-        $sortBy = self::ALLOWED_SORT_FIELDS[$sortByInput] ?? self::ALLOWED_SORT_FIELDS['name'];
-        $sortDirection = strtoupper($sortDirectionInput) === 'DESC' ? 'DESC' : 'ASC';
+        $dataTable = $this->createDataTable(CategoryDataTableType::class, $queryBuilder);
+        $dataTable->handleRequest($request);
 
-        $categories = $this->categoryRepository->findWithSorting($sortBy, $sortDirection);
+        if ($dataTable->isExporting()) {
+            return $this->file($dataTable->export());
+        }
 
         return $this->render('pages/category/index.html.twig', [
-            'categories' => $categories,
-            'current_sort_by' => $sortByInput,
-            'current_sort_direction' => $sortDirection,
+            'categories' => $dataTable->createView(),
         ]);
     }
 
@@ -96,7 +91,7 @@ class CategoryController extends AbstractController
     public function delete(Request $request, Category $category): Response
     {
         $submittedToken = $request->request->get('_token');
-        if (!$this->isCsrfTokenValid('delete' . $category->getId(), $submittedToken)) {
+        if (!$this->isCsrfTokenValid('delete', $submittedToken)) {
             $this->addFlash('error', 'common.invalid_csrf_token');
 
             return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);

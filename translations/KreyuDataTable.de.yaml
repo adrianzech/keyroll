@@ -1,0 +1,21 @@
+# Override KreyuDataTable bundle translations
+# Hinweis: Schlüssel mit Leerzeichen sind im Bundle hardcodiert und können nicht geändert werden
+Equals: 'Gleich'
+'Not equals': 'Ungleich'
+Contains: 'Enthält'
+'Not contains': 'Enthält nicht'
+In: 'In'
+'Not in': 'Nicht in'
+'Greater than': 'Größer als'
+'Greater than or equals': 'Größer oder gleich'
+'Less than': 'Kleiner als'
+'Less than or equals': 'Kleiner oder gleich'
+'Starts with': 'Beginnt mit'
+'Ends with': 'Endet mit'
+Between: 'Zwischen'
+tables:
+  export:
+    title: 'Exportieren'
+    csv: 'CSV'
+    ods: 'ODS'
+    xlsx: 'Excel'

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\DataTable\SSHKeyDataTableType;
 use App\Entity\SSHKey;
 use App\Entity\User;
 use App\Form\SSHKeyType;
 use App\Repository\SSHKeyRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Kreyu\Bundle\DataTableBundle\DataTableFactoryAwareTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,12 +21,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 class SSHKeyController extends AbstractController
 {
-    private const ALLOWED_SORT_FIELDS = [
-        'name' => 'name',
-        'user' => 'user.email',
-        'createdAt' => 'createdAt',
-        'updatedAt' => 'updatedAt',
-    ];
+    use DataTableFactoryAwareTrait;
 
     public function __construct(
         private readonly SSHKeyRepository $sshKeyRepository,
@@ -35,28 +32,17 @@ class SSHKeyController extends AbstractController
     #[Route('/index', name: 'app_ssh_key_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $currentUser = $this->getUser();
-        if (!$currentUser instanceof User) {
-            throw $this->createAccessDeniedException('User not found or not authenticated.');
+        $queryBuilder = $this->sshKeyRepository->createQueryBuilder('user');
+
+        $dataTable = $this->createDataTable(SSHKeyDataTableType::class, $queryBuilder);
+        $dataTable->handleRequest($request);
+
+        if ($dataTable->isExporting()) {
+            return $this->file($dataTable->export());
         }
-
-        $sortByInput = $request->query->get('sort_by', 'createdAt');
-        $sortDirectionInput = $request->query->get('sort_direction', 'DESC');
-
-        $sortBy = self::ALLOWED_SORT_FIELDS[$sortByInput] ?? self::ALLOWED_SORT_FIELDS['createdAt'];
-        $sortDirection = strtoupper($sortDirectionInput) === 'ASC' ? 'ASC' : 'DESC';
-
-        $userToFilter = null;
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $userToFilter = $currentUser;
-        }
-
-        $keys = $this->sshKeyRepository->findWithSorting($userToFilter, $sortBy, $sortDirection);
 
         return $this->render('pages/ssh_key/index.html.twig', [
-            'keys' => $keys,
-            'current_sort_by' => $sortByInput, // Pass the input key for link generation
-            'current_sort_direction' => $sortDirection,
+            'ssh_keys' => $dataTable->createView(),
         ]);
     }
 
@@ -126,11 +112,11 @@ class SSHKeyController extends AbstractController
         $submittedToken = $request->request->get('_token');
 
         // CSRF token check
-        if (!$this->isCsrfTokenValid('delete' . $key->getId(), $submittedToken)) {
+        if (!$this->isCsrfTokenValid('delete', $submittedToken)) {
             $this->addFlash('error', 'common.invalid_csrf_token');
 
             // Return early if the token is invalid
-            return $this->redirectToRoute('app_host_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_ssh_key_index', [], Response::HTTP_SEE_OTHER);
         }
 
         $this->entityManager->remove($key);

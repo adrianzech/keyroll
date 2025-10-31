@@ -1,6 +1,7 @@
 {# templates/layouts/crud_layout.html.twig #}
 {% extends 'base.html.twig' %}
 
+{% set apply_background = apply_background is defined ? apply_background : true %}
 {% set apply_content_padding = apply_content_padding is defined ? apply_content_padding : true %}
 
 {% block body %}
@@ -13,7 +14,7 @@
         {% endblock %}
 
         {% block content_wrapper %}
-            <div class="bg-base-100 shadow-xl rounded-lg {% if apply_content_padding %}p-6{% endif %}">
+            <div class="{% if apply_background %}bg-base-100 shadow-xl rounded-lg{% endif %} {% if apply_content_padding %}p-6{% endif %}">
                 {% block content %}{% endblock %}
             </div>
         {% endblock %}

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\DataTable\HostDataTableType;
 use App\Entity\Host;
 use App\Form\HostType;
 use App\Repository\HostRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Kreyu\Bundle\DataTableBundle\DataTableFactoryAwareTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,15 +20,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 class HostController extends AbstractController
 {
-    private const ALLOWED_SORT_FIELDS = [
-        'name' => 'name',
-        'hostname' => 'hostname',
-        'port' => 'port',
-        'username' => 'username',
-        'connectionStatus' => 'connectionStatus',
-        'createdAt' => 'createdAt',
-        'updatedAt' => 'updatedAt',
-    ];
+    use DataTableFactoryAwareTrait;
 
     public function __construct(
         private readonly HostRepository $hostRepository,
@@ -37,19 +31,17 @@ class HostController extends AbstractController
     #[Route('', name: 'app_host_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $sortByInput = $request->query->get('sort_by', 'name');
-        $sortDirectionInput = $request->query->get('sort_direction', 'ASC');
+        $queryBuilder = $this->hostRepository->createQueryBuilder('user');
 
-        $sortBy = self::ALLOWED_SORT_FIELDS[$sortByInput] ?? self::ALLOWED_SORT_FIELDS['name'];
+        $dataTable = $this->createDataTable(HostDataTableType::class, $queryBuilder);
+        $dataTable->handleRequest($request);
 
-        $sortDirection = strtoupper($sortDirectionInput) === 'DESC' ? 'DESC' : 'ASC';
-
-        $hosts = $this->hostRepository->findWithSorting($sortBy, $sortDirection);
+        if ($dataTable->isExporting()) {
+            return $this->file($dataTable->export());
+        }
 
         return $this->render('pages/host/index.html.twig', [
-            'hosts' => $hosts,
-            'current_sort_by' => $sortByInput,
-            'current_sort_direction' => $sortDirection,
+            'hosts' => $dataTable->createView(),
         ]);
     }
 
@@ -109,7 +101,7 @@ class HostController extends AbstractController
         $submittedToken = $request->request->get('_token');
 
         // CSRF token check
-        if (!$this->isCsrfTokenValid('delete' . $host->getId(), $submittedToken)) {
+        if (!$this->isCsrfTokenValid('delete', $submittedToken)) {
             $this->addFlash('error', 'common.invalid_csrf_token');
 
             // Return early if the token is invalid

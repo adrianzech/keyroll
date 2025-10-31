@@ -32,6 +32,8 @@ parameters:
 
     ignoreErrors:
         - '#Property App\\Entity\\.*::\$id \(int\|null\) is never assigned int so it can be removed from the property type.#'
+        - '#Call to an undefined method Kreyu\\Bundle\\DataTableBundle\\Query\\ProxyQueryInterface::leftJoin#'
+        - '#Call to an undefined method Kreyu\\Bundle\\DataTableBundle\\Query\\ProxyQueryInterface::andWhere#'
 
     # PHPStan caches results for faster subsequent runs
     # Cache directory, typically inside %tmpDir%

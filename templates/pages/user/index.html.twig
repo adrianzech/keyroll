@@ -2,6 +2,7 @@
 {% extends 'layouts/crud_layout.html.twig' %}
 {% import 'components/page_header.html.twig' as page_header %}
 
+{% set apply_background = false %}
 {% set apply_content_padding = false %}
 
 {% set page_title = 'user.title.index' %}
@@ -16,33 +17,6 @@
 {% endblock %}
 
 {% block content %}
-    {{ component('table', {
-        items: users,
-        headers: [
-            { key: 'name', label: 'user.label.name', sortable: true },
-            { key: 'email', label: 'user.label.email', sortable: true },
-            { key: 'primaryRole', label: 'user.label.role', sortable: false },
-        ],
-        item_properties: [
-            'name',
-            'email',
-            'primaryRole',
-        ],
-        column_configs: {
-            'primaryRole': {
-                'component': 'user_role_badge',
-            }
-        },
-        current_sort_by: current_sort_by,
-        current_sort_direction: current_sort_direction,
-        sort_route: 'app_user_index',
-        show_actions_column: is_granted('ROLE_ADMIN'),
-        delete_path_route: 'app_user_delete',
-        edit_path_route: 'app_user_edit',
-        delete_confirm_trans_key: 'user.alert.delete_confirm',
-        entity_name_property_for_confirm: 'email',
-        csrf_token_prefix: 'delete',
-        entity_id_property: 'id',
-        no_items_message_key: 'user.alert.no_users_found'
-    }) }}
+    {% data_table_theme users 'themes/data_table.html.twig' %}
+    {{ data_table(users) }}
 {% endblock %}

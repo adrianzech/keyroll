@@ -1,0 +1,713 @@
+{% extends '@KreyuDataTable/themes/base.html.twig' %}
+
+{# action bar with export/filter/personalize and search #}
+{% block action_bar %}
+    {% set display_filter_action = filtration_enabled and filters|length > 0 and filtration_form.children|length > 0 %}
+    {% set display_export_action = exporting_enabled and exporters|length > 0 %}
+
+    {% if title or has_active_filters or display_filter_action or display_export_action or filtration_enabled or personalization_enabled %}
+        <div class="card">
+            <div class="card-body p-0 pb-2">
+                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-2">
+                    <div class="flex flex-wrap items-center gap-2">
+                        {% if display_export_action %}
+                            {{ block('action_export') }}
+                            {{ block('export_modal') }}
+                        {% endif %}
+
+                        {% if personalization_enabled %}
+                            {{ block('action_personalize') }}
+                            {{ block('personalization_modal') }}
+                        {% endif %}
+
+                        {% for action in actions %}
+                            <div>{{ data_table_action(action) }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="flex flex-wrap justify-end items-center gap-2">
+                        {% if filtration_enabled and filtration_form and filtration_form.vars.search_fields|length > 0 %}
+                            {{ block('action_search') }}
+                        {% endif %}
+
+                        {% if has_active_filters or display_filter_action %}
+                            {% if has_active_filters %}
+                                {{ block('active_filters') }}
+                            {% endif %}
+                            {% if display_filter_action %}
+                                {{ block('action_filter') }}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if filtration_enabled and filtration_form and filters|length > 0 %}
+            {% set modal_id = filtration_form.vars.id ~ '__modal' %}
+            <dialog id="{{ modal_id }}" class="modal">
+                <div class="modal-box w-11/12 max-w-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-bold text-lg">{{ 'tables.filter'|trans }}</h3>
+                        <button type="button"
+                                class="btn btn-ghost btn-xs"
+                                aria-label="{{ 'common.close'|trans }}"
+                                onclick="document.getElementById('{{ modal_id }}').close()">
+                            {{ ux_icon('bi:x-lg', { class: 'w-4 h-4' }) }}
+                        </button>
+                    </div>
+
+                    <div class="space-y-3">
+                        {{ data_table_filters_form(filtration_form) }}
+                    </div>
+                </div>
+                <form method="dialog" class="modal-backdrop"><button>{{ 'common.close'|trans }}</button></form>
+            </dialog>
+        {% endif %}
+    {% endif %}
+
+    {% if has_batch_actions %}
+        {{ block('batch_action_bar', theme) }}
+    {% endif %}
+{% endblock %}
+
+{# action button (single) #}
+{% block action_button_control -%}
+    {%- set variants = {
+        destructive: 'btn-error btn-xs',
+        danger: 'btn btn-ghost btn-error btn-xs',
+        primary: 'btn-primary btn-xs',
+        secondary: 'btn-secondary btn-xs',
+        success: 'btn-success btn-xs',
+        info: 'btn-info btn-xs',
+        warning: 'btn-warning btn-xs',
+        light: 'btn-ghost btn-xs',
+        dark: 'btn-neutral btn-xs',
+        link: 'link',
+        'outline-destructive': 'btn btn-outline btn-error btn-xs',
+        'outline-danger': 'btn btn-outline btn-error btn-xs',
+        'outline-primary': 'btn btn-outline btn-primary btn-xs',
+        'outline-secondary': 'btn btn-outline btn-secondary btn-xs',
+        'outline-success': 'btn btn-outline btn-success btn-xs',
+        'outline-info': 'btn btn-outline btn-info btn-xs',
+        'outline-warning': 'btn btn-outline btn-warning btn-xs',
+        'outline-light': 'btn btn-outline btn-xs',
+        'outline-dark': 'btn btn-outline btn-neutral btn-xs'
+    }|merge(variants ?? {})|filter(e => e is not same as false) -%}
+
+    {% set base_classes = base_classes ?? 'btn btn-sm inline-flex items-center gap-2' %}
+    {% set variant_classes = variant_classes ?? variants[variant ?? default_variant ?? 'primary'] %}
+    {% set attr = attr|merge({ class: (base_classes ~ ' ' ~ variant_classes ~ ' ' ~ attr.class|default(''))|trim }) %}
+
+    {% if confirmation %}
+        {% set attr = attr|merge({ onclick: "document.getElementById('" ~ confirmation.identifier ~ "').showModal()" }) %}
+        {% set confirm_button_attr = { href }|merge(confirm_button_attr|default({})) %}
+        {% if batch %}
+            {% set confirm_button_attr = confirm_button_attr|merge({ 'data-kreyu--data-table-bundle--batch-target': 'identifierHolder' }) %}
+        {% endif %}
+        {% with { attr, confirm_button_attr } %}{{ block('action_confirmation_modal') }}{% endwith %}
+    {% endif %}
+
+    {% set attr = { href, target }|filter(v => v != null)|merge(attr) %}
+    {% set tag = tag ?? 'a' %}
+    {% if batch %}
+        {% set attr = attr|merge({ 'data-kreyu--data-table-bundle--batch-target': 'identifierHolder' }) %}
+    {% endif %}
+
+    <{{ tag }}{{ _self.attributes(attr) }}>
+    {{- data_table_theme_block(data_table, 'action_control', resetAttr = true) -}}
+    </{{ tag }}>
+{%- endblock %}
+
+{# confirmation modal for actions #}
+{% block action_confirmation_modal %}
+    {% set modal_status_color_class = {
+        'info': 'btn-primary',
+        'warning': 'btn-warning',
+        'danger': 'btn-error'
+    }[confirmation.type] %}
+
+    <dialog id="{{ confirmation.identifier }}" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">
+                {{ confirmation.label_title|trans({}, confirmation.translation_domain) }}
+            </h3>
+            <div class="py-2">
+                {{ confirmation.label_description|trans({}, confirmation.translation_domain) }}
+            </div>
+            <div class="modal-action">
+                <button class="btn btn-ghost"
+                        onclick="document.getElementById('{{ confirmation.identifier }}').close()">
+                    {{ confirmation.label_cancel|trans({}, confirmation.translation_domain) }}
+                </button>
+
+                {% set confirm_button_tag = confirm_button_tag|default('a') %}
+                {% set confirm_button_attr = { class: 'btn ' ~ modal_status_color_class }|merge(confirm_button_attr|default({})) %}
+                <{{ confirm_button_tag }} {% with { attr: confirm_button_attr } %}{{ block('attributes') }}{% endwith %}>
+                {{ confirmation.label_confirm|trans({}, confirmation.translation_domain) }}
+            </{{ confirm_button_tag }}>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>{{ 'common.close'|trans }}</button></form>
+    </dialog>
+{% endblock %}
+
+{# dropdown actions #}
+{% block action_dropdown_control %}
+    {% set base_classes = base_classes ?? 'btn btn-sm inline-flex items-center gap-2' %}
+    {% set variant_classes = variant_classes ?? 'btn-primary' %}
+    {% set button_classes = (base_classes ~ ' ' ~ variant_classes ~ ' ' ~ button_attr.class|default(''))|trim %}
+
+    <div class="dropdown dropdown-end">
+        <button type="button"
+                id="{{ data_table.vars.name ~ '--' ~ context.value ~ '-action--' ~ name ~ '--button' }}"
+                class="{{ button_classes }}">
+            {% with { attr: {} } %}{{- block('action_control', theme) -}}{% endwith %}
+        </button>
+
+        {% for action in actions %}
+            {% if action.vars.confirmation %}
+                {% set href = action.vars.href %}
+                {% set confirm_button_attr = { href }|merge(confirm_button_attr|default({})) %}
+                {% set confirmation = action.vars.confirmation %}
+                {% with { confirm_button_attr, confirmation } only %}{{ block('action_confirmation_modal') }}{% endwith %}
+            {% endif %}
+        {% endfor %}
+
+        <ul class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-56 mt-2 z-[1]">
+            {% for action in actions %}
+                <li>{{ data_table_action(action) }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{# top action buttons #}
+{% block action_export %}
+    {% set modal_id = export_form.vars.id ~ '__modal' %}
+    {% set attr = { type: 'button', class: 'btn btn-sm btn-primary', onclick: "document.getElementById('" ~ modal_id ~ "').showModal()" }|merge(attr|default({})) %}
+    <button {{ block('attributes') }}>{{ 'tables.export.title'|trans }}</button>
+{% endblock %}
+
+{# filter button #}
+{% block action_filter %}
+    {% set modal_id = filtration_form.vars.id ~ '__modal' %}
+    {% set attr = {
+        type: 'button',
+        class: 'btn btn-sm btn-primary flex items-center justify-center',
+        onclick: "document.getElementById('" ~ modal_id ~ "').showModal()"
+    }|merge(attr|default({})) %}
+    <button {{ block('attributes') }}
+            aria-label="{{ 'tables.filter'|trans }}">
+        {{ ux_icon('bi:filter', { class: 'w-4 h-4' }) }}
+    </button>
+{% endblock %}
+{% block action_personalize %}
+    {% set modal_id = personalization_form.vars.id ~ '__modal' %}
+    {% set attr = { type: 'button', class: 'btn btn-sm btn-primary', onclick: "document.getElementById('" ~ modal_id ~ "').showModal()" }|merge(attr|default({})) %}
+    <button {{ block('attributes') }}>{{ 'tables.personalization'|trans }}</button>
+{% endblock %}
+
+{# active filters #}
+{% block active_filters %}
+    <div class="flex flex-wrap gap-2">
+        {% if has_active_filters %}
+            {{ block('filter_clear_all_button') }}
+        {% endif %}
+        {% for filter_name, filter_data in filtration_data.filters|default([])|filter(filter => filter.hasValue()) %}
+            {% with { filter: filters[filter_name] } %}
+                {{ block('filter_clear_button') }}
+            {% endwith %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block filter_clear_all_button %}
+    {% set attr = {
+        class: 'btn btn-sm btn-outline btn-error inline-flex items-center gap-1',
+        href: data_table_filter_clear_url(data_table, filters),
+        'data-turbo-action': 'advance'
+    }|merge(attr|default({})) %}
+    <a {{ block('attributes') }}>
+        {{ 'tables.clear_all_filters'|trans }}
+    </a>
+{% endblock %}
+
+{% block filter_clear_button %}
+    {% set attr = {
+        class: 'btn btn-sm btn-outline inline-flex items-center gap-1 whitespace-nowrap',
+        href: data_table_filter_clear_url(data_table, filter),
+        'data-turbo-action': 'advance',
+        'data-turbo-frame': '_self',
+        title: 'tables.clear_this_filter'|trans
+    }|merge(attr|default({})) %}
+    <a {{ block('attributes') }}>
+        <span class="font-semibold">{{ filter.vars.label|trans({}, filter.vars.translation_domain) }}</span>
+        {% if filter.vars.operator_selectable %}
+            <span class="text-base-content/60">{{ filter.vars.data.operator.label|trans({}, 'KreyuDataTable') }}</span>
+        {% endif %}
+        <span>
+            {% if filter.vars.value is iterable %}
+                {% for value in filter.vars.value %}
+                    {{ value }}{{ not loop.last ? ', ' }}
+                {% endfor %}
+            {% else %}
+                {{ filter.vars.value }}
+            {% endif %}
+        </span>
+    </a>
+{% endblock %}
+
+{# search field #}
+{% block action_search %}
+    <div class="flex items-center gap-2">
+        {% for child in filtration_form.vars.search_fields %}
+            {{ form_widget(child.value, {
+                attr: {
+                    form: filtration_form.vars.id,
+                    class: 'input input-bordered input-sm w-48 focus:z-10',
+                    placeholder: 'common.search'|trans
+                }
+            }) }}
+        {% endfor %}
+
+        <button type="submit"
+                form="{{ filtration_form.vars.id }}"
+                class="btn btn-sm btn-primary flex items-center gap-1"
+                aria-label="{{ 'common.search'|trans }}">
+            {{ ux_icon('bi:search', { class: 'w-4 h-4' }) }}
+        </button>
+    </div>
+{% endblock %}
+
+{# batch action bar #}
+{% block batch_action_bar %}
+    <div class="card bg-base-100 border border-base-300" hidden
+         data-kreyu--data-table-bundle--batch-target="batchActionBar">
+        <div class="card-body p-2">
+            <div class="flex items-center gap-2">
+                {{ block('batch_action_bar_title', theme) }}
+                {{ block('batch_action_bar_actions', theme) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block batch_action_bar_title %}
+    <div class="text-sm text-base-content/70">
+        {{ 'common.selected'|trans }}:
+        <span data-kreyu--data-table-bundle--batch-target="selectedCounter">0</span>
+    </div>
+{% endblock %}
+
+{% block batch_action_bar_actions %}
+    <div class="card-actions">
+        <div class="flex flex-row gap-2">
+            {% for action in batch_actions %}
+                <div>{{ data_table_action(action) }}</div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{# sort icons + header #}
+{% block sort_arrow_asc %}
+    {{ ux_icon('bi:chevron-up', { class: 'w-3.5 h-3.5 ml-1 inline-block opacity-70' }) }}
+{% endblock %}
+
+{% block sort_arrow_desc %}
+    {{ ux_icon('bi:chevron-down', { class: 'w-3.5 h-3.5 ml-1 inline-block opacity-70' }) }}
+{% endblock %}
+
+{% block sort_arrow_none %}
+    <span class="ml-1 opacity-30 inline-block">
+        {{ ux_icon('bi:chevron-up', { class: 'w-3 h-3 block -mb-0.5' }) }}
+        {{ ux_icon('bi:chevron-down', { class: 'w-3 h-3 block -mt-0.5' }) }}
+    </span>
+{% endblock %}
+
+{% block column_header %}
+    {% with {
+        active_attr: { class: 'text-primary ' ~ attr.class|default('') },
+        label_attr:  { class: 'no-underline text-base-content inline-flex items-center gap-1 py-1 w-full h-full' }
+    } %}
+        {% if data_table.vars.sorting_enabled and sortable %}
+            {% set attr = attr|merge(sorted ? active_attr : {}) %}
+            <th {{ block('attributes') }}>
+                {% set label_attr = {
+                    href: data_table_column_sort_url(data_table, column),
+                    'data-turbo-action': 'advance',
+                    'data-turbo-frame': '_self'
+                }|merge(label_attr) %}
+                <a {% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}>
+                    {{ block('column_header_label', theme, _context) }}
+                    {% if sorted %}
+                        {% if sort_direction == 'asc' %}
+                            {{ block('sort_arrow_asc', theme, _context) }}
+                        {% else %}
+                            {{ block('sort_arrow_desc', theme, _context) }}
+                        {% endif %}
+                    {% else %}
+                        {{ block('sort_arrow_none', theme, _context) }}
+                    {% endif %}
+                </a>
+            </th>
+        {% else %}
+            <th {{ block('attributes') }}>
+                <span class="text-base-content inline-flex items-center gap-1 py-1">
+                    {{ block('column_header_label', theme, _context) }}
+                </span>
+            </th>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+{% block column_html_value %}
+    {% if strip_tags %}{% set value = value|striptags(allowed_tags) %}{% endif %}
+    <span {{ block('attributes') }}>{{ raw ? value|raw : value }}</span>
+{% endblock %}
+
+{% block column_link_value %}
+    <a {% with { attr: { href, target }|filter(v => v != null)|merge(attr) } %}{{ block('attributes') }}{% endwith %}>
+        {{ block('column_text_value') }}
+    </a>
+{% endblock %}
+
+{# export modal + form #}
+{% block export_modal %}
+    {% set modal_id = export_form.vars.name ~ '__modal' %}
+    <dialog id="{{ modal_id }}" class="modal">
+        <div class="modal-box w-11/12 max-w-md">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="font-bold text-lg">{{ 'tables.export.title'|trans }}</h3>
+                <button type="button"
+                        class="btn btn-ghost btn-xs"
+                        aria-label="{{ 'common.close'|trans }}"
+                        onclick="document.getElementById('{{ modal_id }}').close()">
+                    {{ ux_icon('bi:x-lg', { class: 'w-4 h-4' }) }}
+                </button>
+            </div>
+
+            <div class="py-3">
+                {{ data_table_export_form(export_form) }}
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>{{ 'common.close'|trans }}</button></form>
+    </dialog>
+{% endblock %}
+
+{% block kreyu_data_table_export_form %}
+    {{ form_start(form, { attr: { 'data-turbo': 'false', 'data-turbo-prefetch': 'false' } }) }}
+    <div class="space-y-4">
+        <div class="form-control w-full">
+            {{ form_label(form.filename, null, { label_attr: { class: 'label p-0 pb-1 text-sm font-medium' } }) }}
+            {{ form_widget(form.filename, { attr: { class: 'input input-bordered w-full' } }) }}
+            {{ form_errors(form.filename) }}
+        </div>
+
+        <div class="form-control w-full">
+            {{ form_label(form.exporter, null, { label_attr: { class: 'label p-0 pb-1 text-sm font-medium' } }) }}
+            {{ form_widget(form.exporter, { attr: { class: 'select select-bordered w-full' } }) }}
+            {{ form_errors(form.exporter) }}
+        </div>
+
+        <div class="form-control w-full">
+            {{ form_label(form.strategy, null, { label_attr: { class: 'label p-0 pb-1 text-sm font-medium' } }) }}
+            {{ form_widget(form.strategy, { attr: { class: 'select select-bordered w-full' } }) }}
+            {{ form_errors(form.strategy) }}
+        </div>
+
+        {# explicit label for the checkbox so the default "Value" never shows #}
+        {% set includeLabel = form.includePersonalization.vars.label is same as(false)
+            ? 'tables.include_personalization'|trans
+            : form.includePersonalization.vars.label|trans({}, form.includePersonalization.vars.translation_domain) %}
+        <div class="form-control">
+            <div class="flex items-center gap-2">
+                {{ form_widget(form.includePersonalization, { attr: { class: 'checkbox checkbox-primary' } }) }}
+                {{ form_label(form.includePersonalization, includeLabel, { label_attr: { class: 'label-text cursor-pointer' } }) }}
+            </div>
+            {{ form_errors(form.includePersonalization) }}
+        </div>
+
+        <button class="btn btn-primary w-full">{{ 'tables.export.title'|trans }}</button>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+
+{# filter form (rows + submit) #}
+{% block filtration_form_content %}
+    {% with { attr: { class: 'grid grid-cols-1 gap-3' } } %}
+        <div {{ block('attributes') }}>
+            {% for child in form %}
+                {{ block('filtration_form_row', theme) }}
+            {% endfor %}
+            {{ block('filtration_form_submit', theme) }}
+        </div>
+    {% endwith %}
+{% endblock %}
+
+{% block filtration_form_row %}
+    {% set is_choice = 'choice' in child.vars.block_prefixes %}
+    {% set control_class = is_choice ? 'select select-bordered w-full' : 'input input-bordered w-full' %}
+
+    {% if child.vars.compound %}
+        <div>
+            {{ form_label(child, null, { label_attr: { class: 'label p-0 pb-1 text-sm font-medium' } }) }}
+
+            {% if child.operator is defined %}
+                {{ form_row(child.operator, {
+                    label: false,
+                    row_attr: { class: 'mb-2' },
+                    attr: { class: 'select select-bordered w-full' }
+                }) }}
+            {% endif %}
+
+            {# value row without default label text #}
+            {% if child.value is defined %}
+                {{ form_row(child.value, {
+                    label: false,
+                    attr: { class: 'input input-bordered w-full', placeholder: '' }
+                }) }}
+            {% endif %}
+        </div>
+    {% else %}
+        <div>
+            {{ form_label(child, null, { label_attr: { class: 'label p-0 pb-1 text-sm font-medium' } }) }}
+            {{ form_widget(child, { attr: { class: control_class, placeholder: '' } }) }}
+            {{ form_errors(child) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block filtration_form_submit %}
+    <div>
+        <button type="submit" class="btn btn-primary w-full">
+            {{ 'tables.filter'|trans }}
+        </button>
+    </div>
+{% endblock %}
+
+{# disable turbo for filters to avoid frame mismatch #}
+{% block kreyu_data_table_filters_form %}
+    {{ form_start(form, { attr: { 'data-turbo': 'false' } }) }}
+    {{ block('filtration_form_content', theme) }}
+    {{ form_end(form) }}
+{% endblock %}
+
+{# pagination #}
+{% block pagination_counters %}
+    <div class="flex justify-center items-center">
+        <span {{- block('attributes') -}}>
+            {{- block('pagination_counters_message', theme) -}}
+        </span>
+    </div>
+{% endblock %}
+
+{% block pagination_per_page %}
+    <div class="flex justify-center items-center gap-2">
+        {% set choices = data_table.vars.per_page_choices %}
+        {% if choices is not empty %}
+            {{ block('pagination_per_page_form', theme) }}
+            {{ block('pagination_per_page_message', theme) }}
+        {% else %}
+            <div></div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block pagination_per_page_form %}
+    {% with { select_attr: { class: 'select select-bordered select-sm w-auto' } } %}
+        <form>
+            {% set url_query_parameters = [] %}
+            {% if should_reset_to_first_page ?? true %}
+                {% set url_query_parameters = url_query_parameters|merge({ (data_table.vars.page_parameter_name): 1 }) %}
+            {% endif %}
+
+            {{ _self.array_to_form_inputs(url_query_parameters) }}
+
+            {% set select_attr = {
+                name: data_table.vars.per_page_parameter_name,
+                onchange: 'this.form.submit()',
+                autocomplete: 'off'
+            }|merge(select_attr|default({})) %}
+
+            <select {% with { attr: select_attr } %}{{ block('attributes') }}{% endwith %}>
+                {% for choice in choices %}
+                    <option value="{{ choice }}"{{ item_number_per_page == choice ? ' selected' }}>{{ choice }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    {% endwith %}
+{% endblock %}
+
+{% block pagination_widget %}
+    <div class="border-base-300">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 py-2">
+            {{ block('pagination_per_page', theme) }}
+            {{ block('pagination_counters', theme) }}
+            {% if page_count > 1 %}
+                <div class="join">
+                    {{ block('pagination_controls', theme) }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block pagination_controls %}
+    {% set pageParam = data_table.vars.page_parameter_name %}
+    {% set current = app.request.query.get(pageParam) is not null ? app.request.query.get(pageParam) : data_table.vars.page|default(1) %}
+    {% set last    = page_count|default(1) %}
+    {% set prev    = current > 1 ? (current - 1) : 1 %}
+    {% set next    = current < last ? (current + 1) : last %}
+    {% set window  = 2 %}
+    {% set start   = (current - window) > 1 ? (current - window) : 1 %}
+    {% set end     = (current + window) < last ? (current + window) : last %}
+
+    {% set route        = app.request.attributes.get('_route') %}
+    {% set route_params = app.request.attributes.get('_route_params')|default({}) %}
+    {% set q            = app.request.query.all %}
+
+    {% macro page_url(route, route_params, q, pageParam, page) %}
+        {{- path(route, route_params|merge(q|merge({ (pageParam): page }))) -}}
+    {% endmacro %}
+    {% import _self as _p %}
+
+    <a class="join-item btn btn-sm {{ current == 1 ? 'btn-disabled pointer-events-none' : '' }}"
+       href="{{ current == 1 ? '#' : _p.page_url(route, route_params, q, pageParam, 1) }}"
+       aria-label="First" data-turbo-action="advance" data-turbo-frame="_self">«</a>
+
+    <a class="join-item btn btn-sm {{ current == 1 ? 'btn-disabled pointer-events-none' : '' }}"
+       href="{{ current == 1 ? '#' : _p.page_url(route, route_params, q, pageParam, prev) }}"
+       aria-label="Previous" data-turbo-action="advance" data-turbo-frame="_self">‹</a>
+
+    {% if start > 1 %}
+        <a class="join-item btn btn-sm"
+           href="{{ _p.page_url(route, route_params, q, pageParam, 1) }}"
+           data-turbo-action="advance" data-turbo-frame="_self">1</a>
+        {% if start > 2 %}
+            <span class="join-item btn btn-sm btn-ghost pointer-events-none">…</span>
+        {% endif %}
+    {% endif %}
+
+    {% for p in start..end %}
+        <a class="join-item btn btn-sm {{ p == current ? 'btn-active' : '' }}"
+           href="{{ _p.page_url(route, route_params, q, pageParam, p) }}"
+           aria-current="{{ p == current ? 'page' : 'false' }}"
+           data-turbo-action="advance" data-turbo-frame="_self">{{ p }}</a>
+    {% endfor %}
+
+    {% if end < last %}
+        {% if end < (last - 1) %}
+            <span class="join-item btn btn-sm btn-ghost pointer-events-none">…</span>
+        {% endif %}
+        <a class="join-item btn btn-sm"
+           href="{{ _p.page_url(route, route_params, q, pageParam, last) }}"
+           data-turbo-action="advance" data-turbo-frame="_self">{{ last }}</a>
+    {% endif %}
+
+    <a class="join-item btn btn-sm {{ current == last ? 'btn-disabled pointer-events-none' : '' }}"
+       href="{{ current == last ? '#' : _p.page_url(route, route_params, q, pageParam, next) }}"
+       aria-label="Next" data-turbo-action="advance" data-turbo-frame="_self">›</a>
+
+    <a class="join-item btn btn-sm {{ current == last ? 'btn-disabled pointer-events-none' : '' }}"
+       href="{{ current == last ? '#' : _p.page_url(route, route_params, q, pageParam, last) }}"
+       aria-label="Last" data-turbo-action="advance" data-turbo-frame="_self">»</a>
+{% endblock %}
+
+{# personalization modal #}
+{% block personalization_form_submit %}
+    <button class="btn btn-primary w-full">{{ 'tables.apply'|trans }}</button>
+{% endblock %}
+
+{% block personalization_modal %}
+    {% set modal_id = personalization_form.vars.id ~ '__modal' %}
+    <dialog id="{{ modal_id }}" class="modal">
+        <div class="modal-box w-11/12 max-w-4xl">
+            <div>
+                <h3 class="font-bold text-lg">{{ 'tables.personalization'|trans }}</h3>
+                <div class="py-2">{{ data_table_personalization_form(personalization_form) }}</div>
+            </div>
+            <div class="modal-action">
+                <button class="btn" onclick="document.getElementById('{{ modal_id }}').close()">{{ 'common.close'|trans }}</button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>{{ 'common.close'|trans }}</button></form>
+    </dialog>
+{% endblock %}
+
+{# table markup #}
+{% block table %}
+    <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 shadow-lg">
+        {% with { table_attr: { class: 'table table-zebra table-sm w-full', style: '' }|merge(table_attr|default({})) } %}
+            <table {% with { attr: table_attr|default({}) } %}{{- block('attributes') -}}{% endwith %}>
+                {{ block('table_head', theme) }}
+                {{ block('table_body', theme) }}
+                {{ block('table_foot', theme) }}
+            </table>
+        {% endwith %}
+    </div>
+{% endblock %}
+
+{% block table_head %}
+    <thead class="bg-base-200">{{ block('table_head_row', theme) }}</thead>
+{% endblock %}
+
+{% block table_body %}
+    <tbody>{{ block('table_body_row') }}</tbody>
+{% endblock %}
+
+{% block table_foot %}
+    <tfoot></tfoot>
+{% endblock %}
+
+{# Override action_form_control to add CSRF token support #}
+{% block action_form_control %}
+    {% set attr = { id: form_id, action, method: html_friendly_method, style: 'display: inline;' }|merge(attr) %}
+
+    {% if batch %}
+        {% set attr = { 'data-kreyu--data-table-bundle--batch-target': 'identifierHolder' }|merge(attr) %}
+    {% endif %}
+
+    {% set button_tag = button_tag ?? 'button' %}
+    {% set button_attr = { type: 'submit' }|merge(button_attr) %}
+
+    {# Set button classes based on variant #}
+    {% set variants = {
+        destructive: 'btn-error btn-xs',
+        danger: 'btn btn-ghost btn-error btn-xs',
+        primary: 'btn-primary btn-xs',
+        secondary: 'btn-secondary btn-xs',
+        success: 'btn-success btn-xs',
+        info: 'btn-info btn-xs',
+        warning: 'btn-warning btn-xs',
+        light: 'btn-ghost btn-xs',
+        dark: 'btn-neutral btn-xs',
+    } %}
+    {% set base_classes = 'btn btn-sm inline-flex items-center gap-2' %}
+    {% set variant_classes = variants[variant ?? 'primary'] %}
+    {% set button_attr = button_attr|merge({ class: (base_classes ~ ' ' ~ variant_classes ~ ' ' ~ button_attr.class|default(''))|trim }) %}
+
+    <form{{ _self.attributes(attr) }}>
+        {% if method != html_friendly_method -%}
+            <input type="hidden" name="_method" value="{{ method }}" />
+        {%- endif -%}
+
+        {# Add CSRF token for POST requests #}
+        {% if html_friendly_method == 'POST' %}
+            <input type="hidden" name="_token" value="{{ csrf_token('delete') }}">
+        {% endif %}
+
+        <{{ button_tag }}{{ _self.attributes(button_attr) }}>
+            {{- data_table_theme_block(data_table, 'action_control', resetAttr = true) -}}
+        </{{ button_tag }}>
+    </form>
+{% endblock %}
+
+{# Custom column blocks for badges using Twig Component #}
+{% block column_role_badge_value %}
+    <twig:user_role_badge :data="value" />
+{% endblock %}
+
+{% block column_connection_status_value %}
+    <twig:connection_status_badge :data="value" />
+{% endblock %}

@@ -26,6 +26,9 @@ common:
   save: 'Speichern'
   update: 'Aktualisieren'
   view: 'Anzeigen'
+  close: 'Schließen'
+  search: 'Suche'
+  selected: 'Ausgewählt'
   save_changes: 'Änderungen speichern'
   no_items_found: 'Keine Einträge gefunden.'
   confirm_delete_generic: 'Sind Sie sicher, dass Sie diesen Eintrag löschen möchten?'
@@ -209,7 +212,24 @@ label:
   role: 'Rolle'
   roles: 'Rollen'
 
+tables:
+  export:
+    title: 'Exportieren'
+    csv: 'CSV'
+    ods: 'ODS'
+    xlsx: 'Excel'
+  filter: 'Filter'
+  personalization: 'Personalisierung'
+  apply: 'Anwenden'
+  clear_all_filters: 'Alle Filter löschen'
+  clear_this_filter: 'Diesen Filter löschen'
+  include_personalization: 'Personalisierung einbeziehen'
+
 theme:
   toggle: 'Theme wechseln'
   light: 'Heller Modus'
   dark: 'Dunkler Modus'
+
+# Hardcoded von KreyuDataTable
+Search: 'Suche'
+Actions: 'Aktionen'

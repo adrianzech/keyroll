@@ -1,0 +1,21 @@
+# Override KreyuDataTable bundle translations
+# Note: Keys with spaces are hardcoded by the bundle and cannot be changed
+Equals: 'Equals'
+'Not equals': 'Not equals'
+Contains: 'Contains'
+'Not contains': 'Not contains'
+In: 'In'
+'Not in': 'Not in'
+'Greater than': 'Greater than'
+'Greater than or equals': 'Greater than or equals'
+'Less than': 'Less than'
+'Less than or equals': 'Less than or equals'
+'Starts with': 'Starts with'
+'Ends with': 'Ends with'
+Between: 'Between'
+tables:
+  export:
+    title: 'Export'
+    csv: 'CSV'
+    ods: 'ODS'
+    xlsx: 'Excel'

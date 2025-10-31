@@ -2,6 +2,7 @@
 {% extends 'layouts/crud_layout.html.twig' %}
 {% import 'components/page_header.html.twig' as page_header %}
 
+{% set apply_background = false %}
 {% set apply_content_padding = false %}
 
 {% set page_title = 'category.title.index' %}
@@ -14,34 +15,7 @@
         button_path=path('app_category_new')
     ) }}
 {% endblock %}
-
 {% block content %}
-    {{ component('table', {
-        items: categories,
-        headers: [
-            { key: 'name', label: 'category.label.name', sortable: true },
-            { key: 'hosts', label: 'category.label.assigned_hosts', sortable: true },
-            { key: 'users', label: 'category.label.assigned_users', sortable: true },
-        ],
-        item_properties: [
-            'name',
-            'hosts',
-            'users'
-        ],
-        column_configs: {
-            hosts: { accessor: 'count' },
-            users: { accessor: 'count' }
-        },
-        current_sort_by: current_sort_by,
-        current_sort_direction: current_sort_direction,
-        sort_route: 'app_category_index',
-        show_actions_column: is_granted('ROLE_ADMIN'),
-        delete_path_route: 'app_category_delete',
-        edit_path_route: 'app_category_edit',
-        delete_confirm_trans_key: 'category.alert.delete_confirm',
-        entity_name_property_for_confirm: 'name',
-        csrf_token_prefix: 'delete',
-        entity_id_property: 'id',
-        no_items_message_key: 'category.alert.no_categories_found'
-    }) }}
+    {% data_table_theme categories 'themes/data_table.html.twig' %}
+    {{ data_table(categories) }}
 {% endblock %}

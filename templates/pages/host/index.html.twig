@@ -2,6 +2,7 @@
 {% extends 'layouts/crud_layout.html.twig' %}
 {% import 'components/page_header.html.twig' as page_header %}
 
+{% set apply_background = false %}
 {% set apply_content_padding = false %}
 
 {% set page_title = 'host.title.index' %}
@@ -16,42 +17,6 @@
 {% endblock %}
 
 {% block content %}
-    {{ component('table', {
-        items: hosts,
-        headers: [
-            { key: 'name', label: 'host.label.name', sortable: true },
-            { key: 'hostname', label: 'host.label.hostname', sortable: true },
-            { key: 'port', label: 'host.label.port', sortable: true },
-            { key: 'username', label: 'host.label.username', sortable: true },
-            { key: 'categories', label: 'host.label.categories', sortable: false },
-            { key: 'connectionStatus', label: 'host.label.connection_status', sortable: true },
-        ],
-        item_properties: [
-            'name',
-            'hostname',
-            'port',
-            'username',
-            'categories',
-            'connectionStatus',
-        ],
-        column_configs: {
-            'categories': {
-                'component': 'category_badge'
-            },
-            'connectionStatus': {
-                'component': 'connection_status_badge'
-            }
-        },
-        current_sort_by: current_sort_by,
-        current_sort_direction: current_sort_direction,
-        sort_route: 'app_host_index',
-        show_actions_column: is_granted('ROLE_USER'),
-        delete_path_route: 'app_host_delete',
-        edit_path_route: 'app_host_edit',
-        delete_confirm_trans_key: 'host.alert.delete_confirm',
-        entity_name_property_for_confirm: 'name',
-        csrf_token_prefix: 'delete',
-        entity_id_property: 'id',
-        no_items_message_key: 'host.alert.no_hosts_found'
-    }) }}
+    {% data_table_theme hosts 'themes/data_table.html.twig' %}
+    {{ data_table(hosts) }}
 {% endblock %}

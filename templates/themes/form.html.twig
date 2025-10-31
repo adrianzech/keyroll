@@ -25,7 +25,9 @@
     {%- if type == 'hidden' -%}
         <input type="hidden" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
     {%- else -%}
-        <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+        <label>
+            <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+        </label>
     {%- endif -%}
 {%- endblock form_widget_simple -%}
 
@@ -34,14 +36,18 @@
     {% set attr = attr|merge({
         class: (attr.class|default('') ~ ' textarea textarea-bordered w-full')|trim
     }) %}
-    <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
+    <label>
+        <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
+    </label>
 {%- endblock textarea_widget -%}
 
 {%- block checkbox_widget -%}
     {# This block will be used for CheckboxType fields. #}
     {# The 'attr' (including 'class') will come from your FormType options. #}
     {# It also correctly handles the 'checked' attribute. #}
-    <input type="checkbox" {{ block('widget_attributes') }}{% if value is not empty %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+    <label>
+        <input type="checkbox" {{ block('widget_attributes') }}{% if value is not empty %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+    </label>
 {%- endblock checkbox_widget -%}
 
 {%- block choice_widget_collapsed -%}

@@ -2,6 +2,7 @@
 {% extends 'layouts/crud_layout.html.twig' %}
 {% import 'components/page_header.html.twig' as page_header %}
 
+{% set apply_background = false %}
 {% set apply_content_padding = false %}
 
 {% set page_title = 'ssh_key.title.index' %}
@@ -17,35 +18,6 @@
 
 
 {% block content %}
-    {{ component('table', {
-        items: keys,
-        headers: [
-            { key: 'name', label: 'ssh_key.label.name', sortable: true },
-            { key: 'user', label: 'ssh_key.label.user', sortable: true },
-            { key: 'createdAt', label: 'common.label.created_at', sortable: true },
-            { key: 'updatedAt', label: 'common.label.updated_at', sortable: true },
-        ],
-        item_properties: [
-            'name',
-            'user',
-            'createdAt',
-            'updatedAt',
-        ],
-        column_configs: {
-            user: { accessor: 'name' },
-            createdAt: { type: 'date', format_string: 'd.m.Y H:i' },
-            updatedAt: { type: 'date', format_string: 'd.m.Y H:i' },
-        },
-        current_sort_by: current_sort_by,
-        current_sort_direction: current_sort_direction,
-        sort_route: 'app_ssh_key_index',
-        show_actions_column: is_granted('ROLE_ADMIN') or (app.user and keys|filter(k => k.user == app.user)|length > 0),
-        delete_path_route: 'app_ssh_key_delete',
-        edit_path_route: 'app_ssh_key_edit',
-        delete_confirm_trans_key: 'ssh_key.alert.delete_confirm',
-        entity_name_property_for_confirm: 'name',
-        csrf_token_prefix: 'delete',
-        entity_id_property: 'id',
-        no_items_message_key: 'ssh_key.alert.no_keys_found'
-    }) }}
+    {% data_table_theme ssh_keys 'themes/data_table.html.twig' %}
+    {{ data_table(ssh_keys) }}
 {% endblock %}
