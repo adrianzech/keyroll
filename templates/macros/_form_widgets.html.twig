@@ -11,7 +11,8 @@
          data-controller="entity-selector"
          data-entity-selector-api-url-value="{{ path(api_url_path) }}"
          data-entity-selector-item-singular-name-value="{{ item_singular_name }}"
-         data-entity-selector-initial-data-value="{{ initial_data|json_encode|escape('html_attr') }}">
+         data-entity-selector-initial-data-value="{{ initial_data|json_encode|escape('html_attr') }}"
+         data-entity-selector-remove-icon-value="{{ ux_icon('bi:trash', { class: 'w-4 h-4' })|escape('html_attr') }}">
 
         {{ form_label(form_field, null, {
             'label_attr': {

@@ -13,6 +13,7 @@ export default class extends Controller {
         apiUrl: String,
         itemSingularName: String,
         initialData: Array,
+        removeIcon: String,
     };
 
     connect() {
@@ -168,11 +169,13 @@ export default class extends Controller {
         const itemDiv = document.createElement('div');
         itemDiv.dataset.itemId = itemId;
         itemDiv.className = 'flex justify-between items-center p-2 pl-3 bg-base-100/50 dark:bg-base-300/50';
+        const iconMarkup = this.hasRemoveIconValue ? this.removeIconValue : '<span aria-hidden="true">&times;</span>';
+
         itemDiv.innerHTML = `<span class="truncate mr-2">${itemName}</span>
                              <button type="button"
-                                     class="btn btn-square btn-sm btn-ghosttext-error hover:bg-error hover:text-error-content"
+                                     class="btn btn-square btn-sm btn-ghost text-error hover:bg-error hover:text-error-content"
                                      aria-label="Remove ${itemName}"
-                                     data-action="click->${this.identifier}#removeItem"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"/></svg></button>`;
+                                     data-action="click->${this.identifier}#removeItem">${iconMarkup}</button>`;
         if (this.hasSelectedListTarget) {
             this.selectedListTarget.appendChild(itemDiv);
         }
