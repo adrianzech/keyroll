@@ -61,9 +61,16 @@ class SSHKeyController extends AbstractController
         }
 
         $key = new SSHKey();
-        $key->setUser($user);
+        $isAdmin = $this->isGranted('ROLE_ADMIN');
 
-        $form = $this->createForm(SSHKeyType::class, $key);
+        // Only set default user for non-admins
+        if (!$isAdmin) {
+            $key->setUser($user);
+        }
+
+        $form = $this->createForm(SSHKeyType::class, $key, [
+            'is_admin' => $isAdmin,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -86,7 +93,11 @@ class SSHKeyController extends AbstractController
         Request $request,
         SSHKey $key,
     ): Response {
-        $form = $this->createForm(SSHKeyType::class, $key);
+        $isAdmin = $this->isGranted('ROLE_ADMIN');
+
+        $form = $this->createForm(SSHKeyType::class, $key, [
+            'is_admin' => $isAdmin,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

@@ -110,6 +110,7 @@ ssh_key:
   placeholder:
     name: 'e.g., My Laptop, Server Key'
     public_key: 'Starts with ssh-rsa, ssh-ed25519, etc.'
+    select_user: 'Select a user'
   help:
     public_key: 'Paste the content of your public key file here (e.g., id_rsa.pub).'
   alert:
@@ -119,6 +120,10 @@ ssh_key:
     created_successfully: 'SSH key has been created successfully.'
     updated_successfully: 'SSH key has been updated successfully.'
     deleted_successfully: 'SSH key has been deleted successfully.'
+  name_required: 'Please enter a name for the SSH key.'
+  public_key_required: 'Please provide a public key.'
+  public_key_invalid_format: 'The public key format is invalid. It must start with ssh-rsa, ssh-ed25519, or ecdsa-sha2.'
+  user_required: 'Please select a user for this SSH key.'
 
 category:
   category_singular: 'Category'

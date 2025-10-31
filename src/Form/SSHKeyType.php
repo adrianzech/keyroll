@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\SSHKey;
+use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -42,6 +44,19 @@ class SSHKeyType extends AbstractType
                     ),
                 ],
             ]);
+
+        // Add user selection field only for admins
+        if ($options['is_admin']) {
+            $builder->add('user', EntityType::class, [
+                'class' => User::class,
+                'choice_label' => 'name',
+                'label' => 'ssh_key.label.user',
+                'placeholder' => 'ssh_key.placeholder.select_user',
+                'constraints' => [
+                    new NotBlank(message: 'ssh_key.user_required'),
+                ],
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -49,6 +64,7 @@ class SSHKeyType extends AbstractType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'data_class' => SSHKey::class,
+            'is_admin' => false,
         ]);
     }
 }

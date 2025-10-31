@@ -109,6 +109,7 @@ ssh_key:
   placeholder:
     name: 'z.B. Mein Laptop, Server Key'
     public_key: 'Beginnt mit ssh-rsa, ssh-ed25519, etc.'
+    select_user: 'Benutzer auswählen'
   help:
     public_key: 'Fügen Sie hier den Inhalt Ihrer öffentlichen Schlüsseldatei ein (z.B. id_rsa.pub).'
   alert:
@@ -118,6 +119,10 @@ ssh_key:
     created_successfully: 'SSH Schlüssel wurde erfolgreich erstellt.'
     updated_successfully: 'SSH Schlüssel wurde erfolgreich aktualisiert.'
     deleted_successfully: 'SSH Schlüssel wurde erfolgreich gelöscht.'
+  name_required: 'Bitte geben Sie einen Namen für den SSH Schlüssel ein.'
+  public_key_required: 'Bitte geben Sie einen öffentlichen Schlüssel an.'
+  public_key_invalid_format: 'Das Format des öffentlichen Schlüssels ist ungültig. Er muss mit ssh-rsa, ssh-ed25519 oder ecdsa-sha2 beginnen.'
+  user_required: 'Bitte wählen Sie einen Benutzer für diesen SSH Schlüssel aus.'
 
 category:
   category_singular: 'Kategorie'
