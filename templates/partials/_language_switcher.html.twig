@@ -1,6 +1,10 @@
 {# templates/_partials/_language_switcher.html.twig #}
 {% if supported_locales_string is defined and supported_locales_string is not empty %}
     {% set locales_array = supported_locales_string|split('|') %}
+    {% set locale_icons = {
+        'de': 'emojione-v1:flag-for-germany',
+        'en': 'emojione-v1:flag-for-united-kingdom'
+    } %}
 
     <div class="dropdown dropdown-end">
         <div tabindex="0" role="button" class="btn btn-ghost">
@@ -13,6 +17,7 @@
                 <li>
                     <a href="{{ path('app_settings_change_locale', {'locale': locale_code}) }}"
                        class="{{ app.request.locale == locale_code ? 'active' : '' }}">
+                        {{ ux_icon(locale_icons[locale_code]|default('bi:translate'), { class: 'w-5 h-5 mr-2 inline-block align-middle' }) }}
                         {{ ('common.label.language_' ~ locale_code)|trans }}
                     </a>
                 </li>
