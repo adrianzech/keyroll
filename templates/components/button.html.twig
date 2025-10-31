@@ -32,14 +32,41 @@
 {% endmacro %}
 
 {% macro delete(label_key, form_action_path, csrf_token_value, csrf_token_name = '_token', confirm_message_key = 'common.dialog.delete_generic', confirm_params = {}, icon_class = null, additional_classes = 'btn-error') %}
-    <form method="post" action="{{ form_action_path }}" onsubmit="return confirm('{{ confirm_message_key|trans(confirm_params) }}');"
-          class="inline-block">
-        <input type="hidden" name="{{ csrf_token_name }}" value="{{ csrf_token_value }}">
-        <button type="submit" class="btn {{ additional_classes }}">
-            {% if icon_class %}<i class="{{ icon_class }} mr-2" aria-hidden="true"></i>{% endif %}
-            {{ label_key|trans }}
-        </button>
-    </form>
+    {% set modal_id = 'delete-modal-' ~ random() %}
+    {% set confirm_message = confirm_message_key|trans(confirm_params) %}
+    {% set delete_label = label_key|trans %}
+    {% set cancel_label = 'common.button.cancel'|trans %}
+    {% set title_label = 'common.dialog.delete_title'|trans %}
+    {% set close_label = 'common.action.close'|trans %}
+
+    <button type="button" class="btn {{ additional_classes }}"
+            onclick="document.getElementById('{{ modal_id }}').showModal()">
+        {% if icon_class %}<i class="{{ icon_class }} mr-2" aria-hidden="true"></i>{% endif %}
+        {{ delete_label }}
+    </button>
+
+    <dialog id="{{ modal_id }}" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">{{ title_label }}</h3>
+            <p class="py-4">{{ confirm_message }}</p>
+            <div class="modal-action">
+                <button type="button" class="btn"
+                        onclick="document.getElementById('{{ modal_id }}').close()">
+                    {{ cancel_label }}
+                </button>
+                <form method="post" action="{{ form_action_path }}">
+                    <input type="hidden" name="{{ csrf_token_name }}" value="{{ csrf_token_value }}">
+                    <button type="submit" class="btn {{ additional_classes }}">
+                        {% if icon_class %}<i class="{{ icon_class }} mr-2" aria-hidden="true"></i>{% endif %}
+                        {{ delete_label }}
+                    </button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>{{ close_label }}</button>
+        </form>
+    </dialog>
 {% endmacro %}
 
 {% macro submit(label_key, icon_class = null, additional_classes = 'btn-primary') %}
