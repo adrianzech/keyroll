@@ -27,7 +27,7 @@
 
 <main class="flex-grow container mx-auto p-4">
     {% block flash_messages %}
-        {% include 'components/_flash_messages.html.twig' %}
+        <twig:flash_messages />
     {% endblock %}
 
     {% block body %}{% endblock %}
