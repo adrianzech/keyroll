@@ -19,7 +19,8 @@
             <twig:button
                 variant="error"
                 outline
-                label="common.button.delete"
+                icon="bi:trash"
+                confirmLabel="common.action.delete"
                 confirmTitle="common.dialog.delete_title"
                 :confirmMessage="'entity.user.dialog.delete_confirm'|trans({'%name%': user_entity.name})"
                 :actionPath="path('app_user_delete', { id: user_entity.id })"

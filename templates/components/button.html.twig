@@ -5,11 +5,9 @@
         {{ ux_icon(this.icon, { class: 'w-4 h-4' }) }}
     {% endif %}
 
-    {# Label or content block #}
+    {# Label #}
     {% if this.label %}
         {{ this.label|trans }}
-    {% else %}
-        {{ block('content') }}
     {% endif %}
 
     {# Icon on right #}

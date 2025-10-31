@@ -17,7 +17,8 @@
             <twig:button
                 variant="error"
                 outline
-                label="common.button.delete"
+                icon="bi:trash"
+                confirmLabel="common.action.delete"
                 confirmTitle="common.dialog.delete_title"
                 :confirmMessage="'entity.ssh_key.dialog.delete_confirm'|trans({'%name%': ssh_key.name})"
                 :actionPath="path('app_ssh_key_delete', { id: ssh_key.id })"
