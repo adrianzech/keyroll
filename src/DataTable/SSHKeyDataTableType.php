@@ -98,10 +98,13 @@ class SSHKeyDataTableType extends AbstractDataTableType
                     'method' => 'POST',
                     'label' => 'common.button.delete',
                     'variant' => 'danger',
-                    'confirmation' => [
+                    'confirmation' => fn (SSHKey $sshKey) => [
+                        'type' => 'danger',
                         'translation_domain' => 'messages',
                         'label_title' => 'common.dialog.delete_title',
-                        'label_description' => 'entity.ssh_key.dialog.delete_confirm',
+                        'label_description' => $this->translator->trans('entity.ssh_key.dialog.delete_confirm', [
+                            '%name%' => $sshKey->getName(),
+                        ], 'messages'),
                         'label_confirm' => 'common.button.delete',
                         'label_cancel' => 'common.button.cancel',
                     ],

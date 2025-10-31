@@ -105,10 +105,13 @@ class CategoryDataTableType extends AbstractDataTableType
                     'method' => 'POST',
                     'label' => 'common.button.delete',
                     'variant' => 'danger',
-                    'confirmation' => [
+                    'confirmation' => fn (Category $category) => [
+                        'type' => 'danger',
                         'translation_domain' => 'messages',
                         'label_title' => 'common.dialog.delete_title',
-                        'label_description' => 'entity.category.dialog.delete_confirm',
+                        'label_description' => $this->translator->trans('entity.category.dialog.delete_confirm', [
+                            '%name%' => $category->getName(),
+                        ], 'messages'),
                         'label_confirm' => 'common.button.delete',
                         'label_cancel' => 'common.button.cancel',
                     ],
