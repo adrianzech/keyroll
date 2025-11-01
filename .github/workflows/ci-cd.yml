@@ -235,6 +235,12 @@ jobs:
           coverage: none
           tools: composer:v2
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_MAJOR }}
+          cache: 'npm'
+
       - name: Get composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -248,8 +254,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-${{ env.PHP_VERSION }}-composer-
 
-      - name: Install Dependencies
+      - name: Install Composer Dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Install NPM Dependencies
+        run: npm ci || npm install
 
       - name: Create required directories
         run: |
