@@ -115,6 +115,9 @@ final class Button
         return implode(' ', array_filter($classes));
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getComputedAttributes(): array
     {
         $attributes = [];
