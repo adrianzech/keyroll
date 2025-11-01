@@ -222,6 +222,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APP_ENV: test
+      DATABASE_URL: sqlite:///%kernel.project_dir%/var/data.db
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -249,6 +250,17 @@ jobs:
 
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Create required directories
+        run: |
+          mkdir -p var/tailwind public/styles
+          chmod -R 777 var
+
+      - name: Build Tailwind CSS
+        run: php bin/console tailwind:build --minify
+
+      - name: Copy Tailwind CSS to public directory
+        run: cp var/tailwind/app.built.css public/styles/app.css
 
       - name: Run PHPUnit Tests
         run: php bin/phpunit
