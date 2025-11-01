@@ -272,7 +272,7 @@ jobs:
         run: cp var/tailwind/app.built.css public/styles/app.css
 
       - name: Run PHPUnit Tests
-        run: php bin/phpunit
+        run: php bin/phpunit --testdox
 
   # ----- Build Jobs -----
   build-dev:
