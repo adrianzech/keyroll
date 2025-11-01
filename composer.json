@@ -125,6 +125,7 @@
     }
   },
   "require-dev": {
+    "doctrine/doctrine-fixtures-bundle": "^4.3",
     "friendsofphp/php-cs-fixer": "^3.89.1",
     "phpmd/phpmd": "^2.15",
     "phpstan/extension-installer": "^1.4.3",
@@ -137,6 +138,7 @@
     "symfony/maker-bundle": "^1.64.0",
     "symfony/phpunit-bridge": "^7.3.4",
     "symfony/stopwatch": "7.3.*",
-    "symfony/web-profiler-bundle": "7.3.*"
+    "symfony/web-profiler-bundle": "7.3.*",
+    "zenstruck/foundry": "^2.7"
   }
 }
