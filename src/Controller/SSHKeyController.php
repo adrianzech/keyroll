@@ -32,7 +32,7 @@ class SSHKeyController extends AbstractController
     #[Route('/index', name: 'app_ssh_key_index', methods: ['GET', 'POST'])]
     public function index(Request $request): Response
     {
-        $queryBuilder = $this->sshKeyRepository->createQueryBuilder('user');
+        $queryBuilder = $this->sshKeyRepository->createQueryBuilder('ssh_key');
 
         $dataTable = $this->createDataTable(SSHKeyDataTableType::class, $queryBuilder);
         $dataTable->handleRequest($request);

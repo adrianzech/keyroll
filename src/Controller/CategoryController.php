@@ -31,7 +31,7 @@ class CategoryController extends AbstractController
     #[Route('', name: 'app_category_index', methods: ['GET', 'POST'])]
     public function index(Request $request): Response
     {
-        $queryBuilder = $this->categoryRepository->createQueryBuilder('user');
+        $queryBuilder = $this->categoryRepository->createQueryBuilder('category');
 
         $dataTable = $this->createDataTable(CategoryDataTableType::class, $queryBuilder);
         $dataTable->handleRequest($request);
