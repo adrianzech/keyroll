@@ -1,0 +1,6 @@
+# Doctrine DBAL deprecations from third-party libraries (Zenstruck Foundry ResetDatabase trait)
+# These will be fixed when Foundry is updated to handle the new Doctrine DBAL schema events
+%Subscribing to onSchemaCreateTable events is deprecated%
+
+# Symfony security deprecation - eraseCredentials is properly marked as deprecated
+%Method App\\Entity\\User::eraseCredentials\(\) is deprecated%

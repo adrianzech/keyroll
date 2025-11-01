@@ -6,12 +6,12 @@ namespace App\Factory;
 
 use App\Entity\Host;
 use App\Enum\HostConnectionStatus;
-use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<Host>
+ * @extends PersistentObjectFactory<Host>
  */
-final class HostFactory extends PersistentProxyObjectFactory
+final class HostFactory extends PersistentObjectFactory
 {
     private const SERVER_TYPES = ['web', 'db', 'api', 'cache', 'mail', 'app', 'worker', 'proxy'];
     private const ENVIRONMENTS = ['prod', 'staging', 'dev', 'test'];

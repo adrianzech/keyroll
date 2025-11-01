@@ -157,6 +157,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
+    #[\Deprecated(message: 'This method is empty and will be removed in a future version.', since: '7.3')]
     public function eraseCredentials(): void
     {
         // If we store any temporary, sensitive data on the user, clear it here

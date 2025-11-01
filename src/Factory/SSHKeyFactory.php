@@ -6,14 +6,14 @@ namespace App\Factory;
 
 use App\Entity\SSHKey;
 use App\Entity\User;
-use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<SSHKey>
+ * @extends PersistentObjectFactory<SSHKey>
  *
  * @SuppressWarnings("PHPMD.StaticAccess")
  */
-final class SSHKeyFactory extends PersistentProxyObjectFactory
+final class SSHKeyFactory extends PersistentObjectFactory
 {
     // Valid SSH public key examples for testing (these are example keys, not real private keys)
     private const SSH_KEYS = [
