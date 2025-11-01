@@ -100,6 +100,7 @@ class CategoryController extends AbstractController
         // Check if category is in use before deleting
         if (!$category->getHosts()->isEmpty() || !$category->getUsers()->isEmpty()) {
             $this->addFlash('warning', 'entity.category.alert.cannot_delete_in_use');
+
             return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
         }
 

@@ -113,11 +113,7 @@ final class Badge
         };
 
         $variant = $this->getVariant();
-        if ($variant !== 'ghost') {
-            $classes[] = 'badge-' . $variant;
-        } else {
-            $classes[] = 'badge-ghost';
-        }
+        $classes[] = 'badge-' . $variant;
 
         return implode(' ', array_filter($classes));
     }

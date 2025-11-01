@@ -72,6 +72,7 @@ final class Button
         if ($this->cachedModalId === null) {
             $this->cachedModalId = 'button-modal-' . uniqid();
         }
+
         return $this->cachedModalId;
     }
 
@@ -120,28 +121,30 @@ final class Button
         // If has confirmation, override onclick
         if ($this->hasConfirmation()) {
             $attributes['onclick'] = "document.getElementById('{$this->getModalId()}').showModal()";
-        } else {
-            if ($this->tag === 'a' && $this->href) {
-                $attributes['href'] = $this->href;
-            }
 
-            if ($this->tag === 'button') {
-                $attributes['type'] = $this->type;
-                if ($this->disabled) {
-                    $attributes['disabled'] = 'disabled';
-                }
-                if ($this->form) {
-                    $attributes['form'] = $this->form;
-                }
-            }
+            return $attributes;
+        }
 
-            if ($this->target) {
-                $attributes['target'] = $this->target;
-            }
+        if ($this->tag === 'a' && $this->href) {
+            $attributes['href'] = $this->href;
+        }
 
-            if ($this->onclick) {
-                $attributes['onclick'] = $this->onclick;
+        if ($this->tag === 'button') {
+            $attributes['type'] = $this->type;
+            if ($this->disabled) {
+                $attributes['disabled'] = 'disabled';
             }
+            if ($this->form) {
+                $attributes['form'] = $this->form;
+            }
+        }
+
+        if ($this->target) {
+            $attributes['target'] = $this->target;
+        }
+
+        if ($this->onclick) {
+            $attributes['onclick'] = $this->onclick;
         }
 
         return $attributes;
@@ -153,6 +156,7 @@ final class Button
         foreach ($this->getComputedAttributes() as $attr => $value) {
             $parts[] = sprintf('%s="%s"', $attr, htmlspecialchars($value, ENT_QUOTES));
         }
+
         return implode(' ', $parts);
     }
 
