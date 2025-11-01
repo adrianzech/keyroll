@@ -26,7 +26,7 @@ final class Badge
         return match ($this->type) {
             'user_role' => $this->getUserRoleVariant(),
             'connection_status' => $this->getConnectionStatusVariant(),
-            'category' => 'primary',
+            'category' => 'info',
             default => 'neutral',
         };
     }
@@ -44,8 +44,8 @@ final class Badge
     private function getUserRoleVariant(): string
     {
         return match ($this->data) {
-            'ROLE_ADMIN' => 'secondary',
-            'ROLE_USER' => 'primary',
+            'ROLE_ADMIN' => 'error',
+            'ROLE_USER' => 'info',
             default => 'ghost',
         };
     }
