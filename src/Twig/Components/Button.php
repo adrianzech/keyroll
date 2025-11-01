@@ -6,9 +6,7 @@ namespace App\Twig\Components;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyFields)
- */
+/** @SuppressWarnings("PMD.TooManyFields") */
 #[AsTwigComponent('button')]
 final class Button
 {
