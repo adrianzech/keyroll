@@ -1,0 +1,4 @@
+kreyu_data_table:
+  defaults:
+    personalization:
+      enabled: true
