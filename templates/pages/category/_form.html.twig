@@ -59,7 +59,8 @@
                 icon="bi:trash"
                 confirmLabel="common.action.delete"
                 confirmTitle="common.dialog.delete_title"
-                :confirmMessage="'entity.category.dialog.delete_confirm'|trans({'%name%': category_entity.name})"
+                confirmMessage="entity.category.dialog.delete_confirm"
+                :confirmMessageParameters="{'%name%': category_entity.name}"
                 :actionPath="path('app_category_delete', { id: category_entity.id })"
                 :csrfToken="csrf_token('delete')"
             />

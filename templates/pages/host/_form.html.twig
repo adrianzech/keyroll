@@ -26,7 +26,8 @@
                 icon="bi:trash"
                 confirmLabel="common.action.delete"
                 confirmTitle="common.dialog.delete_title"
-                :confirmMessage="'entity.host.dialog.delete_confirm'|trans({'%name%': host.name})"
+                confirmMessage="entity.host.dialog.delete_confirm"
+                :confirmMessageParameters="{'%name%': host.name}"
                 :actionPath="path('app_host_delete', { id: host.id })"
                 :csrfToken="csrf_token('delete')"
             />

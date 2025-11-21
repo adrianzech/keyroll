@@ -32,6 +32,8 @@ final class Button
     // Confirmation modal props (optional)
     public ?string $confirmTitle = null;
     public ?string $confirmMessage = null;
+    /** @var array<string, string> */
+    public array $confirmMessageParameters = [];
     public ?string $confirmLabel = null;
     public ?string $cancelLabel = null;
     public ?string $closeLabel = null;
