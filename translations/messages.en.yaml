@@ -108,6 +108,10 @@ entity:
       username: 'e.g., root, admin'
     helper:
       hostname: 'Hostname or IP address of the server.'
+    form:
+      search_categories: 'Search Categories...'
+      search_categories_placeholder: 'Type to search categories...'
+      no_categories_added: 'No categories added.'
     status:
       successful: 'Successful'
       failed: 'Failed'

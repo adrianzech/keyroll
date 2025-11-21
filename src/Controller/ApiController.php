@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Repository\CategoryRepository;
 use App\Repository\HostRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,6 +20,7 @@ class ApiController extends AbstractController
     public function __construct(
         private readonly HostRepository $hostRepository,
         private readonly UserRepository $userRepository,
+        private readonly CategoryRepository $categoryRepository,
     ) {
     }
 
@@ -65,6 +67,24 @@ class ApiController extends AbstractController
             $data[] = [
                 'id' => $host->getId(),
                 'name' => $host->getName() . ' (' . $host->getHostname() . ')',
+            ];
+        }
+
+        return $this->json($data);
+    }
+
+    #[Route('/categories/search', name: 'api_categories_search', methods: ['GET'])]
+    public function searchCategories(Request $request): JsonResponse
+    {
+        $query = $request->query->get('query', '');
+        $excludedIds = $this->parseExcludedIds($request);
+
+        $categories = $this->categoryRepository->findByNameLike((string) $query, $excludedIds);
+        $data = [];
+        foreach ($categories as $category) {
+            $data[] = [
+                'id' => $category->getId(),
+                'name' => $category->getName(),
             ];
         }
 

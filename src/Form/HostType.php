@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Category;
 use App\Entity\Host;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -56,6 +58,19 @@ class HostType extends AbstractType
                 'constraints' => [
                     new NotBlank(message: 'entity.host.validation.username.required'),
                 ],
+            ])
+            ->add('categories', EntityType::class, [
+                'class' => Category::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'expanded' => false,
+                'required' => false,
+                'label' => 'entity.host.label.categories',
+                'attr' => [
+                    'class' => 'hidden-symfony-entity-selector',
+                    'data-entity-selector-target' => 'symfonyField',
+                ],
+                'by_reference' => false,
             ]);
     }
 
