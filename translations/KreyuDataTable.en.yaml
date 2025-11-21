@@ -13,7 +13,7 @@ In: 'In'
 'Starts with': 'Starts with'
 'Ends with': 'Ends with'
 Between: 'Between'
-tables:
+data_table:
   export:
     title: 'Export'
     csv: 'CSV'
