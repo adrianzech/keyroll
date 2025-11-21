@@ -249,10 +249,18 @@
         {{ ux_icon('bi:filter', { class: 'w-4 h-4' }) }}
     </button>
 {% endblock %}
+
+{# Ppersonalize button #}
 {% block action_personalize %}
     {% set modal_id = personalization_form.vars.id ~ '__modal' %}
-    {% set attr = { type: 'button', class: 'btn btn-sm btn-primary', onclick: "document.getElementById('" ~ modal_id ~ "').showModal()" }|merge(attr|default({})) %}
-    <button {{ block('attributes') }}>{{ 'data_table.personalization'|trans }}</button>
+    {% set attr = {
+        type: 'button',
+        class: 'btn btn-sm btn-primary flex items-center justify-center',
+        onclick: "document.getElementById('" ~ modal_id ~ "').showModal()"
+    }|merge(attr|default({})) %}
+    <button {{ block('attributes') }}>
+        {{ ux_icon('bi:gear', { class: 'w-4 h-4' }) }}
+    </button>
 {% endblock %}
 
 {# ============================================
@@ -319,7 +327,7 @@
                 attr: {
                     form: filtration_form.vars.id,
                     class: 'input input-bordered input-sm w-48 focus:z-10',
-                    placeholder: 'common.action.search'|trans
+                    placeholder: 'common.action.search'
                 }
             }) }}
         {% endfor %}
@@ -691,20 +699,106 @@
    Personalization
    ============================================ #}
 
+{% block kreyu_data_table_personalization_form %}
+    {% form_theme form with [_self] %}
+    <div data-controller="kreyu--data-table-bundle--personalization">
+        {{ form_start(form, { attr: { 'data-turbo-frame': '_self' } }) }}
+        {% if form._token is defined %}
+            {{ form_row(form._token) }}
+        {% endif %}
+
+        {{ block('personalization_form_help') }}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+            {{ block('personalization_form_columns') }}
+        </div>
+
+        {{ block('personalization_form_submit') }}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+
+{% block personalization_form_help %}
+    <div class="alert alert-info flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>{{ 'Drag items between columns to show/hide relevant data in the list or change their order'|trans({}, 'KreyuDataTable') }}</span>
+    </div>
+{% endblock %}
+
+{% block personalization_form_columns %}
+    {{ block('personalization_form_visible_columns') }}
+    {{ block('personalization_form_hidden_columns') }}
+{% endblock %}
+
+{% block personalization_form_visible_columns %}
+    <div>
+        <div class="card bg-base-200 shadow-sm">
+            <div class="card-body p-3">
+                <h4 class="card-title text-sm">{{ 'Visible columns'|trans({}, 'KreyuDataTable') }}</h4>
+                <ul class="space-y-1"
+                    data-visible="1"
+                    data-kreyu--data-table-bundle--personalization-target="visibleColumns"
+                >
+                    {% for child in form.children.columns|filter(child => child.vars.value.visible) %}
+                        {{ form_row(child) }}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block personalization_form_hidden_columns %}
+    <div>
+        <div class="card bg-base-200 shadow-sm">
+            <div class="card-body p-3">
+                <h4 class="card-title text-sm">{{ 'Hidden columns'|trans({}, 'KreyuDataTable') }}</h4>
+                <ul class="space-y-1"
+                    data-visible="0"
+                    data-kreyu--data-table-bundle--personalization-target="hiddenColumns"
+                >
+                    {% for child in form.children.columns|filter(child => not child.vars.value.visible) %}
+                        {{ form_row(child) }}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block personalization_form_submit %}
     <button class="btn btn-primary w-full">{{ 'data_table.apply'|trans }}</button>
+{% endblock %}
+
+{% block kreyu_data_table_personalization_column_data_row %}
+    <li class="p-2 bg-base-100 rounded cursor-move border border-base-300">
+        {{ form_label(form, null, { label_attr: { class: 'font-medium text-sm' } }) }}
+        {{ form_widget(form.name) }}
+        {{ form_widget(form.priority) }}
+        {{ form_widget(form.visible) }}
+    </li>
 {% endblock %}
 
 {% block personalization_modal %}
     {% set modal_id = personalization_form.vars.id ~ '__modal' %}
     <dialog id="{{ modal_id }}" class="modal">
-        <div class="modal-box w-11/12 max-w-4xl">
-            <div>
+        <div class="modal-box w-11/12 max-w-3xl">
+            <div class="flex items-center justify-between mb-2">
                 <h3 class="font-bold text-lg">{{ 'data_table.personalization'|trans }}</h3>
-                <div class="py-2">{{ data_table_personalization_form(personalization_form) }}</div>
+                <button type="button"
+                        class="btn btn-ghost btn-xs"
+                        aria-label="{{ 'common.action.close'|trans }}
+                        "
+                        onclick="document.getElementById('{{ modal_id }}').close()">
+                    {{ ux_icon('bi:x-lg', { class: 'w-4 h-4' }) }}
+                </button>
             </div>
-            <div class="modal-action">
-                <button class="btn" onclick="document.getElementById('{{ modal_id }}').close()">{{ 'common.action.close'|trans }}</button>
+
+            <div class="space-y-4">
+                {{ data_table_personalization_form(personalization_form) }}
             </div>
         </div>
         <form method="dialog" class="modal-backdrop"><button>{{ 'common.action.close'|trans }}</button></form>
