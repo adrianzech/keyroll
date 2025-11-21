@@ -195,9 +195,11 @@ entity:
     label:
       name: 'Name'
       email: 'E-Mail'
+      categories: 'Kategorien'
       role: 'Rolle'
       user: 'Benutzer'
       admin: 'Admin'
+      no_categories_assigned: 'Keine Kategorien zugewiesen'
     placeholder:
       name: 'z.B. Max Mustermann'
       email: 'z.B. deine@email.com'

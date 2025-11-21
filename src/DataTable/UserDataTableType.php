@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DataTable;
 
+use App\Entity\Category;
 use App\Entity\User;
 use Kreyu\Bundle\DataTableBundle\Action\Type\ButtonActionType;
 use Kreyu\Bundle\DataTableBundle\Action\Type\FormActionType;
@@ -46,6 +47,25 @@ class UserDataTableType extends AbstractDataTableType
                     'label' => $this->translator->trans('entity.user.label.email', [], 'messages'),
                 ],
                 'sort' => true,
+            ])
+            ->addColumn('categories', TextColumnType::class, [
+                'label' => 'entity.user.label.categories',
+                'export' => [
+                    'label' => $this->translator->trans('entity.user.label.categories', [], 'messages'),
+                    'formatter' => function (mixed $categories, mixed ...$context): string {
+                        if (!is_array($categories)) {
+                            return '';
+                        }
+
+                        return implode(', ', array_map(
+                            static fn (Category $category): string => $category->getName(),
+                            $categories,
+                        ));
+                    },
+                ],
+                'sort' => false,
+                'getter' => static fn (User $user, mixed ...$context): array => $user->getCategories()->toArray(),
+                'block_prefix' => 'category_badge',
             ])
             ->addColumn('primaryRole', TextColumnType::class, [
                 'label' => 'entity.user.label.role',
