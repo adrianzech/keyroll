@@ -1,34 +1,35 @@
-{# templates/components/FlashMessages.html.twig #}
-{% for label, messages in app.flashes %}
-    {% for message in messages %}
-        {% if label == 'success' %}
-            <div class="alert alert-success shadow-lg mb-4">
-                <div class="flex items-center">
-                    {{ ux_icon('bi:check-circle', { class: 'flex-shrink-0 h-6 w-6 mr-2' }) }}
+{# templates/components/flash_messages.html.twig #}
+{% set icon_map = {
+    'success': 'bi:check-circle',
+    'error': 'bi:x-circle',
+    'warning': 'bi:exclamation-triangle',
+    'info': 'bi:info-circle'
+} %}
+{% set tone_map = {
+    'success': 'alert-success alert-soft border-success/40',
+    'error': 'alert-error alert-soft border-error/40',
+    'warning': 'alert-warning alert-soft border-warning/40',
+    'info': 'alert-info alert-soft border-info/40'
+} %}
+
+<div class="fixed inset-x-0 top-4 flex justify-center pointer-events-none z-50" data-controller="flash" data-flash-timeout-value="5000" data-flash-stagger-value="150">
+    <div class="w-full max-w-xl space-y-3">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                {% set icon = icon_map[label] ?? 'bi:info-circle' %}
+                {% set tone = tone_map[label] ?? tone_map.info %}
+                <div
+                    class="alert shadow-xl transition duration-200 ease-out border {{ tone }} relative items-start gap-3 pr-10 pointer-events-auto"
+                    data-flash-target="message"
+                    role="alert"
+                >
+                    {{ ux_icon(icon, { class: 'flex-shrink-0 h-5 w-5' }) }}
                     <span>{{ message|trans }}</span>
+                    <button type="button" class="btn btn-ghost btn-xs absolute right-3 top-2" data-action="flash#dismiss">
+                        {{ ux_icon('bi:x', { class: 'h-4 w-4' }) }}
+                    </button>
                 </div>
-            </div>
-        {% elseif label == 'error' %}
-            <div class="alert alert-error shadow-lg mb-4">
-                <div class="flex items-center">
-                    {{ ux_icon('bi:x-circle', { class: 'flex-shrink-0 h-6 w-6 mr-2' }) }}
-                    <span>{{ message|trans }}</span>
-                </div>
-            </div>
-        {% elseif label == 'warning' %}
-            <div class="alert alert-warning shadow-lg mb-4">
-                <div class="flex items-center">
-                    {{ ux_icon('bi:exclamation-triangle', { class: 'flex-shrink-0 h-6 w-6 mr-2' }) }}
-                    <span>{{ message|trans }}</span>
-                </div>
-            </div>
-        {% elseif label == 'info' %}
-            <div class="alert alert-info shadow-lg mb-4">
-                <div class="flex items-center">
-                    {{ ux_icon('bi:info-circle', { class: 'flex-shrink-0 h-6 w-6 mr-2' }) }}
-                    <span>{{ message|trans }}</span>
-                </div>
-            </div>
-        {% endif %}
-    {% endfor %}
-{% endfor %}
+            {% endfor %}
+        {% endfor %}
+    </div>
+</div>
