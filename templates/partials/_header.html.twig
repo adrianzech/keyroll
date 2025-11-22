@@ -1,17 +1,21 @@
 {# templates/partials/_header.html.twig #}
+{% set force_2fa = app.user and not app.user.isTotpEnabled() %}
+
 <div class="navbar bg-base-100 container mx-auto">
     <div class="navbar-start">
         <div class="dropdown">
             <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
                 {{ ux_icon('bi:list', { class: 'h-5 w-5' }) }}
             </div>
-            <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                {% include 'partials/_nav_items.html.twig' %}
-                {% if not app.user %}
-                    <li><a href="{{ path('app_login') }}">{{ 'auth.action.login'|trans }}</a></li>
-                    <li><a href="{{ path('app_register') }}">{{ 'auth.action.register'|trans }}</a></li>
-                {% endif %}
-            </ul>
+            {% if not force_2fa %}
+                <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                    {% include 'partials/_nav_items.html.twig' %}
+                    {% if not app.user %}
+                        <li><a href="{{ path('app_login') }}">{{ 'auth.action.login'|trans }}</a></li>
+                        <li><a href="{{ path('app_register') }}">{{ 'auth.action.register'|trans }}</a></li>
+                    {% endif %}
+                </ul>
+            {% endif %}
         </div>
 
         <a href="{{ path('app_host_index') }}" class="btn btn-ghost normal-case text-xl flex items-center gap-2">
@@ -20,11 +24,13 @@
         </a>
     </div>
 
-    <div class="navbar-center hidden lg:flex">
-        <ul class="menu menu-horizontal px-1">
-            {% include 'partials/_nav_items.html.twig' %}
-        </ul>
-    </div>
+    {% if not force_2fa %}
+        <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal px-1">
+                {% include 'partials/_nav_items.html.twig' %}
+            </ul>
+        </div>
+    {% endif %}
 
     <div class="navbar-end">
         {% include 'partials/_theme_toggle.html.twig' %}
@@ -39,9 +45,11 @@
                 </div>
                 <ul tabindex="0"
                     class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                    <li>
-                        <a href="{{ path('app_settings_index') }}">{{ ux_icon('bi:gear', { class: 'w-4 h-4' }) }} {{ 'common.label.settings'|trans }}</a>
-                    </li>
+                    {% if not force_2fa %}
+                        <li>
+                            <a href="{{ path('app_settings_index') }}">{{ ux_icon('bi:gear', { class: 'w-4 h-4' }) }} {{ 'common.label.settings'|trans }}</a>
+                        </li>
+                    {% endif %}
                     <li>
                         <a href="{{ path('app_logout') }}">{{ ux_icon('bi:box-arrow-right', { class: 'w-4 h-4' }) }} {{ 'auth.action.logout'|trans }}</a>
                     </li>
