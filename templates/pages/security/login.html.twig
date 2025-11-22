@@ -29,14 +29,6 @@
                 {{ form_row(form.email) }}
                 {{ form_row(form.password) }}
 
-                <div class="form-control mb-4">
-                    <label class="cursor-pointer label justify-start">
-                        {{ form_widget(form.rememberMe, {'attr': {'class': 'checkbox checkbox-primary mr-2'}}) }}
-                        <span class="label-text">{{ 'auth.option.remember_me'|trans }}</span>
-                    </label>
-                    {{ form_errors(form.rememberMe) }}
-                </div>
-
                 <div class="card-actions justify-center">
                     <twig:button
                         type="submit"

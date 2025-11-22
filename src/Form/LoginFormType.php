@@ -32,10 +32,6 @@ class LoginFormType extends AbstractType
                 'attr' => [
                     'placeholder' => 'auth.field.password_placeholder',
                 ],
-            ])
-            ->add('rememberMe', CheckboxType::class, [
-                'label' => 'auth.option.remember_me',
-                'required' => false,
             ]);
     }
 
