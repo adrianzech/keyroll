@@ -29,9 +29,41 @@
         {{ form_row(form.plainPassword.second) }}
     </div>
 
+    <div class="divider">{{ 'settings.section.two_factor'|trans }}</div>
+    {% set totp_enabled = app.user and app.user.isTotpEnabled() %}
+    <div class="p-5 rounded-xl bg-base-200/60 dark:bg-base-300/40 border border-base-300/70 space-y-3">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full grid place-items-center {{ totp_enabled ? 'bg-success/20 text-success-content' : 'bg-warning/20 text-warning-content' }}">
+                    {{ ux_icon(totp_enabled ? 'bi:shield-check' : 'bi:shield-lock', { class: 'w-5 h-5' }) }}
+                </div>
+                <div>
+                    <div class="font-semibold">{{ 'two_fa.heading'|trans }}</div>
+                    <p class="text-sm text-base-content/70">{{ 'two_fa.helper.manage_from_settings'|trans }}</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 px-3 py-1 rounded-full border border-base-300/70 bg-base-100/60">
+                    {{ ux_icon(totp_enabled ? 'bi:shield-check' : 'bi:shield-x', { class: 'w-4 h-4' }) }}
+                    <span class="text-sm font-medium {{ totp_enabled ? 'text-success' : 'text-warning' }}">
+                        {{ totp_enabled ? 'two_fa.status.enabled'|trans : 'two_fa.status.pending'|trans }}
+                    </span>
+                </div>
+                <twig:button
+                    tag="a"
+                    :href="path('app_2fa_setup')"
+                    variant="primary"
+                    outline
+                    icon="bi:shield-lock"
+                    label="two_fa.action.manage"
+                />
+            </div>
+        </div>
+    </div>
+
     {{ form_rest(form) }}
 
-    <div class="card-actions justify-end">
+    <div class="card-actions justify-end mt-6">
         <twig:button
             tag="a"
             :href="path('app_host_index')"
