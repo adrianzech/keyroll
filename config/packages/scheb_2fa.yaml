@@ -1,0 +1,16 @@
+# See the configuration reference at https://symfony.com/bundles/SchebTwoFactorBundle/6.x/configuration.html
+scheb_two_factor:
+    google:
+        enabled: true
+        issuer: 'Keyroll'
+        server_name: 'Keyroll'
+    trusted_device:
+        enabled: true
+        lifetime: 2592000 # 30 days
+        extend_lifetime: true
+        cookie_name: keyroll_2fa_trusted
+        cookie_secure: auto
+        cookie_same_site: lax
+    security_tokens:
+        - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+        - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
