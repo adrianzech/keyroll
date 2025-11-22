@@ -1,5 +1,6 @@
 {# templates/partials/_header.html.twig #}
 {% set force_2fa = app.user and not app.user.isTotpEnabled() %}
+{% set route = app.request.attributes.get('_route') %}
 
 <div class="navbar bg-base-100 container mx-auto">
     <div class="navbar-start">
@@ -11,8 +12,12 @@
                 <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                     {% include 'partials/_nav_items.html.twig' %}
                     {% if not app.user %}
-                        <li><a href="{{ path('app_login') }}">{{ 'auth.action.login'|trans }}</a></li>
-                        <li><a href="{{ path('app_register') }}">{{ 'auth.action.register'|trans }}</a></li>
+                        {% if route != 'app_login' %}
+                            <li><a href="{{ path('app_login') }}">{{ 'auth.action.login'|trans }}</a></li>
+                        {% endif %}
+                        {% if route != 'app_register' %}
+                            <li><a href="{{ path('app_register') }}">{{ 'auth.action.register'|trans }}</a></li>
+                        {% endif %}
                     {% endif %}
                 </ul>
             {% endif %}
@@ -56,10 +61,14 @@
                 </ul>
             </div>
         {% else %}
-            <a href="{{ path('app_login') }}"
-               class="btn btn-ghost hidden lg:inline-flex">{{ ux_icon('bi:box-arrow-in-right', { class: 'w-6 h-6' }) }} {{ 'auth.action.login'|trans }}</a>
-            <a href="{{ path('app_register') }}"
-               class="btn btn-ghost hidden lg:inline-flex">{{ ux_icon('bi:person-plus', { class: 'w-6 h-6' }) }} {{ 'auth.action.register'|trans }}</a>
+            {% if route != 'app_login' %}
+                <a href="{{ path('app_login') }}"
+                   class="btn btn-ghost hidden lg:inline-flex">{{ ux_icon('bi:box-arrow-in-right', { class: 'w-6 h-6' }) }} {{ 'auth.action.login'|trans }}</a>
+            {% endif %}
+            {% if route != 'app_register' %}
+                <a href="{{ path('app_register') }}"
+                   class="btn btn-ghost hidden lg:inline-flex">{{ ux_icon('bi:person-plus', { class: 'w-6 h-6' }) }} {{ 'auth.action.register'|trans }}</a>
+            {% endif %}
         {% endif %}
     </div>
 </div>
