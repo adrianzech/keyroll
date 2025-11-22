@@ -222,6 +222,7 @@ settings:
   section:
     account: 'Account Settings'
     general: 'General Settings'
+    two_factor: 'Two-Factor Authentication'
   label:
     update_email: 'Update Email'
     update_password: 'Update Password'
@@ -235,6 +236,47 @@ settings:
     success:
       email_updated: 'Your email address has been updated successfully.'
       password_updated: 'Your password has been updated successfully.'
+
+two_fa:
+  page_title:
+    setup: 'Set Up Two-Factor Authentication'
+    verify: 'Verify 2FA Code'
+  heading: 'Two-Factor Authentication'
+  prompt:
+    enter_code: 'Enter the 6-digit code from your authenticator app.'
+  label:
+    code: 'Authentication Code'
+    account: 'Account'
+    secret: 'Secret Key'
+    otp_uri: 'Authenticator Link'
+    qr_alt: 'QR code for authenticator app'
+    verify_title: 'Confirm setup'
+  placeholder:
+    code: '000000'
+  helper:
+    setup_steps: 'Add this account to your authenticator app, then enter a current code to finish enabling 2FA.'
+    copy_secret: 'If scanning is not available, copy the secret key into your authenticator app.'
+    enter_code: 'Enter the current code from your app to activate 2FA.'
+    regenerate_hint: 'Regenerating disables 2FA until you confirm a new code.'
+    manage_from_settings: 'View your current secret, add new devices, or regenerate your key.'
+  option:
+    trust_device: 'Remember this device for %days% days'
+  action:
+    verify: 'Verify & Enable'
+    regenerate: 'Regenerate Secret'
+    manage: 'Manage 2FA'
+    copy: 'Copy'
+    copied: 'Copied!'
+  status:
+    enabled: '2FA is enabled'
+    pending: '2FA is not enabled yet'
+  flash:
+    enabled: 'Two-factor authentication is now enabled.'
+    invalid_code: 'The code was invalid. Please try again.'
+    regenerated: 'A new secret was generated. Please scan and verify a code.'
+  validation:
+    code_required: 'Please enter the authentication code.'
+    code_length: 'The code should be 6-8 digits.'
 
 data_table:
   export:

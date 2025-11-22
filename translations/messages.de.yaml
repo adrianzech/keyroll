@@ -222,6 +222,7 @@ settings:
   section:
     account: 'Kontoeinstellungen'
     general: 'Allgemeine Einstellungen'
+    two_factor: 'Zwei-Faktor-Authentifizierung'
   label:
     update_email: 'E-Mail aktualisieren'
     update_password: 'Passwort aktualisieren'
@@ -235,6 +236,47 @@ settings:
     success:
       email_updated: 'Ihre E-Mail-Adresse wurde erfolgreich aktualisiert.'
       password_updated: 'Ihr Passwort wurde erfolgreich aktualisiert.'
+
+two_fa:
+  page_title:
+    setup: 'Zwei-Faktor-Authentifizierung einrichten'
+    verify: '2FA-Code bestätigen'
+  heading: 'Zwei-Faktor-Authentifizierung'
+  prompt:
+    enter_code: 'Geben Sie den 6-stelligen Code aus Ihrer Authenticator-App ein.'
+  label:
+    code: 'Authentifizierungscode'
+    account: 'Konto'
+    secret: 'Geheimer Schlüssel'
+    otp_uri: 'Authenticator-Link'
+    qr_alt: 'QR-Code für die Authenticator-App'
+    verify_title: 'Einrichtung bestätigen'
+  placeholder:
+    code: '000000'
+  helper:
+    setup_steps: 'Fügen Sie dieses Konto Ihrer Authenticator-App hinzu und geben Sie anschließend einen aktuellen Code ein, um 2FA zu aktivieren.'
+    copy_secret: 'Wenn kein Scan möglich ist, kopieren Sie den Schlüssel in Ihre Authenticator-App.'
+    enter_code: 'Geben Sie den aktuellen Code aus Ihrer App ein, um 2FA zu aktivieren.'
+    regenerate_hint: 'Durch das Neuerstellen wird 2FA deaktiviert, bis Sie einen neuen Code bestätigen.'
+    manage_from_settings: 'Sehen Sie Ihren aktuellen Schlüssel ein, fügen Sie neue Geräte hinzu oder generieren Sie einen neuen Schlüssel.'
+  option:
+    trust_device: 'Dieses Gerät für %days% Tage merken'
+  action:
+    verify: 'Prüfen & aktivieren'
+    regenerate: 'Schlüssel neu erstellen'
+    manage: '2FA verwalten'
+    copy: 'Kopieren'
+    copied: 'Kopiert!'
+  status:
+    enabled: '2FA ist aktiviert'
+    pending: '2FA ist noch nicht aktiviert'
+  flash:
+    enabled: 'Zwei-Faktor-Authentifizierung wurde aktiviert.'
+    invalid_code: 'Der Code war ungültig. Bitte erneut versuchen.'
+    regenerated: 'Ein neuer Schlüssel wurde erstellt. Bitte scannen und Code bestätigen.'
+  validation:
+    code_required: 'Bitte den Authentifizierungscode eingeben.'
+    code_length: 'Der Code sollte 6–8 Ziffern haben.'
 
 data_table:
   export:
