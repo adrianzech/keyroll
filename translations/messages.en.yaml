@@ -207,6 +207,10 @@ entity:
     placeholder:
       name: 'e.g., John Doe'
       email: 'e.g., your@email.com'
+    form:
+      search_categories: 'Search Categories...'
+      search_categories_placeholder: 'Type to search categories...'
+      no_categories_added: 'No categories added.'
     alert:
       none_found: 'No users found. Add your first user.'
     dialog:
@@ -262,7 +266,8 @@ two_fa:
   option:
     trust_device: 'Remember this device for %days% days'
   action:
-    verify: 'Verify & Enable'
+    verify: 'Verify'
+    verify_enable: 'Verify & Enable'
     regenerate: 'Regenerate Secret'
     manage: 'Manage 2FA'
     copy: 'Copy'
