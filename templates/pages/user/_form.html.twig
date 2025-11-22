@@ -1,6 +1,16 @@
 {# templates/pages/user/_form.html.twig #}
+{% import "macros/_form_widgets.html.twig" as form_widgets %}
+
 {% set user_entity = user_entity ?? form.vars.data %}
 {% set form_id = form.vars.id %}
+
+{% set initial_categories_data = [] %}
+{% if user_entity and user_entity.id and user_entity.categories is iterable and user_entity.categories is not empty %}
+    {% set initial_categories_data = user_entity.categories|map(category => {
+        'id': category.id,
+        'name': category.name
+    }) %}
+{% endif %}
 
 {{ form_start(form, { attr: { id: form_id } }) }}
 
@@ -8,6 +18,18 @@
 {{ form_row(form.email) }}
 {{ form_row(form.plainPassword) }}
 {{ form_row(form.roles) }}
+
+<div class="mt-4">
+    {{ form_widgets.entity_selector(
+        form.categories,
+        'api_categories_search',
+        'category',
+        initial_categories_data,
+        'entity.user.form.search_categories',
+        'entity.user.form.search_categories_placeholder',
+        'entity.user.form.no_categories_added'
+    ) }}
+</div>
 
 {{ form_rest(form) }}
 

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Category;
 use App\Entity\User;
 use App\Form\DataTransformer\RoleToStringTransformer;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -74,6 +76,19 @@ class UserType extends AbstractType
                 'expanded' => false,
                 'required' => true,
                 'placeholder' => false,
+            ])
+            ->add('categories', EntityType::class, [
+                'class' => Category::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'expanded' => false,
+                'required' => false,
+                'label' => 'entity.user.label.categories',
+                'attr' => [
+                    'class' => 'hidden-symfony-entity-selector',
+                    'data-entity-selector-target' => 'symfonyField',
+                ],
+                'by_reference' => false,
             ]);
 
         $builder->get('roles')->addModelTransformer($this->roleTransformer);

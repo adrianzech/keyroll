@@ -207,6 +207,10 @@ entity:
     placeholder:
       name: 'z.B. Max Mustermann'
       email: 'z.B. deine@email.com'
+    form:
+      search_categories: 'Kategorien suchen...'
+      search_categories_placeholder: 'Tippen, um Kategorien zu suchen...'
+      no_categories_added: 'Keine Kategorien hinzugefügt.'
     alert:
       none_found: 'Keine Benutzer gefunden. Fügen Sie Ihren ersten Benutzer hinzu.'
     dialog:
@@ -262,7 +266,8 @@ two_fa:
   option:
     trust_device: 'Dieses Gerät für %days% Tage merken'
   action:
-    verify: 'Prüfen & aktivieren'
+    verify: 'Bestätigen'
+    verify_enable: 'Prüfen & aktivieren'
     regenerate: 'Schlüssel neu erstellen'
     manage: '2FA verwalten'
     copy: 'Kopieren'
