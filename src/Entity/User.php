@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface as GoogleTwoFactorInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -17,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'auth.validation.email.already_exists')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, GoogleTwoFactorInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -55,6 +56,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'users')]
     #[ORM\JoinTable(name: 'user_category')]
     private Collection $categories;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $totpSecret = null;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isTotpEnabled = false;
 
     public function __construct()
     {
@@ -216,5 +223,52 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->categories->removeElement($category);
 
         return $this;
+    }
+
+    /**
+     * Whether TOTP is enabled for this user.
+     */
+    public function isGoogleAuthenticatorEnabled(): bool
+    {
+        return $this->isTotpEnabled && $this->totpSecret !== null;
+    }
+
+    /**
+     * Email is used as the account label in authenticators.
+     */
+    public function getGoogleAuthenticatorUsername(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getGoogleAuthenticatorSecret(): ?string
+    {
+        return $this->totpSecret;
+    }
+
+    public function setTotpSecret(?string $totpSecret): static
+    {
+        $this->totpSecret = $totpSecret;
+
+        return $this;
+    }
+
+    public function enableTotp(): static
+    {
+        $this->isTotpEnabled = true;
+
+        return $this;
+    }
+
+    public function disableTotp(): static
+    {
+        $this->isTotpEnabled = false;
+
+        return $this;
+    }
+
+    public function isTotpEnabled(): bool
+    {
+        return $this->isTotpEnabled;
     }
 }
