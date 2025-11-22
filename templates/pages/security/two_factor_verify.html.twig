@@ -4,12 +4,8 @@
 
 {% block body %}
     <div class="card h-full w-full flex items-center justify-center">
-        <div class="card-body max-w-md w-full">
+        <div class="card-body">
             <h2 class="card-title text-center text-2xl font-bold mb-4">{{ 'two_fa.heading'|trans }}</h2>
-            <p class="text-center text-sm text-base-content/70 mb-2">{{ 'two_fa.prompt.enter_code'|trans }}</p>
-            {% if app.user %}
-                <p class="text-center text-sm font-medium text-base-content/80 mb-4">{{ app.user.email }}</p>
-            {% endif %}
 
             {% if authenticationError is defined and authenticationError %}
                 <div class="alert alert-danger mb-4">
@@ -18,10 +14,11 @@
             {% endif %}
 
             <form
-                action="{{ (checkPathRoute is defined and checkPathRoute) ? path(checkPathRoute) : ((checkPathUrl is defined and checkPathUrl) ? checkPathUrl : path('2fa_login_check')) }}"
-                method="post"
-                class="space-y-4">
-                <div class="form-control">
+                    action="{{ (checkPathRoute is defined and checkPathRoute) ? path(checkPathRoute) : ((checkPathUrl is defined and checkPathUrl) ? checkPathUrl : path('2fa_login_check')) }}"
+                    method="post"
+            >
+
+                <div class="form-control mb-4">
                     <label class="label" for="{{ authCodeParameterName|default('_auth_code') }}">
                         <span class="label-text">{{ 'two_fa.label.code'|trans }}</span>
                     </label>
@@ -41,7 +38,7 @@
                 {% endif %}
 
                 {% if displayTrustedOption %}
-                    <div class="form-control">
+                    <div class="form-control mb-4">
                         <label class="cursor-pointer label justify-start">
                             <input type="checkbox" name="{{ trustedParameterName|default('_trusted') }}" value="1" class="checkbox checkbox-primary mr-2">
                             <span class="label-text">{{ 'two_fa.option.trust_device'|trans({'%days%': 30}) }}</span>
@@ -49,13 +46,23 @@
                     </div>
                 {% endif %}
 
-                <div class="card-actions justify-between items-center">
-                    <a href="{{ path('app_logout') }}" class="btn btn-ghost btn-sm">
-                        {{ 'auth.action.logout'|trans }}
-                    </a>
-                    <button type="submit" class="btn btn-primary">
-                        {{ 'two_fa.action.verify'|trans }}
-                    </button>
+                <div class="card-actions flex-col gap-3">
+                    {# Primary Verify Button #}
+                    <twig:button
+                            type="submit"
+                            variant="primary"
+                            label="two_fa.action.verify"
+                            block
+                    />
+
+                    {# Logout Button (Ghost variant to indicate secondary action) #}
+                    <twig:button
+                            tag="a"
+                            :href="path('app_logout')"
+                            variant="ghost"
+                            label="auth.action.logout"
+                            block
+                    />
                 </div>
             </form>
         </div>

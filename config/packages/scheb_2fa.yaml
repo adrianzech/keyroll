@@ -4,6 +4,7 @@ scheb_two_factor:
         enabled: true
         issuer: 'Keyroll'
         server_name: 'Keyroll'
+        template: 'pages/security/two_factor_verify.html.twig'
     trusted_device:
         enabled: true
         lifetime: 2592000 # 30 days
