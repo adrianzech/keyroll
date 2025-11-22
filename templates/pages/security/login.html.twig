@@ -24,7 +24,7 @@
                 </div>
             {% else %}
 
-                {{ form_start(form) }}
+                {{ form_start(form, { attr: { 'data-turbo': 'false' } }) }}
 
                 {{ form_row(form.email) }}
                 {{ form_row(form.password) }}
