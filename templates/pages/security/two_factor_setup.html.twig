@@ -1,0 +1,110 @@
+{# templates/pages/security/two_factor_setup.html.twig #}
+{% extends 'layouts/crud_layout.html.twig' %}
+{% import 'components/page_header.html.twig' as page_header %}
+
+{% set page_title = 'two_fa.page_title.setup' %}
+{% block title %}{{ page_title|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header %}
+    {% if is_enabled %}
+        {{ page_header.default(
+            title=page_title,
+            button_label='common.action.back',
+            button_path=path('app_settings_index'),
+            button_icon='bi:arrow-left'
+        ) }}
+    {% else %}
+        {{ page_header.default(
+            title=page_title
+        ) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% set status_classes = is_enabled
+        ? 'bg-success/10 border border-success/30 text-success-content'
+        : 'bg-warning/10 border border-warning/30 text-warning-content' %}
+    <div class="grid gap-6">
+        <div class="rounded-xl px-4 py-3 flex items-center gap-3 {{ status_classes }}">
+            {{ ux_icon(is_enabled ? 'bi:shield-check' : 'bi:exclamation-triangle', { class: 'w-5 h-5' }) }}
+            <div class="flex flex-col">
+                <span class="font-semibold">
+                    {{ is_enabled ? 'two_fa.status.enabled'|trans : 'two_fa.status.pending'|trans }}
+                </span>
+                {% if not is_enabled %}
+                    <span class="text-sm opacity-80">{{ 'two_fa.helper.enter_code'|trans }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body space-y-4">
+                <h2 class="card-title text-lg font-semibold">{{ 'two_fa.heading'|trans }}</h2>
+                <p class="text-sm text-base-content/70">
+                    {{ 'two_fa.helper.setup_steps'|trans }}
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="p-4 rounded-xl bg-base-200/70 dark:bg-base-300/50 border border-base-300/70 space-y-2">
+                        <div class="font-semibold text-sm">{{ 'two_fa.label.account'|trans }}</div>
+                        <div class="text-sm">{{ app.user.email }}</div>
+
+                        <div class="font-semibold text-sm mt-3">{{ 'two_fa.label.qr_alt'|trans }}</div>
+                        <div class="flex justify-start">
+                            <img src="https://quickchart.io/qr?text={{ qr_content|url_encode }}"
+                                 alt="{{ 'two_fa.label.qr_alt'|trans }}"
+                                 class="max-w-[220px] rounded-lg border border-base-300/70" />
+                        </div>
+
+                        <p class="text-xs text-base-content/70 mt-2">{{ 'two_fa.helper.copy_secret'|trans }}</p>
+
+                        <div class="font-semibold text-sm mt-4">{{ 'two_fa.label.secret'|trans }}</div>
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <div class="font-mono text-base font-semibold bg-base-100/80 dark:bg-base-300/70 rounded-lg px-3 py-2 select-all h-10 flex items-center border border-base-300/80">
+                                {{ secret }}
+                            </div>
+                            <button type="button"
+                                    class="btn btn-outline btn-sm inline-flex items-center gap-2 h-10"
+                                    onclick="navigator.clipboard.writeText('{{ secret }}').then(()=>{this.querySelector('.copy-label').textContent='{{ 'two_fa.action.copied'|trans|e('js') }}'; setTimeout(()=>this.querySelector('.copy-label').textContent='{{ 'two_fa.action.copy'|trans|e('js') }}',1500);});">
+                                {{ ux_icon('bi:copy', { class: 'w-4 h-4' }) }}
+                                <span class="copy-label">{{ 'two_fa.action.copy'|trans }}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-base-200/70 dark:bg-base-300/50 border border-base-300/70 space-y-4">
+                        <div class="space-y-1">
+                            <div class="font-semibold">{{ 'two_fa.label.verify_title'|trans }}</div>
+                            <p class="text-sm text-base-content/70">{{ 'two_fa.helper.enter_code'|trans }}</p>
+                        </div>
+
+                        <div class="flex flex-col gap-4">
+                            {{ form_start(form, { attr: { class: 'space-y-3 w-full' } }) }}
+                                {{ form_row(form.code) }}
+                                <div class="flex flex-wrap items-center justify-between gap-3">
+                                    <div class="flex items-center gap-2">
+                                        <button type="submit"
+                                                name="regenerate_secret"
+                                                value="1"
+                                                formnovalidate
+                                                class="btn btn-secondary btn-outline w-full md:w-auto inline-flex items-center gap-2">
+                                            {{ ux_icon('bi:arrow-counterclockwise', { class: 'w-4 h-4' }) }}
+                                            {{ 'two_fa.action.regenerate'|trans }}
+                                        </button>
+                                    </div>
+
+                                    <twig:button
+                                        type="submit"
+                                        :attr="{ class: 'w-full md:w-auto' }"
+                                        variant="primary"
+                                        label="two_fa.action.verify"
+                                    />
+                                </div>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

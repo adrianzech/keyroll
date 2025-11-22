@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'two_fa.page_title.verify'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="card h-full w-full flex items-center justify-center">
+        <div class="card-body max-w-md w-full">
+            <h2 class="card-title text-center text-2xl font-bold mb-4">{{ 'two_fa.heading'|trans }}</h2>
+            <p class="text-center text-sm text-base-content/70 mb-2">{{ 'two_fa.prompt.enter_code'|trans }}</p>
+            {% if app.user %}
+                <p class="text-center text-sm font-medium text-base-content/80 mb-4">{{ app.user.email }}</p>
+            {% endif %}
+
+            {% if authenticationError is defined and authenticationError %}
+                <div class="alert alert-danger mb-4">
+                    {{ authenticationError.messageKey|default(authenticationError)|trans(authenticationError.messageData|default({}), 'SchebTwoFactorBundle') }}
+                </div>
+            {% endif %}
+
+            <form
+                action="{{ (checkPathRoute is defined and checkPathRoute) ? path(checkPathRoute) : ((checkPathUrl is defined and checkPathUrl) ? checkPathUrl : path('2fa_login_check')) }}"
+                method="post"
+                class="space-y-4">
+                <div class="form-control">
+                    <label class="label" for="{{ authCodeParameterName|default('_auth_code') }}">
+                        <span class="label-text">{{ 'two_fa.label.code'|trans }}</span>
+                    </label>
+                    <input type="text"
+                           id="{{ authCodeParameterName|default('_auth_code') }}"
+                           name="{{ authCodeParameterName|default('_auth_code') }}"
+                           inputmode="numeric"
+                           autocomplete="one-time-code"
+                           required
+                           class="input input-bordered w-full"
+                           placeholder="123 456"
+                           autofocus />
+                </div>
+
+                {% if isCsrfProtectionEnabled %}
+                    <input type="hidden" name="{{ csrfParameterName|default('_csrf_token') }}" value="{{ csrf_token(csrfTokenId|default('two_factor')) }}">
+                {% endif %}
+
+                {% if displayTrustedOption %}
+                    <div class="form-control">
+                        <label class="cursor-pointer label justify-start">
+                            <input type="checkbox" name="{{ trustedParameterName|default('_trusted') }}" value="1" class="checkbox checkbox-primary mr-2">
+                            <span class="label-text">{{ 'two_fa.option.trust_device'|trans({'%days%': 30}) }}</span>
+                        </label>
+                    </div>
+                {% endif %}
+
+                <div class="card-actions justify-between items-center">
+                    <a href="{{ path('app_logout') }}" class="btn btn-ghost btn-sm">
+                        {{ 'auth.action.logout'|trans }}
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        {{ 'two_fa.action.verify'|trans }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
