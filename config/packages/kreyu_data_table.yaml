@@ -2,3 +2,5 @@ kreyu_data_table:
   defaults:
     personalization:
       enabled: true
+      persistence_enabled: true
+      persistence_subject_provider: App\DataTable\UserPersistenceSubjectProvider
