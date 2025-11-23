@@ -1,5 +1,11 @@
 {# templates/partials/_nav_items.html.twig #}
 {% if is_granted('ROLE_USER') %}
+    <li>
+        <a href="{{ path('app_dashboard') }}"
+           class="{{ app.request.attributes.get('_route') == 'app_dashboard' ? 'active' : '' }}">
+            {{ ux_icon('bi:house-door', { class: 'w-6 h-6' }) }} {{ 'navigation.dashboard'|trans }}
+        </a>
+    </li>
     <li><a href="{{ path('app_host_index') }}"
            class="{{ app.request.attributes.get('_route') starts with 'app_host_' ? 'active' : '' }}">
             {{ ux_icon('bi:pc-display', { class: 'w-6 h-6' }) }} {{ 'entity.host.plural_name'|trans }}

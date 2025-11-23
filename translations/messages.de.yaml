@@ -3,6 +3,7 @@ app:
   tagline: 'SSH-Schlüssel-Verwaltungssystem'
 
 navigation:
+  dashboard: 'Dashboard'
   hosts: 'Server'
   ssh_keys: 'SSH-Schlüssel'
   categories: 'Kategorien'
@@ -302,6 +303,39 @@ theme:
   mode:
     light: 'Heller Modus'
     dark: 'Dunkler Modus'
+
+dashboard:
+  title: 'Dashboard'
+  heading: 'Willkommen zurück, %name%'
+  subheading: 'Behalte Erreichbarkeit, Schlüssel und Zugriffe im Blick.'
+  actions:
+    add_host: 'Server anlegen'
+    add_key: 'SSH-Schlüssel anlegen'
+  stats:
+    hosts:
+      title: 'Server'
+      desc: '%count% erreichbar'
+    keys:
+      title: 'SSH-Schlüssel'
+      desc: 'Schlüssel hinterlegt'
+    users:
+      title: 'Benutzer'
+      desc: 'Personen mit Zugriff'
+    categories:
+      title: 'Kategorien'
+      desc: 'Gruppen zur Strukturierung'
+    uptime:
+      title: 'Erfolgsquote'
+      desc: '%total% überwachte Server'
+      hint: 'Verbindungsprüfungen aller Server'
+  status:
+    title: 'Verbindungsstatus'
+    description: 'Zeigt das Ergebnis der letzten Prüfungen.'
+    empty: 'Noch keine Server angelegt. Lege einen an, um zu starten.'
+    count: '%count% Server'
+    subtitle:
+      successful: 'Erreichbar per SSH'
+      failed: 'Benötigt Aufmerksamkeit'
 
 # Kompatibilitätsschlüssel für KreyuDataTable (nicht snake_case möglich)
 Search: 'Suche'

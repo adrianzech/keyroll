@@ -3,6 +3,7 @@ app:
   tagline: 'SSH Key Management System'
 
 navigation:
+  dashboard: 'Dashboard'
   hosts: 'Hosts'
   ssh_keys: 'SSH Keys'
   categories: 'Categories'
@@ -302,6 +303,39 @@ theme:
   mode:
     light: 'Light Mode'
     dark: 'Dark Mode'
+
+dashboard:
+  title: 'Dashboard'
+  heading: 'Welcome back, %name%'
+  subheading: 'See host reachability, keys, and access at a glance.'
+  actions:
+    add_host: 'New host'
+    add_key: 'New SSH key'
+  stats:
+    hosts:
+      title: 'Hosts'
+      desc: '%count% reachable'
+    keys:
+      title: 'SSH Keys'
+      desc: 'Keys configured'
+    users:
+      title: 'Users'
+      desc: 'People with access'
+    categories:
+      title: 'Categories'
+      desc: 'Groups to segment hosts'
+    uptime:
+      title: 'Success rate'
+      desc: '%total% hosts monitored'
+      hint: 'Connection checks across all hosts'
+  status:
+    title: 'Connection status'
+    description: 'Track how your hosts responded on the last check.'
+    empty: 'No hosts yet. Add one to start tracking.'
+    count: '%count% hosts'
+    subtitle:
+      successful: 'Answering over SSH'
+      failed: 'Needs attention'
 
 # Bundle compatibility keys (non snake_case required by KreyuDataTable)
 Search: 'Search'

@@ -1,0 +1,196 @@
+{% extends 'layouts/crud_layout.html.twig' %}
+{% set apply_background = false %}
+{% set apply_content_padding = false %}
+{% set total_hosts = overview.hosts ?? 0 %}
+
+{% block title %}{{ 'dashboard.title'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header %}
+    <div class="bg-base-100 border border-base-200 rounded-2xl shadow-sm p-6 mb-8">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-primary mb-1">{{ 'dashboard.title'|trans }}</p>
+                <h1 class="text-3xl font-extrabold text-base-content">
+                    {{ 'dashboard.heading'|trans({'%name%': app.user ? app.user.name : 'Keyroll'}) }}
+                </h1>
+                <p class="text-sm text-base-content/60 mt-1">{{ 'dashboard.subheading'|trans }}</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <a href="{{ path('app_host_new') }}" class="btn btn-primary btn-sm md:btn-md shadow-primary/20 shadow-lg">
+                    {{ ux_icon('bi:pc-display', { class: 'w-4 h-4' }) }}
+                    {{ 'dashboard.actions.add_host'|trans }}
+                </a>
+                <a href="{{ path('app_ssh_key_new') }}" class="btn btn-secondary btn-outline btn-sm md:btn-md">
+                    {{ ux_icon('bi:key-fill', { class: 'w-4 h-4' }) }}
+                    {{ 'dashboard.actions.add_key'|trans }}
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content_wrapper %}
+    <div class="space-y-8">
+        <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            {# Hosts Stat #}
+            <div class="card bg-base-100 shadow-sm border border-base-200 transition-all hover:shadow-md">
+                <div class="card-body p-6 flex flex-row items-center justify-between">
+                    <div>
+                        <div class="stat-title text-base-content/60 font-medium mb-1">{{ 'dashboard.stats.hosts.title'|trans }}</div>
+                        <div class="stat-value text-primary text-3xl font-bold">{{ overview.hosts ?? 0 }}</div>
+                        <div class="stat-desc text-xs mt-1 font-medium">
+                            {{ 'dashboard.stats.hosts.desc'|trans({'%count%': hostStatusCounts['successful'] ?? 0}) }}
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-full bg-primary/10 text-primary">
+                        {{ ux_icon('bi:hdd-network', { class: 'w-6 h-6' }) }}
+                    </div>
+                </div>
+            </div>
+
+            {# Keys Stat #}
+            <div class="card bg-base-100 shadow-sm border border-base-200 transition-all hover:shadow-md">
+                <div class="card-body p-6 flex flex-row items-center justify-between">
+                    <div>
+                        <div class="stat-title text-base-content/60 font-medium mb-1">{{ 'dashboard.stats.keys.title'|trans }}</div>
+                        <div class="stat-value text-secondary text-3xl font-bold">{{ overview.keys ?? 0 }}</div>
+                        <div class="stat-desc text-xs mt-1 font-medium">{{ 'dashboard.stats.keys.desc'|trans }}</div>
+                    </div>
+                    <div class="p-3 rounded-full bg-secondary/10 text-secondary">
+                        {{ ux_icon('bi:key', { class: 'w-6 h-6' }) }}
+                    </div>
+                </div>
+            </div>
+
+            {# Users Stat #}
+            <div class="card bg-base-100 shadow-sm border border-base-200 transition-all hover:shadow-md">
+                <div class="card-body p-6 flex flex-row items-center justify-between">
+                    <div>
+                        <div class="stat-title text-base-content/60 font-medium mb-1">{{ 'dashboard.stats.users.title'|trans }}</div>
+                        <div class="stat-value text-accent text-3xl font-bold">{{ overview.users ?? 0 }}</div>
+                        <div class="stat-desc text-xs mt-1 font-medium">{{ 'dashboard.stats.users.desc'|trans }}</div>
+                    </div>
+                    <div class="p-3 rounded-full bg-accent/10 text-accent">
+                        {{ ux_icon('bi:people', { class: 'w-6 h-6' }) }}
+                    </div>
+                </div>
+            </div>
+
+            {# Categories Stat #}
+            <div class="card bg-base-100 shadow-sm border border-base-200 transition-all hover:shadow-md">
+                <div class="card-body p-6 flex flex-row items-center justify-between">
+                    <div>
+                        <div class="stat-title text-base-content/60 font-medium mb-1">{{ 'dashboard.stats.categories.title'|trans }}</div>
+                        <div class="stat-value text-info text-3xl font-bold">{{ overview.categories ?? 0 }}</div>
+                        <div class="stat-desc text-xs mt-1 font-medium">{{ 'dashboard.stats.categories.desc'|trans }}</div>
+                    </div>
+                    <div class="p-3 rounded-full bg-info/10 text-info">
+                        {{ ux_icon('bi:folder2-open', { class: 'w-6 h-6' }) }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {# Lower Section Grid #}
+        <section class="grid gap-6 lg:grid-cols-2">
+
+            {# Uptime & Health Card #}
+            <div class="card bg-base-100 border border-base-200 shadow-sm">
+                <div class="card-body p-6">
+                    <div class="flex items-start justify-between mb-6">
+                        <div>
+                            <h3 class="font-bold text-lg text-base-content">{{ 'dashboard.stats.uptime.title'|trans }}</h3>
+                            <p class="text-sm text-base-content/60">{{ 'dashboard.stats.uptime.desc'|trans({'%total%': total_hosts}) }}</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-4xl font-extrabold text-success tracking-tight">
+                                {% if successRate is not null %}
+                                    {{ successRate }}<span class="text-xl">%</span>
+                                {% else %}
+                                    --
+                                {% endif %}
+                            </div>
+                            <p class="text-xs font-semibold text-success uppercase tracking-wide mt-1">{{ 'dashboard.stats.uptime.hint'|trans }}</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="card bg-base-200/50 border border-base-200 hover:bg-base-200 transition-colors">
+                            <div class="card-body p-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="w-2 h-2 rounded-full bg-success"></div>
+                                    <span class="text-xs font-bold text-base-content/70 uppercase">{{ 'entity.host.status.successful'|trans }}</span>
+                                </div>
+                                <p class="text-2xl font-bold text-base-content">{{ hostStatusCounts['successful'] ?? 0 }}</p>
+                                <p class="text-xs text-base-content/50">{{ 'dashboard.status.subtitle.successful'|trans }}</p>
+                            </div>
+                        </div>
+
+                        <div class="card bg-base-200/50 border border-base-200 hover:bg-base-200 transition-colors">
+                            <div class="card-body p-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="w-2 h-2 rounded-full bg-error"></div>
+                                    <span class="text-xs font-bold text-base-content/70 uppercase">{{ 'entity.host.status.failed'|trans }}</span>
+                                </div>
+                                <p class="text-2xl font-bold text-base-content">{{ hostStatusCounts['failed'] ?? 0 }}</p>
+                                <p class="text-xs text-base-content/50">{{ 'dashboard.status.subtitle.failed'|trans }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Detailed Status Breakdown #}
+            <div class="card bg-base-100 border border-base-200 shadow-sm">
+                <div class="card-body p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="font-bold text-lg text-base-content">{{ 'dashboard.status.title'|trans }}</h3>
+                            <p class="text-sm text-base-content/60">{{ 'dashboard.status.description'|trans }}</p>
+                        </div>
+                        <div class="p-2 bg-secondary/10 rounded-lg text-secondary">
+                            {{ ux_icon('bi:graph-up', { class: 'w-5 h-5' }) }}
+                        </div>
+                    </div>
+
+                    {% if total_hosts == 0 %}
+                        <div class="alert alert-info bg-info/10 text-info border-info/20">
+                            {{ ux_icon('bi:info-circle', { class: 'w-5 h-5' }) }}
+                            <span class="font-medium">{{ 'dashboard.status.empty'|trans }}</span>
+                        </div>
+                    {% else %}
+                        {% set status_styles = {
+                            'successful': {'color': 'success', 'icon': 'bi:check-circle-fill'},
+                            'failed': {'color': 'error', 'icon': 'bi:exclamation-triangle-fill'},
+                            'checking': {'color': 'info', 'icon': 'bi:clock-history'},
+                            'unknown': {'color': 'warning', 'icon': 'bi:question-circle-fill'},
+                        } %}
+
+                        <div class="flex flex-col gap-5">
+                            {% for key, style in status_styles %}
+                                {% set count = hostStatusCounts[key] ?? 0 %}
+                                {% set percentage = total_hosts > 0 ? (count / total_hosts * 100) : 0 %}
+
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center gap-2">
+                                            <span class="badge badge-soft badge-{{ style.color }} badge-sm gap-1.5 pl-1.5 pr-2.5 py-3">
+                                                {{ ux_icon(style.icon, { class: 'w-3.5 h-3.5' }) }}
+                                                <span class="font-semibold">{{ ('entity.host.status.' ~ key)|trans }}</span>
+                                            </span>
+                                            <span class="text-xs font-medium text-base-content/50">
+                                                {{ 'dashboard.status.count'|trans({'%count%': count}) }}
+                                            </span>
+                                        </div>
+                                        <span class="text-xs font-bold text-base-content">{{ percentage|round(0, 'common') }}%</span>
+                                    </div>
+                                    <progress class="progress progress-{{ style.color }} w-full h-2" value="{{ percentage }}" max="100"></progress>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
