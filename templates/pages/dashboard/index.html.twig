@@ -43,7 +43,7 @@
                         </div>
                     </div>
                     <div class="p-3 rounded-full bg-primary/10 text-primary">
-                        {{ ux_icon('bi:hdd-network', { class: 'w-6 h-6' }) }}
+                        {{ ux_icon('bi:pc-display', { class: 'w-6 h-6' }) }}
                     </div>
                 </div>
             </div>
@@ -57,21 +57,7 @@
                         <div class="stat-desc text-xs mt-1 font-medium">{{ 'dashboard.stats.keys.desc'|trans }}</div>
                     </div>
                     <div class="p-3 rounded-full bg-secondary/10 text-secondary">
-                        {{ ux_icon('bi:key', { class: 'w-6 h-6' }) }}
-                    </div>
-                </div>
-            </div>
-
-            {# Users Stat #}
-            <div class="card bg-base-100 shadow-sm border border-base-200 transition-all hover:shadow-md">
-                <div class="card-body p-6 flex flex-row items-center justify-between">
-                    <div>
-                        <div class="stat-title text-base-content/60 font-medium mb-1">{{ 'dashboard.stats.users.title'|trans }}</div>
-                        <div class="stat-value text-accent text-3xl font-bold">{{ overview.users ?? 0 }}</div>
-                        <div class="stat-desc text-xs mt-1 font-medium">{{ 'dashboard.stats.users.desc'|trans }}</div>
-                    </div>
-                    <div class="p-3 rounded-full bg-accent/10 text-accent">
-                        {{ ux_icon('bi:people', { class: 'w-6 h-6' }) }}
+                        {{ ux_icon('bi:key-fill', { class: 'w-6 h-6' }) }}
                     </div>
                 </div>
             </div>
@@ -85,7 +71,21 @@
                         <div class="stat-desc text-xs mt-1 font-medium">{{ 'dashboard.stats.categories.desc'|trans }}</div>
                     </div>
                     <div class="p-3 rounded-full bg-info/10 text-info">
-                        {{ ux_icon('bi:folder2-open', { class: 'w-6 h-6' }) }}
+                        {{ ux_icon('bi:card-list', { class: 'w-6 h-6' }) }}
+                    </div>
+                </div>
+            </div>
+
+            {# Users Stat #}
+            <div class="card bg-base-100 shadow-sm border border-base-200 transition-all hover:shadow-md">
+                <div class="card-body p-6 flex flex-row items-center justify-between">
+                    <div>
+                        <div class="stat-title text-base-content/60 font-medium mb-1">{{ 'dashboard.stats.users.title'|trans }}</div>
+                        <div class="stat-value text-accent text-3xl font-bold">{{ overview.users ?? 0 }}</div>
+                        <div class="stat-desc text-xs mt-1 font-medium">{{ 'dashboard.stats.users.desc'|trans }}</div>
+                    </div>
+                    <div class="p-3 rounded-full bg-accent/10 text-accent">
+                        {{ ux_icon('bi:people-fill', { class: 'w-6 h-6' }) }}
                     </div>
                 </div>
             </div>
