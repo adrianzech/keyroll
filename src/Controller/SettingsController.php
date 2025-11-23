@@ -9,6 +9,7 @@ use App\Form\AccountFormType;
 use App\Service\UserSettingsUpdater;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -108,6 +109,12 @@ class SettingsController extends AbstractController
 
         $request->getSession()->set('_locale', $locale);
 
-        return $this->redirect($redirectTarget);
+        $response = $this->redirect($redirectTarget);
+        $response->headers->setCookie(
+            Cookie::create('keyroll_locale', $locale, new \DateTimeImmutable('+1 year'))
+                ->withSameSite(Cookie::SAMESITE_LAX)
+        );
+
+        return $response;
     }
 }
