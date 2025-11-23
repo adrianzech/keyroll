@@ -40,6 +40,25 @@
     {{- colors[type] ?? 'btn-primary' -}}
 {% endmacro %}
 
+{# Render a filter value in a human-friendly way #}
+{% macro render_filter_value(value) %}
+    {% if value is same as(null) %}
+        {{ '' }}
+    {% elseif value is constant('App\\Enum\\HostConnectionStatus::SUCCESSFUL') 
+        or value is constant('App\\Enum\\HostConnectionStatus::FAILED')
+        or value is constant('App\\Enum\\HostConnectionStatus::CHECKING')
+        or value is constant('App\\Enum\\HostConnectionStatus::UNKNOWN') %}
+        {{ value.getLabelKey()|trans({}, 'messages') }}
+    {% elseif value is iterable and value|length > 0 %}
+        {# This path is mainly defensive; values are usually iterated by caller. #}
+        {{ value|join(', ') }}
+    {% elseif value is defined and value.getName is defined %}
+        {{ value.getName() }}
+    {% else %}
+        {{ value }}
+    {% endif %}
+{% endmacro %}
+
 {# ============================================
    Action bar
    ============================================ #}
@@ -268,15 +287,23 @@
    ============================================ #}
 
 {% block active_filters %}
+    {% set active_filters = filtration_data.filters|default([])|filter(filter =>
+        filter.hasValue()
+        and not (filter.value is iterable and filter.value|length == 0)
+    ) %}
+    {% set active_filters_present = active_filters|length > 0 %}
+
     <div class="flex flex-wrap gap-2">
-        {% if has_active_filters %}
+        {% if active_filters_present %}
             {{ block('filter_clear_all_button') }}
         {% endif %}
-        {% for filter_name, filter_data in filtration_data.filters|default([])|filter(filter => filter.hasValue()) %}
-            {% with { filter: filters[filter_name] } %}
-                {{ block('filter_clear_button') }}
-            {% endwith %}
-        {% endfor %}
+        {% if active_filters_present %}
+            {% for filter_name, filter_data in active_filters %}
+                {% with { filter: filters[filter_name] } %}
+                    {{ block('filter_clear_button') }}
+                {% endwith %}
+            {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}
 
@@ -292,6 +319,7 @@
 {% endblock %}
 
 {% block filter_clear_button %}
+    {% import _self as helpers %}
     {% set attr = {
         class: 'btn btn-sm btn-outline inline-flex items-center gap-1 whitespace-nowrap',
         href: data_table_filter_clear_url(data_table, filter),
@@ -307,10 +335,10 @@
         <span>
             {% if filter.vars.value is iterable %}
                 {% for value in filter.vars.value %}
-                    {{ value }}{{ not loop.last ? ', ' }}
+                    {{ helpers.render_filter_value(value) }}{{ not loop.last ? ', ' }}
                 {% endfor %}
             {% else %}
-                {{ filter.vars.value }}
+                {{ helpers.render_filter_value(filter.vars.value) }}
             {% endif %}
         </span>
     </a>

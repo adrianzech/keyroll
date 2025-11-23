@@ -9,15 +9,22 @@ use App\Entity\Host;
 use App\Enum\HostConnectionStatus;
 use Kreyu\Bundle\DataTableBundle\Action\Type\ButtonActionType;
 use Kreyu\Bundle\DataTableBundle\Action\Type\FormActionType;
+use Kreyu\Bundle\DataTableBundle\Bridge\Doctrine\Orm\Filter\Type\DateFilterType;
+use Kreyu\Bundle\DataTableBundle\Bridge\Doctrine\Orm\Filter\Type\NumericFilterType;
 use Kreyu\Bundle\DataTableBundle\Bridge\Doctrine\Orm\Filter\Type\StringFilterType;
 use Kreyu\Bundle\DataTableBundle\Bridge\OpenSpout\Exporter\Type\CsvExporterType;
 use Kreyu\Bundle\DataTableBundle\Bridge\OpenSpout\Exporter\Type\OdsExporterType;
 use Kreyu\Bundle\DataTableBundle\Bridge\OpenSpout\Exporter\Type\XlsxExporterType;
 use Kreyu\Bundle\DataTableBundle\Column\Type\TextColumnType;
 use Kreyu\Bundle\DataTableBundle\DataTableBuilderInterface;
+use Kreyu\Bundle\DataTableBundle\Filter\FilterData;
+use Kreyu\Bundle\DataTableBundle\Filter\Operator;
+use Kreyu\Bundle\DataTableBundle\Filter\Type\CallbackFilterType;
 use Kreyu\Bundle\DataTableBundle\Pagination\PaginationData;
 use Kreyu\Bundle\DataTableBundle\Query\ProxyQueryInterface;
 use Kreyu\Bundle\DataTableBundle\Type\AbstractDataTableType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -116,11 +123,110 @@ class HostDataTableType extends AbstractDataTableType
             ->addFilter('username', StringFilterType::class, [
                 'label' => 'entity.host.label.username',
             ])
+            ->addFilter('port', NumericFilterType::class, [
+                'label' => 'entity.host.label.port',
+                'supported_operators' => [
+                    Operator::Equals,
+                    Operator::GreaterThan,
+                    Operator::LessThan,
+                    Operator::GreaterThanEquals,
+                    Operator::LessThanEquals,
+                ],
+                'operator_selectable' => true,
+            ])
+            ->addFilter('categories', CallbackFilterType::class, [
+                'label' => 'entity.host.label.categories',
+                'form_type' => EntityType::class,
+                'form_options' => [
+                    'class' => Category::class,
+                    'choice_label' => 'name',
+                    'multiple' => true,
+                    'required' => false,
+                ],
+                'active_filter_formatter' => static fn (FilterData $data): string => implode(', ', array_map(
+                    static fn (Category $category): string => $category->getName(),
+                    array_filter(
+                        ($data->getValue() instanceof \Traversable ? iterator_to_array($data->getValue()) : (array) $data->getValue()),
+                        static fn (mixed $category): bool => $category instanceof Category,
+                    ),
+                )),
+                'callback' => function (ProxyQueryInterface $query, FilterData $data): void {
+                    if (!$data->hasValue()) {
+                        return;
+                    }
+
+                    $rawCategories = $data->getValue();
+                    $categories = array_filter(
+                        $rawCategories instanceof \Traversable ? iterator_to_array($rawCategories) : (array) $rawCategories,
+                        static fn (mixed $category): bool => $category instanceof Category,
+                    );
+
+                    if ($categories === []) {
+                        return;
+                    }
+
+                    /* @noinspection PhpUndefinedMethodInspection */
+                    $query
+                        ->leftJoin('host.categories', 'filter_category')
+                        ->andWhere('filter_category IN (:categories)')
+                        ->setParameter('categories', $categories)
+                        ->distinct();
+                },
+            ])
+            ->addFilter('connectionStatus', CallbackFilterType::class, [
+                'label' => 'entity.host.label.connection_status',
+                'form_type' => ChoiceType::class,
+                'form_options' => [
+                    'choices' => [
+                        'entity.host.status.successful' => HostConnectionStatus::SUCCESSFUL,
+                        'entity.host.status.failed' => HostConnectionStatus::FAILED,
+                        'entity.host.status.checking' => HostConnectionStatus::CHECKING,
+                        'entity.host.status.unknown' => HostConnectionStatus::UNKNOWN,
+                    ],
+                    'choice_translation_domain' => 'messages',
+                    'multiple' => true,
+                    'required' => false,
+                    'placeholder' => '',
+                ],
+                'active_filter_formatter' => fn (FilterData $data): string => implode(', ', array_map(
+                    fn (HostConnectionStatus $status): string => $this->translator->trans($status->getLabelKey(), [], 'messages'),
+                    array_filter(
+                        ($data->getValue() instanceof \Traversable ? iterator_to_array($data->getValue()) : (array) $data->getValue()),
+                        static fn (mixed $status): bool => $status instanceof HostConnectionStatus,
+                    ),
+                )),
+                'callback' => function (ProxyQueryInterface $query, FilterData $data): void {
+                    if (!$data->hasValue()) {
+                        return;
+                    }
+
+                    $rawStatuses = $data->getValue();
+                    $statuses = array_filter(
+                        $rawStatuses instanceof \Traversable ? iterator_to_array($rawStatuses) : (array) $rawStatuses,
+                        static fn (mixed $status): bool => $status instanceof HostConnectionStatus,
+                    );
+
+                    if ($statuses === []) {
+                        return;
+                    }
+
+                    /* @noinspection PhpUndefinedMethodInspection */
+                    $query
+                        ->andWhere('host.connectionStatus IN (:connectionStatuses)')
+                        ->setParameter('connectionStatuses', $statuses);
+                },
+            ])
+            ->addFilter('createdAt', DateFilterType::class, [
+                'label' => 'common.label.created_at',
+                'operator_selectable' => true,
+            ])
             ->setSearchHandler(function (ProxyQueryInterface $query, string $search): void {
                 /* @noinspection PhpUndefinedMethodInspection */
                 $query
-                    ->andWhere('host.name LIKE :search OR host.hostname LIKE :search OR host.username LIKE :search')
-                    ->setParameter('search', '%' . $search . '%');
+                    ->leftJoin('host.categories', 'search_category')
+                    ->andWhere('host.name LIKE :search OR host.hostname LIKE :search OR host.username LIKE :search OR host.port LIKE :search OR host.connectionStatus LIKE :search OR search_category.name LIKE :search')
+                    ->setParameter('search', '%' . $search . '%')
+                    ->distinct();
             })
             ->addExporter('csv', CsvExporterType::class, [
                 'label' => 'data_table.export.csv',
