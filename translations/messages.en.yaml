@@ -295,6 +295,7 @@ data_table:
   clear_all_filters: 'Clear all filters'
   clear_this_filter: 'Clear this filter'
   include_personalization: 'Include personalization'
+  personalization_toggle_help: 'Use the toggles to show or hide columns in the list.'
 
 theme:
   toggle: 'Toggle Theme'

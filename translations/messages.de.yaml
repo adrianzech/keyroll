@@ -295,6 +295,7 @@ data_table:
   clear_all_filters: 'Alle Filter löschen'
   clear_this_filter: 'Diesen Filter löschen'
   include_personalization: 'Personalisierung einbeziehen'
+  personalization_toggle_help: 'Verwenden Sie die Schalter, um Spalten in der Liste ein- oder auszublenden.'
 
 theme:
   toggle: 'Theme wechseln'
