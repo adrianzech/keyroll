@@ -13,6 +13,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 readonly class LocaleListener
 {
     private const LOCALE_COOKIE_NAME = 'keyroll_locale';
+    /**
+     * @var list<string>
+     */
     private array $supportedLocales;
 
     public function __construct(

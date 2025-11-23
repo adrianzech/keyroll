@@ -1,4 +1,5 @@
 .idea
+.pdepend
 node_modules
 
 ###> symfony/framework-bundle ###

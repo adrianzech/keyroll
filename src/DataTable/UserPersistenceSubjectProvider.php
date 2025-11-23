@@ -21,7 +21,7 @@ class UserPersistenceSubjectProvider implements PersistenceSubjectProviderInterf
         $user = $this->tokenStorage->getToken()?->getUser();
 
         if (!$user instanceof UserInterface) {
-            throw PersistenceSubjectNotFoundException::createForProvider($this);
+            throw new PersistenceSubjectNotFoundException(sprintf('Persistence subject not found by the "%s"', static::class));
         }
 
         $identifier = $this->buildIdentifier($user);

@@ -4,39 +4,38 @@ declare(strict_types=1);
 
 namespace App\DataTable;
 
-use App\Entity\Category;
-use App\Entity\Host;
-use App\Entity\User;
-use Kreyu\Bundle\DataTableBundle\Action\Type\ButtonActionType;
-use Kreyu\Bundle\DataTableBundle\Action\Type\FormActionType;
 use Kreyu\Bundle\DataTableBundle\Bridge\Doctrine\Orm\Filter\Type\DateFilterType;
 use Kreyu\Bundle\DataTableBundle\Bridge\Doctrine\Orm\Filter\Type\StringFilterType;
-use Kreyu\Bundle\DataTableBundle\Bridge\OpenSpout\Exporter\Type\CsvExporterType;
-use Kreyu\Bundle\DataTableBundle\Bridge\OpenSpout\Exporter\Type\OdsExporterType;
-use Kreyu\Bundle\DataTableBundle\Bridge\OpenSpout\Exporter\Type\XlsxExporterType;
 use Kreyu\Bundle\DataTableBundle\Column\Type\TextColumnType;
 use Kreyu\Bundle\DataTableBundle\DataTableBuilderInterface;
-use Kreyu\Bundle\DataTableBundle\Filter\FilterData;
 use Kreyu\Bundle\DataTableBundle\Filter\Type\CallbackFilterType;
 use Kreyu\Bundle\DataTableBundle\Pagination\PaginationData;
-use Kreyu\Bundle\DataTableBundle\Query\ProxyQueryInterface;
 use Kreyu\Bundle\DataTableBundle\Type\AbstractDataTableType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CategoryDataTableType extends AbstractDataTableType
 {
     public function __construct(
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
         private readonly TranslatorInterface $translator,
+        private readonly DataTableConfigurator $dataTableConfigurator,
     ) {
     }
 
     public function buildDataTable(DataTableBuilderInterface $builder, array $options): void
+    {
+        $this->configureColumns($builder);
+        $this->configureFilters($builder);
+        $this->configureSearch($builder);
+        $this->configureExporters($builder);
+        $this->setDefaultPagination($builder);
+        $this->configureAdminActions($builder);
+    }
+
+    private function configureColumns(DataTableBuilderInterface $builder): void
     {
         $builder
             ->addColumn('name', TextColumnType::class, [
@@ -52,7 +51,7 @@ class CategoryDataTableType extends AbstractDataTableType
                     'label' => $this->translator->trans('entity.category.label.assigned_hosts_count', [], 'messages'),
                 ],
                 'sort' => false,
-                'getter' => fn (Category $category) => $category->getHosts()->count(),
+                'getter' => fn ($category) => $category->getHosts()->count(),
             ])
             ->addColumn('usersCount', TextColumnType::class, [
                 'label' => 'entity.category.label.assigned_users_count',
@@ -60,7 +59,7 @@ class CategoryDataTableType extends AbstractDataTableType
                     'label' => $this->translator->trans('entity.category.label.assigned_users_count', [], 'messages'),
                 ],
                 'sort' => false,
-                'getter' => fn (Category $category) => $category->getUsers()->count(),
+                'getter' => fn ($category) => $category->getUsers()->count(),
             ])
             ->addColumn('createdAt', TextColumnType::class, [
                 'label' => 'common.label.created_at',
@@ -69,152 +68,151 @@ class CategoryDataTableType extends AbstractDataTableType
                 ],
                 'sort' => true,
                 'block_prefix' => 'time_ago',
-            ])
-            ->addFilter('name', StringFilterType::class, [
-                'label' => 'entity.category.label.name',
-            ])
-            ->addFilter('hosts', CallbackFilterType::class, [
-                'label' => 'entity.category.label.assigned_hosts',
-                'form_type' => EntityType::class,
-                'form_options' => [
-                    'class' => Host::class,
-                    'choice_label' => 'name',
-                    'multiple' => true,
-                    'required' => false,
-                ],
-                'active_filter_formatter' => static fn (FilterData $data): string => implode(', ', array_map(
-                    static fn (Host $host): string => $host->getName(),
-                    array_filter(
-                        ($data->getValue() instanceof \Traversable ? iterator_to_array($data->getValue()) : (array) $data->getValue()),
-                        static fn (mixed $host): bool => $host instanceof Host,
-                    ),
-                )),
-                'callback' => function (ProxyQueryInterface $query, FilterData $data): void {
-                    if (!$data->hasValue()) {
-                        return;
-                    }
+            ]);
+    }
 
-                    $rawHosts = $data->getValue();
-                    $hosts = array_filter(
-                        $rawHosts instanceof \Traversable ? iterator_to_array($rawHosts) : (array) $rawHosts,
-                        static fn (mixed $host): bool => $host instanceof Host,
-                    );
+    private function configureFilters(DataTableBuilderInterface $builder): void
+    {
+        $builder->addFilter('name', StringFilterType::class, [
+            'label' => 'entity.category.label.name',
+        ]);
 
-                    if ($hosts === []) {
-                        return;
-                    }
+        $this->addRelationFilter(
+            builder: $builder,
+            name: 'hosts',
+            label: 'entity.category.label.assigned_hosts',
+            association: 'category.hosts',
+            alias: 'filter_host',
+            parameter: 'hosts',
+            entityClass: 'App\Entity\Host',
+        );
 
-                    /* @noinspection PhpUndefinedMethodInspection */
-                    $query
-                        ->leftJoin('category.hosts', 'filter_host')
-                        ->andWhere('filter_host IN (:hosts)')
-                        ->setParameter('hosts', $hosts)
-                        ->distinct();
-                },
-            ])
-            ->addFilter('users', CallbackFilterType::class, [
-                'label' => 'entity.category.label.assigned_users',
-                'form_type' => EntityType::class,
-                'form_options' => [
-                    'class' => User::class,
-                    'choice_label' => 'name',
-                    'multiple' => true,
-                    'required' => false,
-                ],
-                'active_filter_formatter' => static fn (FilterData $data): string => implode(', ', array_map(
-                    static fn (User $user): string => $user->getName(),
-                    array_filter(
-                        ($data->getValue() instanceof \Traversable ? iterator_to_array($data->getValue()) : (array) $data->getValue()),
-                        static fn (mixed $user): bool => $user instanceof User,
-                    ),
-                )),
-                'callback' => function (ProxyQueryInterface $query, FilterData $data): void {
-                    if (!$data->hasValue()) {
-                        return;
-                    }
+        $this->addRelationFilter(
+            builder: $builder,
+            name: 'users',
+            label: 'entity.category.label.assigned_users',
+            association: 'category.users',
+            alias: 'filter_user',
+            parameter: 'users',
+            entityClass: 'App\Entity\User',
+        );
 
-                    $rawUsers = $data->getValue();
-                    $users = array_filter(
-                        $rawUsers instanceof \Traversable ? iterator_to_array($rawUsers) : (array) $rawUsers,
-                        static fn (mixed $user): bool => $user instanceof User,
-                    );
+        $builder->addFilter('createdAt', DateFilterType::class, [
+            'label' => 'common.label.created_at',
+            'operator_selectable' => true,
+        ]);
+    }
 
-                    if ($users === []) {
-                        return;
-                    }
+    private function configureSearch(DataTableBuilderInterface $builder): void
+    {
+        $builder->setSearchHandler(function ($query, string $search): void {
+            /* @noinspection PhpUndefinedMethodInspection */
+            $query
+                ->leftJoin('category.hosts', 'search_host')
+                ->leftJoin('category.users', 'search_user')
+                ->andWhere('category.name LIKE :search OR search_host.name LIKE :search OR search_user.name LIKE :search')
+                ->setParameter('search', '%' . $search . '%')
+                ->distinct();
+        });
+    }
 
-                    /* @noinspection PhpUndefinedMethodInspection */
-                    $query
-                        ->leftJoin('category.users', 'filter_user')
-                        ->andWhere('filter_user IN (:users)')
-                        ->setParameter('users', $users)
-                        ->distinct();
-                },
-            ])
-            ->addFilter('createdAt', DateFilterType::class, [
-                'label' => 'common.label.created_at',
-                'operator_selectable' => true,
-            ])
-            ->setSearchHandler(function (ProxyQueryInterface $query, string $search): void {
+    private function configureExporters(DataTableBuilderInterface $builder): void
+    {
+        $this->dataTableConfigurator->addDefaultExporters($builder);
+    }
+
+    private function setDefaultPagination(DataTableBuilderInterface $builder): void
+    {
+        $builder->setDefaultPaginationData(
+            new PaginationData(
+                page: 1,
+                perPage: 10,
+            )
+        );
+    }
+
+    private function configureAdminActions(DataTableBuilderInterface $builder): void
+    {
+        if (!$this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        $this->dataTableConfigurator->addAdminActions(
+            builder: $builder,
+            editRoute: 'app_category_edit',
+            deleteRoute: 'app_category_delete',
+            deleteTranslationKey: 'entity.category.dialog.delete_confirm',
+            idAccessor: static fn ($category) => $category->getId(),
+            nameAccessor: static fn ($category) => $category->getName(),
+        );
+    }
+
+    private function addRelationFilter(
+        DataTableBuilderInterface $builder,
+        string $name,
+        string $label,
+        string $association,
+        string $alias,
+        string $parameter,
+        string $entityClass,
+    ): void {
+        $builder->addFilter($name, CallbackFilterType::class, [
+            'label' => $label,
+            'form_type' => EntityType::class,
+            'form_options' => [
+                'class' => $entityClass,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'required' => false,
+            ],
+            'active_filter_formatter' => fn ($data): string => implode(', ', array_map(
+                static fn (object $entity): string => (string) $entity->getName(),
+                $this->extractEntities($data, $entityClass),
+            )),
+            'callback' => function ($query, $data) use ($association, $alias, $parameter, $entityClass): void {
+                $entities = $this->extractEntities($data, $entityClass);
+
+                if ($entities === []) {
+                    return;
+                }
+
                 /* @noinspection PhpUndefinedMethodInspection */
                 $query
-                    ->leftJoin('category.hosts', 'search_host')
-                    ->leftJoin('category.users', 'search_user')
-                    ->andWhere('category.name LIKE :search OR search_host.name LIKE :search OR search_user.name LIKE :search')
-                    ->setParameter('search', '%' . $search . '%')
+                    ->leftJoin($association, $alias)
+                    ->andWhere(sprintf('%s IN (:%s)', $alias, $parameter))
+                    ->setParameter($parameter, $entities)
                     ->distinct();
-            })
-            ->addExporter('csv', CsvExporterType::class, [
-                'label' => 'data_table.export.csv',
-            ])
-            ->addExporter('ods', OdsExporterType::class, [
-                'label' => 'data_table.export.ods',
-            ])
-            ->addExporter('xlsx', XlsxExporterType::class, [
-                'label' => 'data_table.export.xlsx',
-            ])
-            ->setDefaultPaginationData(
-                new PaginationData(
-                    page: 1,
-                    perPage: 10,
-                )
-            );
+            },
+        ]);
+    }
 
-        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-            $builder
-                ->addRowAction('edit', ButtonActionType::class, [
-                    'href' => fn (Category $category) => $this->urlGenerator->generate('app_category_edit', [
-                        'id' => $category->getId(),
-                    ]),
-                    'label' => 'common.button.edit',
-                    'variant' => 'light',
-                ])
-                ->addRowAction('delete', FormActionType::class, [
-                    'action' => fn (Category $category) => $this->urlGenerator->generate('app_category_delete', [
-                        'id' => $category->getId(),
-                    ]),
-                    'method' => 'POST',
-                    'label' => 'common.button.delete',
-                    'variant' => 'danger',
-                    'confirmation' => fn (Category $category) => [
-                        'type' => 'danger',
-                        'translation_domain' => 'messages',
-                        'label_title' => 'common.dialog.delete_title',
-                        'label_description' => $this->translator->trans('entity.category.dialog.delete_confirm', [
-                            '%name%' => $category->getName(),
-                        ], 'messages'),
-                        'label_confirm' => 'common.button.delete',
-                        'label_cancel' => 'common.button.cancel',
-                    ],
-                ]);
+    /**
+     * @return array<int, object>
+     */
+    private function extractEntities(mixed $data, string $expectedClass): array
+    {
+        if (!$data->hasValue()) {
+            return [];
         }
+
+        $rawEntities = $data->getValue();
+        $entities = match (true) {
+            is_array($rawEntities) => $rawEntities,
+            is_iterable($rawEntities) => iterator_to_array($rawEntities),
+            default => [$rawEntities],
+        };
+
+        return array_values(array_filter(
+            $entities,
+            static fn (mixed $entity): bool => $entity instanceof $expectedClass,
+        ));
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'data_class' => Category::class,
+            'data_class' => 'App\Entity\Category',
         ]);
     }
 }

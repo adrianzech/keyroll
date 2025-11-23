@@ -45,7 +45,7 @@ class ForceTwoFactorSetupSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->shouldBypass($event->getRequest()->getPathInfo() ?? '')) {
+        if ($this->shouldBypass($event->getRequest()->getPathInfo())) {
             return;
         }
 
@@ -73,7 +73,7 @@ class ForceTwoFactorSetupSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->shouldBypass($event->getRequest()->getPathInfo() ?? '')) {
+        if ($this->shouldBypass($event->getRequest()->getPathInfo())) {
             return;
         }
 
