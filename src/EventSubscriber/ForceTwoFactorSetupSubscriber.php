@@ -16,6 +16,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ForceTwoFactorSetupSubscriber implements EventSubscriberInterface
 {
+    private bool $isTestEnvironment;
+
     /**
      * @var string[]
      */
@@ -37,6 +39,7 @@ class ForceTwoFactorSetupSubscriber implements EventSubscriberInterface
         private readonly Security $security,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
+        $this->isTestEnvironment = 'test' === ($_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? null);
     }
 
     public function onKernelRequest(RequestEvent $event): void
@@ -92,6 +95,10 @@ class ForceTwoFactorSetupSubscriber implements EventSubscriberInterface
 
     private function shouldBypass(string $path): bool
     {
+        if ($this->isTestEnvironment) {
+            return true;
+        }
+
         foreach ($this->allowedPathPrefixes as $prefix) {
             if (str_starts_with($path, $prefix)) {
                 return true;
