@@ -1,0 +1,5 @@
+ux_icons:
+  # Avoid remote icon downloads during tests; missing icons render as empty strings.
+  iconify:
+    enabled: false
+  ignore_not_found: true
