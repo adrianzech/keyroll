@@ -69,36 +69,38 @@
     {% if title or has_active_filters or display_filter_action or display_export_action or filtration_enabled or personalization_enabled %}
         <div class="card">
             <div class="card-body p-0 pb-2">
-                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-2">
-                    <div class="flex flex-wrap items-center gap-2">
-                        {% if display_export_action %}
-                            {{ block('action_export') }}
-                            {{ block('export_modal') }}
-                        {% endif %}
-
-                        {% if personalization_enabled %}
-                            {{ block('action_personalize') }}
-                            {{ block('personalization_modal') }}
-                        {% endif %}
-
-                        {% for action in actions %}
-                            <div>{{ data_table_action(action) }}</div>
-                        {% endfor %}
-                    </div>
-
-                    <div class="flex flex-wrap justify-end items-center gap-2">
-                        {% if filtration_enabled and filtration_form and filtration_form.vars.search_fields|length > 0 %}
-                            {{ block('action_search') }}
-                        {% endif %}
-
-                        {% if has_active_filters or display_filter_action %}
-                            {% if has_active_filters %}
-                                {{ block('active_filters') }}
+                <div class="flex flex-col gap-2 md:items-start md:gap-3">
+                    <div class="flex flex-wrap items-center gap-2 justify-between w-full">
+                        <div class="flex flex-wrap items-center gap-2">
+                            {% if filtration_enabled and filtration_form and filtration_form.vars.search_fields|length > 0 %}
+                                {{ block('action_search') }}
                             {% endif %}
-                            {% if display_filter_action %}
-                                {{ block('action_filter') }}
+
+                            {% if has_active_filters or display_filter_action %}
+                                {% if display_filter_action %}
+                                    {{ block('action_filter') }}
+                                {% endif %}
+                                {% if has_active_filters %}
+                                    {{ block('active_filters') }}
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2">
+                            {% if display_export_action %}
+                                {{ block('action_export') }}
+                                {{ block('export_modal') }}
+                            {% endif %}
+
+                            {% if personalization_enabled %}
+                                {{ block('action_personalize') }}
+                                {{ block('personalization_modal') }}
+                            {% endif %}
+
+                            {% for action in actions %}
+                                <div>{{ data_table_action(action) }}</div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -351,21 +353,17 @@
 {% block action_search %}
     <div class="flex items-center gap-2">
         {% for child in filtration_form.vars.search_fields %}
-            {{ form_widget(child.value, {
-                attr: {
-                    form: filtration_form.vars.id,
-                    class: 'input input-bordered input-sm w-48 focus:z-10',
-                    placeholder: 'common.action.search'
-                }
-            }) }}
+            <label class="input input-bordered input-sm flex items-center gap-2 w-52">
+                {{ ux_icon('bi:search', { class: 'w-4 h-4 text-base-content/70' }) }}
+                {{ form_widget(child.value, {
+                    attr: {
+                        form: filtration_form.vars.id,
+                        class: 'w-full focus:z-10 border-0 outline-none',
+                        placeholder: 'common.action.search'
+                    }
+                }) }}
+            </label>
         {% endfor %}
-
-        <button type="submit"
-                form="{{ filtration_form.vars.id }}"
-                class="btn btn-sm btn-primary flex items-center gap-1"
-                aria-label="{{ 'common.action.search'|trans }}">
-            {{ ux_icon('bi:search', { class: 'w-4 h-4' }) }}
-        </button>
     </div>
 {% endblock %}
 
