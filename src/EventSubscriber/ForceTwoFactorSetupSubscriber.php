@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ForceTwoFactorSetupSubscriber implements EventSubscriberInterface
@@ -38,8 +39,9 @@ class ForceTwoFactorSetupSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly Security $security,
         private readonly UrlGeneratorInterface $urlGenerator,
+        KernelInterface $kernel,
     ) {
-        $this->isTestEnvironment = 'test' === ($_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? null);
+        $this->isTestEnvironment = 'test' === $kernel->getEnvironment();
     }
 
     public function onKernelRequest(RequestEvent $event): void
