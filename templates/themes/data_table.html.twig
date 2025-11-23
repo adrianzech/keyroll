@@ -233,7 +233,7 @@
 {% block action_export %}
     {% set modal_id = export_form.vars.id ~ '__modal' %}
     {% set attr = { type: 'button', class: 'btn btn-sm btn-primary', onclick: "document.getElementById('" ~ modal_id ~ "').showModal()" }|merge(attr|default({})) %}
-    <button {{ block('attributes') }}>{{ 'data_table.export.title'|trans }}</button>
+    <button {{ block('attributes') }}>{{ ux_icon('bi:cloud-download', { class: 'w-4 h-4' }) }}</button>
 {% endblock %}
 
 {# Filter button #}
