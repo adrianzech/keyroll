@@ -716,22 +716,14 @@
     </div>
 {% endblock %}
 
-
-{% block personalization_form_help %}
-    <div class="alert alert-info flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        <span>{{ 'data_table.personalization_toggle_help'|trans }}</span>
-    </div>
-{% endblock %}
-
 {% block personalization_form_columns %}
-    <div class="card-body p-0 space-y-2">
-        <div class="space-y-2">
-            {% for child in form.children.columns %}
-                {{ form_row(child) }}
-            {% endfor %}
+    <div class="" data-controller="personalization-toggle">
+        <div class="card-body p-0 space-y-2">
+            <div class="space-y-2" data-personalization-toggle-target="list">
+                {% for child in form.children.columns %}
+                    {{ form_row(child) }}
+                {% endfor %}
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -745,21 +737,29 @@
 
 {% block kreyu_data_table_personalization_column_data_row %}
     {% set toggle_id = form.visible.vars.id ~ '__toggle' %}
-    <div class="p-3 bg-base-100 rounded border border-base-300 flex items-center justify-between">
-        <div class="flex flex-col gap-1">
-            {{ form_widget(form.name) }}
-            {{ form_widget(form.priority) }}
-            {{ form_widget(form.visible, { value: 0 }) }}
-            <label for="{{ toggle_id }}" class="font-medium text-sm">
-                {{ form.vars.label|trans(form.vars.translation_parameters, form.vars.translation_domain) }}
-            </label>
+    <div class="p-3 rounded border border-base-300 flex items-center justify-between gap-3"
+         data-personalization-toggle-target="item">
+        <div class="flex items-center gap-3 flex-1">
+            <span class="cursor-move text-base-content/70" data-drag-handle>
+                {{ ux_icon('bi:grip-vertical', { class: 'w-5 h-5' }) }}
+            </span>
+            <div class="flex flex-col gap-1 flex-1">
+                {{ form_widget(form.name) }}
+                {{ form_widget(form.priority, { attr: { 'data-personalization-toggle-priority-input': true } }) }}
+                {{ form_widget(form.visible, {
+                    value: form.visible.vars.data ? 1 : 0,
+                    attr: { 'data-personalization-toggle-visible-input': true }
+                }) }}
+                <label for="{{ toggle_id }}" class="font-medium text-sm">
+                    {{ form.vars.label|trans(form.vars.translation_parameters, form.vars.translation_domain) }}
+                </label>
+            </div>
         </div>
         <input type="checkbox"
                id="{{ toggle_id }}"
-               name="{{ form.visible.vars.full_name }}"
-               value="1"
                class="toggle toggle-primary"
-               {% if form.visible.vars.data %}checked{% endif %}>
+               {% if form.visible.vars.data %}checked{% endif %}
+               data-action="change->personalization-toggle#toggleVisibility">
     </div>
 {% endblock %}
 
