@@ -107,7 +107,7 @@
         {% if filtration_enabled and filtration_form and filters|length > 0 %}
             {% set modal_id = filtration_form.vars.id ~ '__modal' %}
             <dialog id="{{ modal_id }}" class="modal">
-                <div class="modal-box w-11/12 max-w-lg">
+                <div class="modal-box w-11/12 max-w-5xl">
                     <div class="flex items-center justify-between mb-2">
                         <h3 class="font-bold text-lg">{{ 'data_table.filter'|trans }}</h3>
                         <button type="button"
@@ -539,7 +539,7 @@
 
 {# Filtration form content #}
 {% block filtration_form_content %}
-    {% with { attr: { class: 'grid grid-cols-1 gap-3' } } %}
+    {% with { attr: { class: 'grid grid-cols-1 md:grid-cols-2 gap-4' } } %}
         <div {{ block('attributes') }}>
             {% for child in form %}
                 {{ block('filtration_form_row', theme) }}
@@ -583,7 +583,7 @@
 {% endblock %}
 
 {% block filtration_form_submit %}
-    <div>
+    <div class="md:col-span-2">
         <button type="submit" class="btn btn-primary w-full">
             {{ 'data_table.filter'|trans }}
         </button>
