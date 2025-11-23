@@ -8,15 +8,20 @@ use App\Entity\Category;
 use App\Entity\User;
 use Kreyu\Bundle\DataTableBundle\Action\Type\ButtonActionType;
 use Kreyu\Bundle\DataTableBundle\Action\Type\FormActionType;
+use Kreyu\Bundle\DataTableBundle\Bridge\Doctrine\Orm\Query\DoctrineOrmProxyQueryInterface;
 use Kreyu\Bundle\DataTableBundle\Bridge\Doctrine\Orm\Filter\Type\StringFilterType;
 use Kreyu\Bundle\DataTableBundle\Bridge\OpenSpout\Exporter\Type\CsvExporterType;
 use Kreyu\Bundle\DataTableBundle\Bridge\OpenSpout\Exporter\Type\OdsExporterType;
 use Kreyu\Bundle\DataTableBundle\Bridge\OpenSpout\Exporter\Type\XlsxExporterType;
 use Kreyu\Bundle\DataTableBundle\Column\Type\TextColumnType;
 use Kreyu\Bundle\DataTableBundle\DataTableBuilderInterface;
+use Kreyu\Bundle\DataTableBundle\Filter\FilterData;
+use Kreyu\Bundle\DataTableBundle\Filter\Type\CallbackFilterType;
 use Kreyu\Bundle\DataTableBundle\Pagination\PaginationData;
 use Kreyu\Bundle\DataTableBundle\Query\ProxyQueryInterface;
 use Kreyu\Bundle\DataTableBundle\Type\AbstractDataTableType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -90,10 +95,89 @@ class UserDataTableType extends AbstractDataTableType
             ->addFilter('email', StringFilterType::class, [
                 'label' => 'entity.user.label.email',
             ])
+            ->addFilter('categories', CallbackFilterType::class, [
+                'label' => 'entity.user.label.categories',
+                'form_type' => EntityType::class,
+                'form_options' => [
+                    'class' => Category::class,
+                    'choice_label' => 'name',
+                    'multiple' => true,
+                    'required' => false,
+                ],
+                'active_filter_formatter' => static fn (FilterData $data): string => implode(', ', array_map(
+                    static fn (Category $category): string => $category->getName(),
+                    array_filter(
+                        ($data->getValue() instanceof \Traversable ? iterator_to_array($data->getValue()) : (array) $data->getValue()),
+                        static fn (mixed $category): bool => $category instanceof Category,
+                    ),
+                )),
+                'callback' => function (ProxyQueryInterface $query, FilterData $data): void {
+                    if (!$data->hasValue() || !$query instanceof DoctrineOrmProxyQueryInterface) {
+                        return;
+                    }
+
+                    $rawCategories = $data->getValue();
+                    $categories = array_filter(
+                        $rawCategories instanceof \Traversable ? iterator_to_array($rawCategories) : (array) $rawCategories,
+                        static fn (mixed $category): bool => $category instanceof Category,
+                    );
+
+                    if ($categories === []) {
+                        return;
+                    }
+
+                    $queryBuilder = $query->getQueryBuilder();
+                    $rootAlias = current($queryBuilder->getRootAliases());
+
+                    $queryBuilder
+                        ->leftJoin($rootAlias . '.categories', 'filter_category')
+                        ->andWhere('filter_category IN (:categories)')
+                        ->setParameter('categories', $categories)
+                        ->distinct();
+                },
+            ])
+            ->addFilter('primaryRole', CallbackFilterType::class, [
+                'label' => 'entity.user.label.role',
+                'form_type' => ChoiceType::class,
+                'form_options' => [
+                    'choices' => [
+                        'entity.user.label.admin' => 'ROLE_ADMIN',
+                        'entity.user.label.user' => 'ROLE_USER',
+                    ],
+                    'placeholder' => '',
+                    'required' => false,
+                ],
+                'active_filter_formatter' => fn (FilterData $data): string => $data->hasValue()
+                    ? $this->translator->trans(match ((string) $data->getValue()) {
+                        'ROLE_ADMIN' => 'entity.user.label.admin',
+                        default => 'entity.user.label.user',
+                    }, [], 'messages')
+                    : '',
+                'callback' => function (ProxyQueryInterface $query, FilterData $data): void {
+                    if (!$data->hasValue() || !$query instanceof DoctrineOrmProxyQueryInterface) {
+                        return;
+                    }
+
+                    $queryBuilder = $query->getQueryBuilder();
+                    $rootAlias = current($queryBuilder->getRootAliases());
+
+                    $role = (string) $data->getValue();
+
+                    $queryBuilder
+                        ->andWhere($rootAlias . '.roles LIKE :rolePattern')
+                        ->setParameter('rolePattern', '%"' . $role . '"%');
+                },
+            ])
             ->setSearchHandler(function (ProxyQueryInterface $query, string $search): void {
+                if (!$query instanceof DoctrineOrmProxyQueryInterface) {
+                    return;
+                }
+
                 $query
-                    ->andWhere('user.name LIKE :search OR user.email LIKE :search')
-                    ->setParameter('search', '%' . $search . '%');
+                    ->leftJoin('user.categories', 'search_category')
+                    ->andWhere('user.name LIKE :search OR user.email LIKE :search OR search_category.name LIKE :search OR user.roles LIKE :search')
+                    ->setParameter('search', '%' . $search . '%')
+                    ->distinct();
             })
             ->addExporter('csv', CsvExporterType::class, [
                 'label' => 'data_table.export.csv',
